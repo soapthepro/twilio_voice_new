@@ -90,7 +90,12 @@ public class IncomingCallNotificationService extends Service {
         Log.i(TAG, "Setting notification from, " + callInvite.getFrom());
         String fromId = callInvite.getFrom().replace("client:", "");
         Log.i(TAG, "CALLER NAME AFTER REMOVAL = " + fromId);
-        String caller = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
+        String caller;
+        if (fromId != null) {
+            caller = fromId;
+        } else {
+            caller = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
+        }
         Log.i(TAG, "CALLER NAME AFTER SETTING = " + caller);
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Version O = Android 8

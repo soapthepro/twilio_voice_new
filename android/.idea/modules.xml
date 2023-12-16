@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio_voice.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio_voice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio_voice.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio_voice.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio_voice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio_voice.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio_voice.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio_voice.unitTest.iml" />
     </modules>
   </component>
 </project>
