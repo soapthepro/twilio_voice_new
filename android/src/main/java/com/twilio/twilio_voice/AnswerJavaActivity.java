@@ -167,9 +167,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 case Constants.ACTION_CANCEL_CALL:
                     newCancelCallClickListener();
                     break;
-                case Constants.ACTION_ACCEPT:
-                    checkPermissionsAndAccept();
-                    break;
                 default: {
                 }
             }
@@ -262,6 +259,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         intent.putExtra(Constants.CALL_FROM, call.getFrom());
         startActivity(intent);
         Log.d(TAG, "Connected");
+        finish();
     }
 
     private void endCall() {
