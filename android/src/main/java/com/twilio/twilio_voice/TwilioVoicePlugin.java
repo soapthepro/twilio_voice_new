@@ -36,6 +36,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import org.json.JSONObject;
 
