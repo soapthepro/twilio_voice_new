@@ -453,6 +453,14 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 // startAudioSwitch();
                 acceptCall();
             }
+        } else if (requestCode == MIC_BLUETOOTH_REQUEST_CODE) {
+            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Bluetooth permissions needed. Please allow in your application settings.", Toast.LENGTH_LONG).show();
+                acceptCall();
+            } else {
+                // startAudioSwitch();
+                acceptCall();
+            }
         } else {
             throw new IllegalStateException("Unexpected value: " + requestCode);
         }
