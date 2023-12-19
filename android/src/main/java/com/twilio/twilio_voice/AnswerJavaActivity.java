@@ -3,6 +3,7 @@ package com.twilio.twilio_voice;
 import android.Manifest;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import android.media.AudioManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,7 +36,15 @@ import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
 import com.twilio.audioswitch.AudioDevice;
 import com.twilio.audioswitch.AudioSwitch;
+import kotlin.Unit;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
 
 public class AnswerJavaActivity extends AppCompatActivity {
 
@@ -411,16 +420,16 @@ public class AnswerJavaActivity extends AppCompatActivity {
         Log.d(TAG, "requestAudioPermissions");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
-                ActivityCompat.requestPermissions(this, Manifest.permission.RECORD_AUDIO, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, {Manifest.permission.RECORD_AUDIO}, MIC_PERMISSION_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, Manifest.permission.RECORD_AUDIO, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, {Manifest.permission.RECORD_AUDIO}, MIC_PERMISSION_REQUEST_CODE);
             }
         } 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_CONNECT)) {
-                ActivityCompat.requestPermissions(this, Manifest.permission.BLUETOOTH_CONNECT, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, {Manifest.permission.BLUETOOTH_CONNECT}, MIC_PERMISSION_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, Manifest.permission.BLUETOOTH_CONNECT, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, {Manifest.permission.BLUETOOTH_CONNECT}, MIC_PERMISSION_REQUEST_CODE);
             }
         } 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
@@ -473,7 +482,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 audioDeviceNames.add(a.getName());
             }
             new AlertDialog.Builder(this)
-                .setTitle(R.string.select_device)                
+                .setTitle("Select Audio Device")                
                 .setSingleChoiceItems(                    
                     audioDeviceNames.toArray(new CharSequence[0]),                      
                     selectedDeviceIndex,                       
