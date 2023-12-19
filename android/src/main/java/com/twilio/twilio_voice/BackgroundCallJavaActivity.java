@@ -104,10 +104,11 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        handleCallIntent(getIntent());
+        
         audioSwitch = new AudioSwitch(getApplicationContext());
         savedVolumeControlStream = getVolumeControlStream();
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+        handleCallIntent(getIntent());
     }
 
     private void handleCallIntent(Intent intent) {
