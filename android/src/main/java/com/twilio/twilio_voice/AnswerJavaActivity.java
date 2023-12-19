@@ -418,7 +418,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private void requestAudioPermissions() {
         String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.BLUETOOTH_CONNECT};
         String[] permissionAudio = {Manifest.permission.RECORD_AUDIO};
-        String[] permissionBluetooth = {Manifest.permission.BLUETOOTH_CONNECT}
+        String[] permissionBluetooth = {Manifest.permission.BLUETOOTH_CONNECT};
         Log.d(TAG, "requestAudioPermissions");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
