@@ -417,19 +417,21 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
     private void requestAudioPermissions() {
         String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.BLUETOOTH_CONNECT};
+        String[] permissionAudio = {Manifest.permission.RECORD_AUDIO};
+        String[] permissionBluetooth = {Manifest.permission.BLUETOOTH_CONNECT}
         Log.d(TAG, "requestAudioPermissions");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
-                ActivityCompat.requestPermissions(this, {Manifest.permission.RECORD_AUDIO}, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, permissionAudio, MIC_PERMISSION_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, {Manifest.permission.RECORD_AUDIO}, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, permissionAudio, MIC_PERMISSION_REQUEST_CODE);
             }
         } 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_CONNECT)) {
-                ActivityCompat.requestPermissions(this, {Manifest.permission.BLUETOOTH_CONNECT}, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, permissionBluetooth, MIC_PERMISSION_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, {Manifest.permission.BLUETOOTH_CONNECT}, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, permissionBluetooth, MIC_PERMISSION_REQUEST_CODE);
             }
         } 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
