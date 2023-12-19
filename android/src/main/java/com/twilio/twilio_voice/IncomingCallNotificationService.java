@@ -215,8 +215,7 @@ public class IncomingCallNotificationService extends Service {
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
         endForeground();
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.cancel(Constants.INCOMING_CALL_NOTIFICATION_ID);
+        notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite!");
         SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
