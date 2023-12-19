@@ -259,7 +259,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         intent.putExtra(Constants.CALL_FROM, call.getFrom());
         startActivity(intent);
         Log.d(TAG, "Connected");
-        finish();
+        finishAndRemoveTask();
     }
 
     private void endCall() {
