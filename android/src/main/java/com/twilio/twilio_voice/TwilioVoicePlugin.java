@@ -543,7 +543,9 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         Log.d(TAG, "Answering call");
         activeCallInvite.accept(this.activity, callListener);
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
-        notificationManager.cancel(activeCallNotificationId);
+        Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
+        NotificationManagerCompat notificationManagerNew = NotificationManagerCompat.from(this);
+        notificationManagerNew.cancel(activeCallNotificationId);
     }
 
     private void sendPhoneCallEvents(String description) {
