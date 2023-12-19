@@ -60,6 +60,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private CallInvite activeCallInvite;
     private int activeCallNotificationId;
     private static final int MIC_PERMISSION_REQUEST_CODE = 17893;
+    private static final int MIC_BLUETOOTH_REQUEST_CODE = 17693;
     private PowerManager.WakeLock wakeLock;
     private TextView tvUserName;
     private TextView tvCallStatus;
@@ -429,9 +430,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
         } 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_CONNECT)) {
-                ActivityCompat.requestPermissions(this, permissionBluetooth, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, permissionBluetooth, MIC_BLUETOOTH_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, permissionBluetooth, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, permissionBluetooth, MIC_BLUETOOTH_REQUEST_CODE);
             }
         } 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
