@@ -19,6 +19,10 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +33,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
+import com.twilio.audioswitch.AudioDevice;
+import com.twilio.audioswitch.AudioSwitch;
 
 
 public class AnswerJavaActivity extends AppCompatActivity {
@@ -50,6 +56,10 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private TextView tvCallStatus;
     private ImageView btnAnswer;
     private ImageView btnReject;
+    private AudioSwitch audioSwitch;
+    private int savedVolumeControlStream;
+    private MenuItem audioDeviceMenuItem;
+
     Call.Listener callListener = callListener();
 
     @Override
@@ -92,6 +102,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
 
         handleIncomingCallIntent(getIntent());
+        audioSwitch = new AudioSwitch(getApplicationContext());
+        savedVolumeControlStream = getVolumeControlStream();
+        setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
     private void handleIncomingCallIntent(Intent intent) {
@@ -193,6 +206,15 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
     }
 
+    private void startAudioSwitch() {
+        audioSwitch.start((audioDevices, audioDevice) -> {
+            Log.d(TAG, "Updating AudioDeviceIcon");
+            updateAudioDeviceIcon(audioDevice);
+            return Unit.INSTANCE;
+        });
+    }
+
+
 
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
@@ -252,6 +274,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
             @Override
             public void onConnectFailure(@NonNull Call call, @NonNull CallException error) {
+                audioSwitch.deactivate();
                 Log.d(TAG, "Connect failure");
                 Log.e(TAG, "Call Error: %d, %s" + error.getErrorCode() + error.getMessage());
             }
@@ -263,6 +286,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
             @Override
             public void onConnected(@NonNull Call call) {
+                audioSwitch.activate();
                 activeCall = call;
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Connected from BackgroundUI");
@@ -282,6 +306,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
             @Override
             public void onDisconnected(@NonNull Call call, CallException error) {
+                audioSwitch.deactivate();
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Disconnected");
                     endCall();
@@ -344,6 +369,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver();
+        startAudioSwitch();
     }
 
     // We still want to listen messages from backgroundCallJavaActivity
@@ -370,20 +396,37 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
     private Boolean checkPermissionForMicrophone() {
         int resultMic = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
-        return resultMic == PackageManager.PERMISSION_GRANTED;
+        if (resultMic != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        int resultMic2 = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT);
+        if (resultMic2 != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
     }
 
     private void requestAudioPermissions() {
-        String[] permissions = {Manifest.permission.RECORD_AUDIO};
+        String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.BLUETOOTH_CONNECT};
         Log.d(TAG, "requestAudioPermissions");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
-                ActivityCompat.requestPermissions(this, permissions, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, Manifest.permission.RECORD_AUDIO, MIC_PERMISSION_REQUEST_CODE);
             } else {
-                ActivityCompat.requestPermissions(this, permissions, MIC_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, Manifest.permission.RECORD_AUDIO, MIC_PERMISSION_REQUEST_CODE);
             }
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        } 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_CONNECT)) {
+                ActivityCompat.requestPermissions(this, Manifest.permission.BLUETOOTH_CONNECT, MIC_PERMISSION_REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this, Manifest.permission.BLUETOOTH_CONNECT, MIC_PERMISSION_REQUEST_CODE);
+            }
+        } 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "requestAudioPermissions-> permission granted->newAnswerCallClickListener");
+            startAudioSwitch();
             acceptCall();
         }
     }
@@ -395,17 +438,77 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 Toast.makeText(this, "Microphone permissions needed. Please allow in your application settings.", Toast.LENGTH_LONG).show();
                 rejectCallClickListener();
             } else {
+                startAudioSwitch();
                 acceptCall();
             }
         } else {
             throw new IllegalStateException("Unexpected value: " + requestCode);
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {    
+        MenuInflater inflater = getMenuInflater();    
+        inflater.inflate(R.menu.menu, menu);    
+        audioDeviceMenuItem = menu.findItem(R.id.menu_audio_device);    
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {    
+        if (item.getItemId() == R.id.menu_audio_device) {        
+            showAudioDevices();        
+            return true;   
+        }    
+        return false;
+    }
+
+
+    private void showAudioDevices() {
+        AudioDevice selectedDevice = audioSwitch.getSelectedAudioDevice();
+        List<AudioDevice> availableAudioDevices = audioSwitch.getAvailableAudioDevices();
+        if (selectedDevice != null) {
+            int selectedDeviceIndex = availableAudioDevices.indexOf(selectedDevice);
+            ArrayList<String> audioDeviceNames = new ArrayList<>();
+            for (AudioDevice a : availableAudioDevices) {
+                audioDeviceNames.add(a.getName());
+            }
+            new AlertDialog.Builder(this)
+                .setTitle(R.string.select_device)                
+                .setSingleChoiceItems(                    
+                    audioDeviceNames.toArray(new CharSequence[0]),                      
+                    selectedDeviceIndex,                       
+                    (dialog, index) -> {                            
+                        dialog.dismiss();                            
+                        AudioDevice selectedAudioDevice = availableAudioDevices.get(index);                            
+                        updateAudioDeviceIcon(selectedAudioDevice);                            
+                        audioSwitch.selectDevice(selectedAudioDevice);                        
+                    }).create().show();    
+        }
+    }
+
+    private void updateAudioDeviceIcon(AudioDevice selectedAudioDevice) {    
+        int audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;    
+        if (selectedAudioDevice instanceof AudioDevice.BluetoothHeadset) {       
+            audioDeviceMenuIcon = R.drawable.ic_bluetooth_white_24dp;    
+        } else if (selectedAudioDevice instanceof AudioDevice.WiredHeadset) {        
+            audioDeviceMenuIcon = R.drawable.ic_headset_mic_white_24dp;    
+        } else if (selectedAudioDevice instanceof AudioDevice.Earpiece) {        
+            audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;    
+        } else if (selectedAudioDevice instanceof AudioDevice.Speakerphone) {        
+            audioDeviceMenuIcon = R.drawable.ic_volume_up_white_24dp;    
+        }    
+        if (audioDeviceMenuItem != null) {       
+            audioDeviceMenuItem.setIcon(audioDeviceMenuIcon);    
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
         Log.d(TAG, "AnwserJAvaActivity ondestroy");
         super.onDestroy();
+        audioSwitch.stop();
+        setVolumeControlStream(savedVolumeControlStream);
         unregisterReceiver();
         if (wakeLock != null) {
             wakeLock.release();
