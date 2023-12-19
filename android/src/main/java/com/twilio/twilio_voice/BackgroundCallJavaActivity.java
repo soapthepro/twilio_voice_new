@@ -18,6 +18,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +32,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 //import com.twilio.voice.Call;
 import com.twilio.voice.CallInvite;
+import com.twilio.audioswitch.AudioDevice;
+import com.twilio.audioswitch.AudioSwitch;
+import kotlin.Unit;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
 
 public class BackgroundCallJavaActivity extends AppCompatActivity {
 
@@ -47,6 +61,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     private ImageView btnMute;
     private ImageView btnOutput;
     private ImageView btnHangUp;
+    private AudioSwitch audioSwitch;
+    private int savedVolumeControlStream;
+    private MenuItem audioDeviceMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +104,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         handleCallIntent(getIntent());
+        audioSwitch = new AudioSwitch(getApplicationContext());
+        savedVolumeControlStream = getVolumeControlStream();
+        setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
     private void handleCallIntent(Intent intent) {
@@ -114,6 +134,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                 tvCallStatus.setText(getString(R.string.connected_status));
                 Log.d(TAG, "handleCallIntent-");
                 configCallUI();
+                startAudioSwitch();
             }else{
                 finish();
             }
@@ -136,6 +157,14 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             Log.d(TAG, "wakeLog release");
             wakeLock.release();
         } 
+    }
+
+    private void startAudioSwitch() {
+        audioSwitch.start((audioDevices, audioDevice) -> {
+            Log.d(TAG, "Updating AudioDeviceIcon");
+            updateAudioDeviceIcon(audioDevice);
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
@@ -215,6 +244,63 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {    
+        MenuInflater inflater = getMenuInflater();    
+        inflater.inflate(R.menu.menu, menu);    
+        audioDeviceMenuItem = menu.findItem(R.id.menu_audio_device);    
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {    
+        if (item.getItemId() == R.id.menu_audio_device) {        
+            showAudioDevices();        
+            return true;   
+        }    
+        return false;
+    }
+
+
+    private void showAudioDevices() {
+        AudioDevice selectedDevice = audioSwitch.getSelectedAudioDevice();
+        List<AudioDevice> availableAudioDevices = audioSwitch.getAvailableAudioDevices();
+        if (selectedDevice != null) {
+            int selectedDeviceIndex = availableAudioDevices.indexOf(selectedDevice);
+            ArrayList<String> audioDeviceNames = new ArrayList<>();
+            for (AudioDevice a : availableAudioDevices) {
+                audioDeviceNames.add(a.getName());
+            }
+            new AlertDialog.Builder(this)
+                .setTitle("Select Audio Device")                
+                .setSingleChoiceItems(                    
+                    audioDeviceNames.toArray(new CharSequence[0]),                      
+                    selectedDeviceIndex,                       
+                    (dialog, index) -> {                            
+                        dialog.dismiss();                            
+                        AudioDevice selectedAudioDevice = availableAudioDevices.get(index);                            
+                        updateAudioDeviceIcon(selectedAudioDevice);                            
+                        audioSwitch.selectDevice(selectedAudioDevice);                        
+                    }).create().show();    
+        }
+    }
+
+    private void updateAudioDeviceIcon(AudioDevice selectedAudioDevice) {    
+        int audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;    
+        if (selectedAudioDevice instanceof AudioDevice.BluetoothHeadset) {       
+            audioDeviceMenuIcon = R.drawable.ic_bluetooth_white_24dp;    
+        } else if (selectedAudioDevice instanceof AudioDevice.WiredHeadset) {        
+            audioDeviceMenuIcon = R.drawable.ic_headset_mic_white_24dp;    
+        } else if (selectedAudioDevice instanceof AudioDevice.Earpiece) {        
+            audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;    
+        } else if (selectedAudioDevice instanceof AudioDevice.Speakerphone) {        
+            audioDeviceMenuIcon = R.drawable.ic_volume_up_white_24dp;    
+        }    
+        if (audioDeviceMenuItem != null) {       
+            audioDeviceMenuItem.setIcon(audioDeviceMenuIcon);    
+        }
+    }
+
 
     private void callCanceled() {
         Log.d(TAG, "Call is cancelled");
@@ -225,6 +311,8 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        audioSwitch.stop();
+        setVolumeControlStream(savedVolumeControlStream);
         deactivateSensor();
     }
 
