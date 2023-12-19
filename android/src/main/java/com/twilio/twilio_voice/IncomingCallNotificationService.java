@@ -243,6 +243,7 @@ public class IncomingCallNotificationService extends Service {
             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
+        endForeground();
     }
 
     private void reject(CallInvite callInvite) {
