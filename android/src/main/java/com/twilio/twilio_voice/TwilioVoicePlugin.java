@@ -159,7 +159,15 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             activity.startActivity(answerIntent);
                         }else{
-                            answer();
+                            // answer();
+                            Log.d(TAG, "Origin is 0 sending to AnswerJavaActivity");
+                            Intent answerIntent = new Intent(activity, AnswerJavaActivity.class);
+                            answerIntent.setAction(Constants.ACTION_ACCEPT);
+                            answerIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, activeCallNotificationId);
+                            answerIntent.putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite);
+                            answerIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            activity.startActivity(answerIntent);
                         }
 
                     break;
