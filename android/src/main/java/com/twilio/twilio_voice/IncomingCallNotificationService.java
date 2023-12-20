@@ -242,7 +242,9 @@ public class IncomingCallNotificationService extends Service {
         } else {
             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
-            finish();
+            // Intent myService = new Intent(this, IncomingCallNotificationService.class);
+            // stopService(myService);
+            stopSelf();
         }
     }
 
