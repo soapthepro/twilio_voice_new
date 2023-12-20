@@ -221,6 +221,7 @@ public class IncomingCallNotificationService extends Service {
         SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
+        Intent activeCallIntentNew;
         if (origin == 0 && !isAppVisible()) {
             Log.i(TAG, "Creating answerJavaActivity intent");
             activeCallIntent = new Intent(this, AnswerJavaActivity.class);
@@ -229,15 +230,26 @@ public class IncomingCallNotificationService extends Service {
             activeCallIntent = new Intent();
         }
 
+        activeCallIntentNew = new Intent();
+
+
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activeCallIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         activeCallIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
         activeCallIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, origin);
         activeCallIntent.setAction(Constants.ACTION_ACCEPT);
+
+        activeCallIntentNew.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        activeCallIntentNew.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activeCallIntentNew.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+        activeCallIntentNew.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
+        activeCallIntentNew.putExtra(Constants.ACCEPT_CALL_ORIGIN, origin);
+        activeCallIntentNew.setAction(Constants.ACTION_ACCEPT);
+
         Log.i(TAG, "Launch IsAppVisible && !isAppVisible: " + (origin == 0 && !isAppVisible()));
         if (origin == 0 && !isAppVisible()) {
-            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntentNew);
             startActivity(activeCallIntent);
             Log.i(TAG, "starting activity");
         } else {
