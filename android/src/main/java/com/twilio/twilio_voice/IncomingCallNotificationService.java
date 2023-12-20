@@ -240,7 +240,7 @@ public class IncomingCallNotificationService extends Service {
             startActivity(activeCallIntent);
             Log.i(TAG, "starting activity");
         } else {
-            // LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
