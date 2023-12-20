@@ -160,7 +160,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             activity.startActivity(answerIntent);
                         }else{
-                            // answer();
+                            answer();
                         }
 
                     break;
@@ -619,6 +619,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             @Override
             public void onConnectFailure(Call call, CallException error) {
                 // setAudioFocus(false);
+                activeCall = call;
                 Log.d(TAG, "Connect failure");
                 String message = String.format("Call Error: %d, %s", error.getErrorCode(), error.getMessage());
                 Log.e(TAG, message);
