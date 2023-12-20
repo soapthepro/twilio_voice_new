@@ -240,11 +240,11 @@ public class IncomingCallNotificationService extends Service {
             startActivity(activeCallIntent);
             Log.i(TAG, "starting activity");
         } else {
-            Intent activeCallIntent;
+            Intent openAppCallIntent;
             String packageName = "com.theclosecompany.sales_book";
-            activeCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-            if (activeCallIntent != null) {
-                startActivity(activeCallIntent);
+            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+            if (openAppCallIntent != null) {
+                startActivity(openAppCallIntent);
             } 
             // LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
