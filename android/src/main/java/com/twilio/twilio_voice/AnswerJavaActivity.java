@@ -303,6 +303,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                     Log.d(TAG, "Connected from BackgroundUI");
                     TwilioVoicePlugin.activeCall = call;
                     startAnswerActivity(call);
+                    finish();
                 }
             }
 
