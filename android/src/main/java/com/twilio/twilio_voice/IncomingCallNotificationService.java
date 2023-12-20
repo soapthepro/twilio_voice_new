@@ -214,7 +214,8 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        endForeground();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
         SoundPoolManager.getInstance(this).stopRinging();
@@ -242,7 +243,6 @@ public class IncomingCallNotificationService extends Service {
             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
-        endForeground();
     }
 
     private void reject(CallInvite callInvite) {
@@ -364,7 +364,7 @@ public class IncomingCallNotificationService extends Service {
         pluginIntent.setAction(Constants.ACTION_INCOMING_CALL);
         pluginIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
         pluginIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
-        // LocalBroadcastManager.getInstance(this).sendBroadcast(pluginIntent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(pluginIntent);
         Log.i(TAG, "AppHasStarted " + TwilioVoicePlugin.appHasStarted + " sdk>=29 and !isAppVisible() " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
         if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {            
             return;
