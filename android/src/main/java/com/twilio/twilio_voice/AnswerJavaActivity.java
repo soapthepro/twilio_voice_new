@@ -254,11 +254,14 @@ public class AnswerJavaActivity extends AppCompatActivity {
     }
 
     private void startAnswerActivity(Call call) {
-        Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.CALL_FROM, call.getFrom());
-        startActivity(intent);
+        // Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // intent.putExtra(Constants.CALL_FROM, call.getFrom());
+        // startActivity(intent);
+        String targetPackageName = "com.theclosecompany.sales_book";
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(targetPackageName);
+        startActivity(launchIntent);
         Log.d(TAG, "Connected");
     }
 
