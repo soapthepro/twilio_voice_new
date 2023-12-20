@@ -301,6 +301,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 activeCall = call;
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Connected from BackgroundUI");
+                    TwilioVoicePlugin.activeCall = call;
                     startAnswerActivity(call);
                 }
             }

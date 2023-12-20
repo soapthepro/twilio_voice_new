@@ -221,9 +221,6 @@ public class IncomingCallNotificationService extends Service {
         SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
-        if (TwilioVoicePlugin.appHasStarted) {
-            // Log.i
-        }
         if (origin == 0 && !isAppVisible()) {
             Log.i(TAG, "Creating answerJavaActivity intent");
             activeCallIntent = new Intent(this, AnswerJavaActivity.class);
@@ -249,7 +246,7 @@ public class IncomingCallNotificationService extends Service {
             if (openAppCallIntent != null) {
                 startActivity(openAppCallIntent);
             } 
-            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            // LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
