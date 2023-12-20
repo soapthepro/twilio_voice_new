@@ -74,7 +74,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private NotificationManager notificationManager;
     private CallInvite activeCallInvite;
-    private Call activeCall;
+    Call activeCall;
     private int activeCallNotificationId;
     private Context context;
     private Activity activity;
@@ -420,7 +420,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             result.success(activeCall == null ? null : activeCall.getSid());
         } else if (call.method.equals("isOnCall")) {
             Log.d(TAG, "Is on call invoked");
-            Log.d(TAG, "ACTIVE CALL INVITE: " + this.activeCallInvite != null);
             result.success(this.activeCall != null);
         } else if (call.method.equals("holdCall")) {
             Log.d(TAG, "Hold call invoked");
