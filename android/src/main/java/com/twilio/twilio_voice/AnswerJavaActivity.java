@@ -235,7 +235,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 1);
         acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, activeCallNotificationId);
         Log.d(TAG, "Clicked accept startService");
-        // startService(acceptIntent);
+        startService(acceptIntent);
         Log.d(TAG, "isLocked: " + isLocked() + " appHasStarted: " + TwilioVoicePlugin.appHasStarted);
         if (TwilioVoicePlugin.appHasStarted) {
             Log.d(TAG, "AnswerJavaActivity Finish");
@@ -244,7 +244,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         else {
             Log.d(TAG, "Answering call in AnswerjavaActivity 244 with id: " + activeCallNotificationId);
             notificationManager.cancel(activeCallNotificationId);
-            activeCallInvite.accept(this, callListener);
+            // activeCallInvite.accept(this, callListener);
         }
     }
 
