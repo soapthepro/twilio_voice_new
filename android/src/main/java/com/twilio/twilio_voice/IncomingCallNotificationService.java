@@ -236,8 +236,8 @@ public class IncomingCallNotificationService extends Service {
         activeCallIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, origin);
         activeCallIntent.setAction(Constants.ACTION_ACCEPT);
         Log.i(TAG, "Launch IsAppVisible && !isAppVisible: " + (origin == 0 && !isAppVisible()));
-        if (origin == 0 && !isAppVisible()) 
-            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);{
+        if (origin == 0 && !isAppVisible()) {
+            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             startActivity(activeCallIntent);
             Log.i(TAG, "starting activity");
         } else {
