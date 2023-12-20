@@ -134,6 +134,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                     newCancelCallClickListener();
                     break;
                 case Constants.ACTION_ACCEPT:
+                    Log.d(TAG, "ACTION ACCEPT IN AnswerJavaActivity");
                     checkPermissionsAndAccept();
                     break;
                 case Constants.ACTION_END_CALL:
@@ -241,7 +242,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             finish();
         }
         else {
-            Log.d(TAG, "Answering call");
+            Log.d(TAG, "Answering call in AnswerjavaActivity 244");
             activeCallInvite.accept(this, callListener);
             notificationManager.cancel(activeCallNotificationId);
         }

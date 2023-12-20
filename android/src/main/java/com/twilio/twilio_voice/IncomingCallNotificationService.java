@@ -46,7 +46,7 @@ public class IncomingCallNotificationService extends Service {
                     break;
                 case Constants.ACTION_ACCEPT:
                     int origin = intent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                    Log.d(TAG, "onStartCommand-ActionAccept" + origin);
+                    Log.d(TAG, "onStartCommand-ActionAccept in IncomingCallNotificationService" + origin);
                     accept(callInvite, notificationId, origin);
                     break;
                 case Constants.ACTION_REJECT:
@@ -217,7 +217,7 @@ public class IncomingCallNotificationService extends Service {
         endForeground();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(notificationId);
-        Log.i(TAG, "accept call invite!");
+        Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
         SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
@@ -243,7 +243,6 @@ public class IncomingCallNotificationService extends Service {
             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
-        endForeground();
     }
 
     private void reject(CallInvite callInvite) {

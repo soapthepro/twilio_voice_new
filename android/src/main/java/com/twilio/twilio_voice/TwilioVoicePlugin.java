@@ -148,6 +148,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     handleReject();
                     break;
                 case Constants.ACTION_ACCEPT:
+                         Log.d(TAG, "Received ACTION_ACCEPT in TwilioVoicePlugin");
                         int acceptOrigin = intent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN,0);
                         if(acceptOrigin == 0){
                             Log.d(TAG, "Origin is 0 sending to AnswerJavaActivity");
@@ -425,7 +426,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             this.hold();
             result.success(true);
         } else if (call.method.equals("answer")) {
-            Log.d(TAG, "Answering call");
+            Log.d(TAG, "Answering call onMethodCall TwilioVoicePlugin");
             this.answer();
             result.success(true);
         } else if (call.method.equals("unregister")) {
@@ -542,12 +543,11 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
      * Accept an incoming Call
      */
     private void answer() {
-        Log.d(TAG, "Answering call");
+        Log.d(TAG, "Answering call in answer function 545 line TwilioVoicePlugin");
         activeCallInvite.accept(this.activity, callListener);
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
-        NotificationManagerCompat notificationManagerNew = NotificationManagerCompat.from(this.activity);
-        notificationManagerNew.cancel(activeCallNotificationId);
+        notificationManager.cancel(activeCallNotificationId);
     }
 
     private void sendPhoneCallEvents(String description) {
