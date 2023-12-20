@@ -199,13 +199,13 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                 // isMuted = !isMuted;
                 // applyFabState(btnMute, isMuted);
                 String targetPackageName = "com.example.targetapp";
-                PackageManager packageManager = context.getPackageManager();
+                PackageManager packageManager = getApplicationContext().getPackageManager();
                 Intent intent = packageManager.getLaunchIntentForPackage(targetPackageName);
                 if (intent != null)
                 {
                     intent.setPackage(null);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    context.startActivity(intent);
+                    getApplicationContext().startActivity(intent);
                     finish();
                 }
             }
