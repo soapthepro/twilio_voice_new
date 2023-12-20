@@ -62,6 +62,7 @@ public class IncomingCallNotificationService extends Service {
                     break;
             }
         }
+        stopSelf();
         return START_NOT_STICKY;
     }
 
@@ -157,7 +158,7 @@ public class IncomingCallNotificationService extends Service {
         // VERSION S = Android 12
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Log.i(TAG, "building acceptIntent for Android 12+");
-            acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationActivity.class);
+            acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
             acceptIntent.setAction(Constants.ACTION_ACCEPT);
             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
