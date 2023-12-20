@@ -198,16 +198,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                 // sendIntent(Constants.ACTION_TOGGLE_MUTE);
                 // isMuted = !isMuted;
                 // applyFabState(btnMute, isMuted);
-                String targetPackageName = "com.example.targetapp";
-                PackageManager packageManager = getApplicationContext().getPackageManager();
-                Intent intent = packageManager.getLaunchIntentForPackage(targetPackageName);
-                if (intent != null)
-                {
-                    intent.setPackage(null);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    getApplicationContext().startActivity(intent);
-                    finish();
-                }
+                finish();
             }
         });
 
