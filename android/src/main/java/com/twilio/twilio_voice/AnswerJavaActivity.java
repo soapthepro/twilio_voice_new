@@ -244,7 +244,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         else {
             Log.d(TAG, "Answering call in AnswerjavaActivity 244 with id: " + activeCallNotificationId);
             notificationManager.cancel(activeCallNotificationId);
-            // activeCallInvite.accept(this, callListener);
+            activeCallInvite.accept(this, callListener);
         }
     }
 
@@ -254,11 +254,11 @@ public class AnswerJavaActivity extends AppCompatActivity {
     }
 
     private void startAnswerActivity(Call call) {
-        // Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
-        // intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        // intent.putExtra(Constants.CALL_FROM, call.getFrom());
-        // startActivity(intent);
+        Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.CALL_FROM, call.getFrom());
+        startActivity(intent);
         Log.d(TAG, "Connected");
     }
 
