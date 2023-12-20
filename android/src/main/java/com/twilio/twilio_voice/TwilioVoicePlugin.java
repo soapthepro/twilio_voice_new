@@ -74,7 +74,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private NotificationManager notificationManager;
     private CallInvite activeCallInvite;
-    Call activeCall;
+    static Call activeCall;
     private int activeCallNotificationId;
     private Context context;
     private Activity activity;
