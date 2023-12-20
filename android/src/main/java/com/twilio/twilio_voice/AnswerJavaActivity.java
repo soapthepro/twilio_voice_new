@@ -259,9 +259,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // intent.putExtra(Constants.CALL_FROM, call.getFrom());
         // startActivity(intent);
-        String targetPackageName = "com.theclosecompany.sales_book";
-        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(targetPackageName);
-        startActivity(launchIntent);
         Log.d(TAG, "Connected");
     }
 
