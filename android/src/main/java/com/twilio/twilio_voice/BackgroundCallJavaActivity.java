@@ -60,6 +60,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     private TextView tvUserName;
     private TextView tvCallStatus;
     private ImageView btnMute;
+    private ImageView btnSalescaptain;
     private ImageView btnOutput;
     private ImageView btnHangUp;
     private AudioSwitch audioSwitch;
@@ -75,6 +76,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         tvUserName = (TextView) findViewById(R.id.tvUserName);
         tvCallStatus = (TextView) findViewById(R.id.tvCallStatus);
         btnMute = (ImageView) findViewById(R.id.btnMute);
+        btnSalescaptain = (ImageView) findViewById(R.id.btnSalescaptain);
         btnOutput = (ImageView) findViewById(R.id.btnOutput);
         btnHangUp = (ImageView) findViewById(R.id.btnHangUp);
 
@@ -195,10 +197,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onCLick");
-                // sendIntent(Constants.ACTION_TOGGLE_MUTE);
-                // isMuted = !isMuted;
-                // applyFabState(btnMute, isMuted);
-                finish();
+                sendIntent(Constants.ACTION_TOGGLE_MUTE);
+                isMuted = !isMuted;
+                applyFabState(btnMute, isMuted);
             }
         });
 
@@ -210,6 +211,15 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 
             }
         });
+
+        btnSalescaptain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onCLick");
+                finish();
+            }
+        });
+
         btnOutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
