@@ -214,7 +214,6 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
-        endForeground();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
@@ -242,10 +241,8 @@ public class IncomingCallNotificationService extends Service {
         } else {
             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
-            // Intent myService = new Intent(this, IncomingCallNotificationService.class);
-            // stopService(myService);
-            stopSelf();
         }
+        endForeground();
     }
 
     private void reject(CallInvite callInvite) {
@@ -342,6 +339,7 @@ public class IncomingCallNotificationService extends Service {
 
     private void endForeground() {
         stopForeground(true);
+        stopSelf();
     }
 
     @TargetApi(Build.VERSION_CODES.O)
