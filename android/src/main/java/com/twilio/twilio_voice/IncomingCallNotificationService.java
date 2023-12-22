@@ -51,7 +51,7 @@ public class IncomingCallNotificationService extends Service {
         this.intentFilter = new IntentFilter(VOLUME_CHANGED_ACTION);
     }
 
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate() {
         context.registerReceiver(volumeChangeListener, intentFilter);
     }
 
