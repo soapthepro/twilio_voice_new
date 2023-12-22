@@ -25,7 +25,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.CancelledCallInvite;
-import com.twilio.twilio_voice.HeadsetActionButtonReceiver;
 
 public class IncomingCallNotificationService extends Service implements HeadsetActionButtonReceiver.Delegate {
 
