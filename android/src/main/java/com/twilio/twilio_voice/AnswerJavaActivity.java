@@ -90,7 +90,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // voiceBroadcastReceiver = new VoiceBroadcastReceiver();
         // registerReceiver();
         voiceBroadcastReceiver = new VoiceBroadcastReceiver();
-        mediaButtonReceiver = new MediaButtonIntentReceiver();
         registerReceiver();
 
         Log.d(TAG, "isKeyguardUp $isKeyguardUp");
