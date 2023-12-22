@@ -366,6 +366,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             intentFilter.addAction(Constants.ACTION_TOGGLE_MUTE);
             intentFilter.addAction(Constants.ACTION_CANCEL_CALL);
             intentFilter.addAction(Constants.ACTION_END_CALL);
+            intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
             isReceiverRegistered = true;
