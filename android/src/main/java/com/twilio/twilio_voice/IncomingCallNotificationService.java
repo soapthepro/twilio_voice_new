@@ -42,8 +42,7 @@ public class IncomingCallNotificationService extends Service {
     // THE STREAM TYPE YOU WANT VOLUME FROM
     private VolumeChangeListener volumeChangeListener;
     private IntentFilter intentFilter;
-    // private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
-    private static final String VOLUME_CHANGED_ACTION = "android.intent.action.MEDIA_BUTTON";
+    private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
     private static int counter;
     private static int doublePressSpeed = 300; // double keypressed in ms
     private static Timer doublePressTimer;
@@ -76,31 +75,35 @@ public class IncomingCallNotificationService extends Service {
     // }
 
     public class VolumeChangeListener extends BroadcastReceiver {
+        private int callCount = 0;
         @Override
         public void onReceive(Context context, Intent intent) {
-            String intentAction = intent.getAction();
-            Toast.makeText(context, "RECEIVED: " + intentAction, Toast.LENGTH_SHORT).show();
-            if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
-                counter++;
-                if (doublePressTimer != null) {
-                    doublePressTimer.cancel();
-                }
-                doublePressTimer = new Timer();
-                doublePressTimer.schedule(new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        if (counter == 1) {
-                            if (answeredNotificationId != privNotificationId) {
-                                int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                                accept(privCallInvite, privNotificationId, origin);
-                            }
-                        } else {
-                            reject(privCallInvite);
-                        }
-                        counter = 0;
+            callCount++;
+            if (callCount % 3 == 0) {
+                String intentAction = intent.getAction();
+                Toast.makeText(context, "RECEIVED: " + intentAction, Toast.LENGTH_SHORT).show();
+                if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
+                    counter++;
+                    if (doublePressTimer != null) {
+                        doublePressTimer.cancel();
                     }
-                }, doublePressSpeed);
+                    doublePressTimer = new Timer();
+                    doublePressTimer.schedule(new TimerTask() {
+
+                        @Override
+                        public void run() {
+                            if (counter == 1) {
+                                if (answeredNotificationId != privNotificationId) {
+                                    int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                                    accept(privCallInvite, privNotificationId, origin);
+                                }
+                            } else {
+                                reject(privCallInvite);
+                            }
+                            counter = 0;
+                        }
+                    }, doublePressSpeed);
+                }
             }
         }
     }
