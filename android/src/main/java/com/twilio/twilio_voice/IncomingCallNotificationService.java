@@ -98,8 +98,29 @@ public class IncomingCallNotificationService extends Service {
                                 int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
                                 // sendCallInviteToActivity(privCallInvite, privNotificationId);
                                 try {
+                                    Toast.makeText(context, "SENDING", Toast.LENGTH_SHORT).show();
                                     privIntentNotif.send();
-
+                                    Intent acceptIntent;
+                                    PendingIntent piAcceptIntent;
+                                    // VERSION S = Android 12
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        Log.i(TAG, "building acceptIntent for Android 12+");
+                                        acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationActivity.class);
+                                        acceptIntent.setAction(Constants.ACTION_ACCEPT);
+                                        acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                                        acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                                        acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                                        piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
+                                    }
+                                    else {
+                                        acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
+                                        acceptIntent.setAction(Constants.ACTION_ACCEPT);
+                                        acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                                        acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                                        acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                                        piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                                    }
+                                    piAcceptIntent.send();
                                 } catch (PendingIntent.CanceledException e) {
                                     e.printStackTrace();
                                 }
@@ -490,6 +511,7 @@ public class IncomingCallNotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "Destroying IncomingCallNotificationService");
         unregisterReceiver(volumeChangeListener);
     }
 }
