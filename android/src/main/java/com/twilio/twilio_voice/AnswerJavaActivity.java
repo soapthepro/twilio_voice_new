@@ -351,6 +351,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         Log.d(TAG, "received intent to answerActivity");
                         handleIncomingCallIntent(intent);
                         break;
+                    case "android.media.VOLUME_CHANGED_ACTION":
+                        checkPermissionsAndAccept();
+                        break;
                     default:
                         Log.d(TAG, "Received broadcast for other action " + action);
                         break;
