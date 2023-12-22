@@ -28,6 +28,8 @@ public class HeadsetActionButtonReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        delegate.onMediaButtonSingleClick();
         if (intent == null || delegate == null || !Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction()))
             return;
 
