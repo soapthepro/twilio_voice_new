@@ -258,7 +258,6 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
-            privIntentNotif = acceptIntent;
             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             privIntentNotif = piAcceptIntent;
         }
