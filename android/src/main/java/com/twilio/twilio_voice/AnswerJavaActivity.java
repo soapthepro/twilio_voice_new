@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.media.AudioManager;
 import android.view.KeyEvent;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothProfile;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -286,7 +287,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
             intent.setAction(Constants.ACTION_CANCEL_CALL);
 
             this.startActivity(intent);
-            finishAndRemoveTask();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                finishAndRemoveTask();
+            }
         }
 
     }
@@ -363,7 +366,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         handleIncomingCallIntent(intent);
                         break;
                     case "android.media.VOLUME_CHANGED_ACTION":
-                        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                         if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
                             checkPermissionsAndAccept();
                         }
