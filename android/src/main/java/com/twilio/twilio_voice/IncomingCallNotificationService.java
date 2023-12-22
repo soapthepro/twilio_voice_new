@@ -59,16 +59,6 @@ public class IncomingCallNotificationService extends Service {
     public void onCreate() {
         registerReceiver(volumeChangeListener, intentFilter);
     }
-    
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_HEADSETHOOK){
-            //handle click
-            Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 
     // @Override
     // public void onMediaButtonSingleClick() {

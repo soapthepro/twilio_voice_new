@@ -120,6 +120,16 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_HEADSETHOOK){
+            //handle click
+            Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     private void handleIncomingCallIntent(Intent intent) {
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, "handleIncomingCallIntent-");
