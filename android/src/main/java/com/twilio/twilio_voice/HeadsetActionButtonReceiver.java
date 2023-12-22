@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,6 +30,7 @@ public class HeadsetActionButtonReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
         delegate.onMediaButtonSingleClick();
         if (intent == null || delegate == null || !Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction()))
             return;
@@ -56,6 +58,7 @@ public class HeadsetActionButtonReceiver extends BroadcastReceiver {
     }
 
     public static void register(final Context context) {
+        Toast.makeText(context, "REGISTERED", Toast.LENGTH_SHORT).show();
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mRemoteControlResponder = new ComponentName(context, HeadsetActionButtonReceiver.class);
         mAudioManager.registerMediaButtonEventReceiver(mRemoteControlResponder);

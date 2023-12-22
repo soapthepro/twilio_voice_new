@@ -33,6 +33,15 @@ public class IncomingCallNotificationService extends Service implements HeadsetA
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "Service onCreate");
+
+        HeadsetActionButtonReceiver.delegate = this;
+        HeadsetActionButtonReceiver.register(this);
+    }
+
+    @Override
     public void onMediaButtonSingleClick() {
         // Handle single press
         Toast.makeText(this, "Single Click", Toast.LENGTH_SHORT).show();
@@ -50,8 +59,6 @@ public class IncomingCallNotificationService extends Service implements HeadsetA
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         Log.i(TAG, "onStartCommand " + action);
-        HeadsetActionButtonReceiver.delegate = this;
-        HeadsetActionButtonReceiver.register(this);
         if (action != null) {
             CallInvite callInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
             int notificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
