@@ -16,6 +16,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -30,16 +34,21 @@ public class IncomingCallNotificationService extends Service {
 
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
+    private MediaButtonIntentReceiver mediaButtonReceiver;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         Log.i(TAG, "onStartCommand " + action);
+        
         if (action != null) {
             CallInvite callInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
             int notificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
             Log.i(TAG, "onStartCommand notificationId" + notificationId);
             Log.i(TAG, "is callInvite null: " + (callInvite != null));
+            mediaButtonReceiver = new MediaButtonIntentReceiver();
+            registerReceiver(); 
+            Toast.makeText(getApplicationContext(), "RECEIVED " + action, Toast.LENGTH_SHORT).show();
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
                     handleIncomingCall(callInvite, notificationId);
@@ -63,6 +72,33 @@ public class IncomingCallNotificationService extends Service {
             }
         }
         return START_NOT_STICKY;
+    }
+
+    public class MediaButtonIntentReceiver extends BroadcastReceiver {
+
+        public MediaButtonIntentReceiver() {
+            super();
+            Toast.makeText(getApplicationContext(), "INITIALIZING MEDIABUTTONRECEIVER", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String intentAction = intent.getAction();
+            Toast.makeText(getApplicationContext(), "RECEIVED SOMETHING!" + intentAction, Toast.LENGTH_SHORT).show(); 
+            if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
+                return;
+            }
+            KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (event == null) {
+                return;
+            }
+            int action = event.getAction();
+            if (action == KeyEvent.ACTION_DOWN) {
+            // do something
+                Toast.makeText(context, "BUTTON PRESSED!", Toast.LENGTH_SHORT).show(); 
+            }
+            abortBroadcast();
+        }
     }
 
     @Override
@@ -345,6 +381,24 @@ public class IncomingCallNotificationService extends Service {
 
     private void endForeground() {
         stopForeground(true);
+    }
+
+    private void registerReceiver() {
+        Log.d(TAG, "Registering answerJavaActivity receiver");
+        if (!isReceiverRegistered) {
+            IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+            LocalBroadcastManager.getInstance(this).registerReceiver(
+                    mediaButtonReceiver, filter);
+            isReceiverRegistered = true;
+        }
+    }
+
+    private void unregisterReceiver() {
+        Log.d(TAG, "Unregistering receiver");
+        if (isReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mediaButtonReceiver);
+            isReceiverRegistered = false;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
