@@ -42,7 +42,7 @@ public class IncomingCallNotificationService extends Service {
     // THE STREAM TYPE YOU WANT VOLUME FROM
     private VolumeChangeListener volumeChangeListener;
     private IntentFilter intentFilter;
-    private final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
+    private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
     private static int counter;
     private static int doublePressSpeed = 300; // double keypressed in ms
     private static Timer doublePressTimer;
@@ -74,10 +74,11 @@ public class IncomingCallNotificationService extends Service {
     //     // Add your logic for a double press, e.g., reject the call
     // }
 
-    public static class VolumeChangeListener extends BroadcastReceiver {
+    public class VolumeChangeListener extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String intentAction = intent.getAction();
+            Toast.makeText(context, "RECEIVED: " + intentAction, Toast.LENGTH_SHORT).show();
             if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
                 counter++;
                 if (doublePressTimer != null) {
