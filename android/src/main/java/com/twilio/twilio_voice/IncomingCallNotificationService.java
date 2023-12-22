@@ -49,7 +49,9 @@ public class IncomingCallNotificationService extends Service {
     private static CallInvite privCallInvite;
     private static int privNotificationId;
     private static Intent privIntent;
+    private static Intent privIntentNotif;
     private static int answeredNotificationId;
+    private static PendingIntent privAcceptIntent;
 
     public IncomingCallNotificationService() {
         this.volumeChangeListener = new VolumeChangeListener();
@@ -95,7 +97,8 @@ public class IncomingCallNotificationService extends Service {
                             // if (counter == 1) {
                             if (answeredNotificationId != privNotificationId) {
                                 int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                                sendCallInviteToActivity(privCallInvite, privNotificationId);
+                                // sendCallInviteToActivity(privCallInvite, privNotificationId);
+                                privAcceptIntent.send();
                             }
                             // } else {
                             //     reject(privCallInvite);
@@ -243,6 +246,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
+            privAcceptIntent = piAcceptIntent;
         }
         else {
             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
@@ -251,6 +255,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            privAcceptIntent = piAcceptIntent;
         }
 
         long[] mVibratePattern = new long[]{0, 400, 400, 400, 400, 400, 400, 400};
