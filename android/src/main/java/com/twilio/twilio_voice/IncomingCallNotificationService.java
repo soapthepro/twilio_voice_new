@@ -34,15 +34,25 @@ public class IncomingCallNotificationService extends Service {
 
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
+    private Context context;
+    private AudioManager audioManager;
+    // THE STREAM TYPE YOU WANT VOLUME FROM
+    private final int streamType = AudioManager.STREAM_MUSIC;
+    private VolumeChangeListener volumeChangeListener;
+    private IntentFilter intentFilter;
+    private final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
+
+    public IncomingCallNotificationService(Context context) {
+        this.context = context;
+        this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        this.volumeChangeListener = new VolumeChangeListener();
+        this.intentFilter = new IntentFilter(VOLUME_CHANGED_ACTION);
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "Service onCreate");
-        ((AudioManager)getSystemService(AUDIO_SERVICE))
-        .registerMediaButtonEventReceiver(new ComponentName(this, ButtonReceiver.class));
-        // HeadsetActionButtonReceiver.delegate = this;
-        // HeadsetActionButtonReceiver.register(this);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context.registerReceiver(volumeChangeListener, intentFilter);
     }
 
     // @Override
@@ -59,7 +69,7 @@ public class IncomingCallNotificationService extends Service {
     //     // Add your logic for a double press, e.g., reject the call
     // }
 
-    public static class ButtonReceiver extends BroadcastReceiver {
+    public static class VolumeChangeListener extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -438,8 +448,6 @@ public class IncomingCallNotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        // Unregister the HeadsetActionButtonReceiver to prevent memory leaks
-        // HeadsetActionButtonReceiver.unregister(this);
+        context.unregisterReceiver(volumeChangeListener);
     }
 }
