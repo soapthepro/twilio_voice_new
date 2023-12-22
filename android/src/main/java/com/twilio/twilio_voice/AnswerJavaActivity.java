@@ -339,7 +339,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Toast.makeText(this, "Received broadcast for action " + action, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Received broadcast for action " + action, Toast.LENGTH_LONG).show();
             Log.d(TAG, "Received broadcast for action " + action);
 
             if (action != null)
@@ -366,7 +366,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
         public MediaButtonIntentReceiver() {
             super();
-            Toast.makeText(this, "INITIALIZED MEDIABUTTONRECEIVER", Toast.LENGTH_LONG).show();
         }
 
         @Override
