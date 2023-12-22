@@ -56,7 +56,7 @@ public class IncomingCallNotificationService extends Service {
     //     // Add your logic for a double press, e.g., reject the call
     // }
 
-    public class ButtonReceiver extends BroadcastReceiver {
+    public static class ButtonReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
