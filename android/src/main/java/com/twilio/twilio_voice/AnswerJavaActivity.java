@@ -370,6 +370,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String intentAction = intent.getAction();
+            Toast.makeText(context, "RECEIVED SOMETHING!" + intentAction, Toast.LENGTH_SHORT).show(); 
             if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
                 return;
             }
