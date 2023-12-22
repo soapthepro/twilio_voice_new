@@ -47,7 +47,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class AnswerJavaActivity extends AppCompatActivity {
+public class AnswerJavaActivity extends AppCompatActivity implements HeadsetActionButtonReceiver.Delegate  {
 
     private static String TAG = "AnswerActivity";
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
