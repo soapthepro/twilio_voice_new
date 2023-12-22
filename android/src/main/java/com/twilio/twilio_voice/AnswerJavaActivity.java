@@ -339,6 +339,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Toast.makeText(this, "Received broadcast for action " + action, Toast.LENGTH_LONG).show();
             Log.d(TAG, "Received broadcast for action " + action);
 
             if (action != null)
@@ -365,6 +366,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
         public MediaButtonIntentReceiver() {
             super();
+            Toast.makeText(this, "INITIALIZED MEDIABUTTONRECEIVER " + action, Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -394,6 +396,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             intentFilter.addAction(Constants.ACTION_TOGGLE_MUTE);
             intentFilter.addAction(Constants.ACTION_CANCEL_CALL);
             intentFilter.addAction(Constants.ACTION_END_CALL);
+            intentFilter.addAction(Intent.ACTION_MEDIA_BUTTON);
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
             IntentFilter mediaButtonFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
