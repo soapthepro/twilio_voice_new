@@ -54,6 +54,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private NotificationManager notificationManager;
     private boolean isReceiverRegistered = false;
     private VoiceBroadcastReceiver voiceBroadcastReceiver;
+    private MediaButtonIntentReceiver mediaButtonReceiver;
 
     private boolean initiatedDisconnect = false;
 
@@ -86,7 +87,10 @@ public class AnswerJavaActivity extends AppCompatActivity {
         boolean isKeyguardUp = kgm.inKeyguardRestrictedInputMode();
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // voiceBroadcastReceiver = new VoiceBroadcastReceiver();
+        // registerReceiver();
         voiceBroadcastReceiver = new VoiceBroadcastReceiver();
+        mediaButtonReceiver = new MediaButtonIntentReceiver();
         registerReceiver();
 
         Log.d(TAG, "isKeyguardUp $isKeyguardUp");
@@ -356,6 +360,31 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
     }
 
+    public class MediaButtonIntentReceiver extends BroadcastReceiver {
+
+        public MediaButtonIntentReceiver() {
+            super();
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String intentAction = intent.getAction();
+            if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
+                return;
+            }
+            KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (event == null) {
+                return;
+            }
+            int action = event.getAction();
+            if (action == KeyEvent.ACTION_DOWN) {
+            // do something
+                Toast.makeText(context, "BUTTON PRESSED!", Toast.LENGTH_SHORT).show(); 
+            }
+            abortBroadcast();
+        }
+    }
+
     private void registerReceiver() {
         Log.d(TAG, "Registering answerJavaActivity receiver");
         if (!isReceiverRegistered) {
@@ -365,6 +394,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
             intentFilter.addAction(Constants.ACTION_END_CALL);
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
+            IntentFilter mediaButtonFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+            LocalBroadcastManager.getInstance(this).registerReceiver(
+                    mediaButtonReceiver, mediaButtonFilter);
             isReceiverRegistered = true;
         }
     }
@@ -373,6 +405,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         Log.d(TAG, "Unregistering receiver");
         if (isReceiverRegistered) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(voiceBroadcastReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mediaButtonReceiver);
             isReceiverRegistered = false;
         }
     }
