@@ -394,8 +394,7 @@ public class IncomingCallNotificationService extends Service {
         Log.d(TAG, "Registering answerJavaActivity receiver");
         if (!isReceiverRegistered) {
             IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
-            LocalBroadcastManager.getInstance(this).registerReceiver(
-                    mediaButtonReceiver, filter);
+            registerReceiver(mediaButtonReceiver, filter);
             isReceiverRegistered = true;
         }
     }
