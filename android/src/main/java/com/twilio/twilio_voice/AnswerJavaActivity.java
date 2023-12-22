@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.media.AudioManager;
 import android.view.KeyEvent;
+import android.bluetooth.BluetoothAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -362,7 +363,10 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         handleIncomingCallIntent(intent);
                         break;
                     case "android.media.VOLUME_CHANGED_ACTION":
-                        checkPermissionsAndAccept();
+                        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                        if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
+                            checkPermissionsAndAccept();
+                        }
                         break;
                     default:
                         Log.d(TAG, "Received broadcast for other action " + action);
