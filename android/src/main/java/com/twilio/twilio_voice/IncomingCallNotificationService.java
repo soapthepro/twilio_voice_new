@@ -48,7 +48,10 @@ public class IncomingCallNotificationService extends Service {
             Log.i(TAG, "onStartCommand notificationId" + notificationId);
             Log.i(TAG, "is callInvite null: " + (callInvite != null));
             registerReceiver(); 
-            Toast.makeText(getApplicationContext(), "RECEIVED " + action, Toast.LENGTH_SHORT).show();
+            Context context = getApplicationContext();
+            if (context != null) {
+                Toast.makeText(getApplicationContext(), "RECEIVED " + action, Toast.LENGTH_SHORT).show();
+            }
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
                     handleIncomingCall(callInvite, notificationId);
@@ -78,7 +81,11 @@ public class IncomingCallNotificationService extends Service {
 
         public MediaButtonIntentReceiver() {
             super();
-            Toast.makeText(getApplicationContext(), "INITIALIZING MEDIABUTTONRECEIVER", Toast.LENGTH_SHORT).show();
+            Context context = getApplicationContext();
+            if (context != null) {
+                registerReceiver();
+                Toast.makeText(getApplicationContext(), "INITIALIZING MEDIABUTTONRECEIVER", Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
