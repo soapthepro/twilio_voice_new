@@ -37,15 +37,12 @@ public class IncomingCallNotificationService extends Service {
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
     private Context context;
-    private AudioManager audioManager;
     // THE STREAM TYPE YOU WANT VOLUME FROM
-    private final int streamType = AudioManager.STREAM_MUSIC;
     private VolumeChangeListener volumeChangeListener;
     private IntentFilter intentFilter;
     private final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
 
     public IncomingCallNotificationService() {
-        this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         this.volumeChangeListener = new VolumeChangeListener();
         this.intentFilter = new IntentFilter(VOLUME_CHANGED_ACTION);
     }
