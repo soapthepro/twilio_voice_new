@@ -34,7 +34,8 @@ public class IncomingCallNotificationService extends Service {
 
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
-    private MediaButtonIntentReceiver mediaButtonReceiver;
+    private MediaButtonIntentReceiver mediaButtonReceiver = new MediaButtonIntentReceiver();
+    private boolean isReceiverRegistered = false;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -46,7 +47,6 @@ public class IncomingCallNotificationService extends Service {
             int notificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
             Log.i(TAG, "onStartCommand notificationId" + notificationId);
             Log.i(TAG, "is callInvite null: " + (callInvite != null));
-            mediaButtonReceiver = new MediaButtonIntentReceiver();
             registerReceiver(); 
             Toast.makeText(getApplicationContext(), "RECEIVED " + action, Toast.LENGTH_SHORT).show();
             switch (action) {
