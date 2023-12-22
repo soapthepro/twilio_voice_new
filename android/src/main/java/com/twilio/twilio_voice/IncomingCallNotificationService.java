@@ -44,15 +44,14 @@ public class IncomingCallNotificationService extends Service {
     private IntentFilter intentFilter;
     private final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
 
-    public IncomingCallNotificationService(Context context) {
-        this.context = context;
-        this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+    public IncomingCallNotificationService() {
+        this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         this.volumeChangeListener = new VolumeChangeListener();
         this.intentFilter = new IntentFilter(VOLUME_CHANGED_ACTION);
     }
 
     public void onCreate() {
-        context.registerReceiver(volumeChangeListener, intentFilter);
+        registerReceiver(volumeChangeListener, intentFilter);
     }
 
     // @Override
@@ -448,6 +447,6 @@ public class IncomingCallNotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        context.unregisterReceiver(volumeChangeListener);
+        unregisterReceiver(volumeChangeListener);
     }
 }
