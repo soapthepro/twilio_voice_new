@@ -81,11 +81,11 @@ public class IncomingCallNotificationService extends Service {
 
         public MediaButtonIntentReceiver() {
             super();
-            Context context = getApplicationContext();
-            if (context != null) {
-                registerReceiver();
-                Toast.makeText(getApplicationContext(), "INITIALIZING MEDIABUTTONRECEIVER", Toast.LENGTH_SHORT).show();
-            }
+            // Context context = getApplicationContext();
+            // if (context != null) {
+            //     registerReceiver();
+            //     Toast.makeText(getApplicationContext(), "INITIALIZING MEDIABUTTONRECEIVER", Toast.LENGTH_SHORT).show();
+            // }
         }
 
         @Override
