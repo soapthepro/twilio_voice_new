@@ -42,7 +42,8 @@ public class IncomingCallNotificationService extends Service {
     // THE STREAM TYPE YOU WANT VOLUME FROM
     private VolumeChangeListener volumeChangeListener;
     private IntentFilter intentFilter;
-    private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
+    // private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
+    private static final String VOLUME_CHANGED_ACTION = "android.intent.action.MEDIA_BUTTON";
     private static int counter;
     private static int doublePressSpeed = 300; // double keypressed in ms
     private static Timer doublePressTimer;
