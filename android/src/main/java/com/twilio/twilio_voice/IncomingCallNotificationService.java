@@ -92,15 +92,15 @@ public class IncomingCallNotificationService extends Service {
 
                         @Override
                         public void run() {
-                            if (counter == 1) {
-                                if (answeredNotificationId != privNotificationId) {
-                                    int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                                    accept(privCallInvite, privNotificationId, origin);
-                                }
-                            } else {
-                                reject(privCallInvite);
+                            // if (counter == 1) {
+                            if (answeredNotificationId != privNotificationId) {
+                                int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                                accept(privCallInvite, privNotificationId, origin);
                             }
-                            counter = 0;
+                            // } else {
+                            //     reject(privCallInvite);
+                            // }
+                            // counter = 0;
                         }
                     }, doublePressSpeed);
                 }
@@ -326,7 +326,7 @@ public class IncomingCallNotificationService extends Service {
             if (openAppCallIntent != null) {
                 startActivity(openAppCallIntent);
             } 
-            // LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
