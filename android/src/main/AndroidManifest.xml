@@ -15,7 +15,7 @@
     <activity
         android:name=".IncomingCallNotificationActivity" android:turnScreenOn="true" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/Theme.AppCompat">
     </activity>
-    <receiver android:name=".HeadsetActionButtonReceiver" >
+    <receiver android:name=".HeadsetActionButtonReceiver" android:exported="false">
       <intent-filter android:priority="10000" >
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
