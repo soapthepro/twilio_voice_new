@@ -49,7 +49,7 @@ public class IncomingCallNotificationService extends Service {
     private static CallInvite privCallInvite;
     private static int privNotificationId;
     private static Intent privIntent;
-    private static Intent privIntentNotif;
+    private static PendingIntent privIntentNotif;
     private static int answeredNotificationId;
 
     public IncomingCallNotificationService() {
@@ -97,12 +97,11 @@ public class IncomingCallNotificationService extends Service {
                             if (answeredNotificationId != privNotificationId) {
                                 int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
                                 // sendCallInviteToActivity(privCallInvite, privNotificationId);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    privIntentNotif.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(privIntentNotif);
-                                }
-                                else {
-                                    startService(privIntentNotif);
+                                try {
+                                    privIntentNotif.send();
+
+                                } catch (PendingIntent.CanceledException e) {
+                                    e.printStackTrace();
                                 }
                             }
                             // } else {
@@ -250,8 +249,8 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
-            privIntentNotif = acceptIntent;
             piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
+            privIntentNotif = piAcceptIntent;
         }
         else {
             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
@@ -261,6 +260,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             privIntentNotif = acceptIntent;
             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            privIntentNotif = piAcceptIntent;
         }
 
         long[] mVibratePattern = new long[]{0, 400, 400, 400, 400, 400, 400, 400};
