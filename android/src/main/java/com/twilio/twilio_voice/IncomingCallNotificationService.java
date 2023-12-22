@@ -86,8 +86,6 @@ public class IncomingCallNotificationService extends Service {
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
                     if (answeredNotificationId != privNotificationId) {
                         try {
-                            Toast.makeText(context, "SENDING", Toast.LENGTH_SHORT).show();
-                            privIntentNotif.send();
                             Intent acceptIntent;
                             PendingIntent piAcceptIntent;
                             // VERSION S = Android 12
