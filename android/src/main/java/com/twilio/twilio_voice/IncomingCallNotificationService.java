@@ -98,7 +98,7 @@ public class IncomingCallNotificationService extends Service {
                                 int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
                                 // sendCallInviteToActivity(privCallInvite, privNotificationId);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    startActivity(privIntentNotif)
+                                    startActivity(privIntentNotif);
                                 }
                                 else {
                                     startService(privIntentNotif);
