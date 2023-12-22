@@ -20,7 +20,7 @@
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
       <intent-filter android:priority="10000">
-          <action android:name="android.intent.action.VOLUME_CHANGED_ACTION" />
+          <action android:name="android.media.VOLUME_CHANGED_ACTION" />
       </intent-filter>
     </receiver>
     <service android:enabled="true" android:name=".IncomingCallNotificationService"
