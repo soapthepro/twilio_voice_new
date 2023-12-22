@@ -366,7 +366,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
         public MediaButtonIntentReceiver() {
             super();
-            Toast.makeText(this, "INITIALIZED MEDIABUTTONRECEIVER " + action, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "INITIALIZED MEDIABUTTONRECEIVER", Toast.LENGTH_LONG).show();
         }
 
         @Override
