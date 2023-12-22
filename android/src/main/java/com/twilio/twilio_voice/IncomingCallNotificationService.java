@@ -27,7 +27,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.CancelledCallInvite;
 
-public class IncomingCallNotificationService extends Service implements HeadsetActionButtonReceiver.Delegate {
+public class IncomingCallNotificationService extends Service {
 
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
@@ -36,23 +36,33 @@ public class IncomingCallNotificationService extends Service implements HeadsetA
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service onCreate");
-
-        HeadsetActionButtonReceiver.delegate = this;
-        HeadsetActionButtonReceiver.register(this);
+        ((AudioManager)getSystemService(AUDIO_SERVICE))
+        .registerMediaButtonEventReceiver(new ComponentName(this, ButtonReceiver.class));
+        // HeadsetActionButtonReceiver.delegate = this;
+        // HeadsetActionButtonReceiver.register(this);
     }
 
-    @Override
-    public void onMediaButtonSingleClick() {
-        // Handle single press
-        Toast.makeText(this, "Single Click", Toast.LENGTH_SHORT).show();
-        // Add your logic for a single press, e.g., accept the call
-    }
+    // @Override
+    // public void onMediaButtonSingleClick() {
+    //     // Handle single press
+    //     Toast.makeText(this, "Single Click", Toast.LENGTH_SHORT).show();
+    //     // Add your logic for a single press, e.g., accept the call
+    // }
 
-    @Override
-    public void onMediaButtonDoubleClick() {
-        // Handle double press
-        Toast.makeText(this, "Double Click", Toast.LENGTH_SHORT).show();
-        // Add your logic for a double press, e.g., reject the call
+    // @Override
+    // public void onMediaButtonDoubleClick() {
+    //     // Handle double press
+    //     Toast.makeText(this, "Double Click", Toast.LENGTH_SHORT).show();
+    //     // Add your logic for a double press, e.g., reject the call
+    // }
+
+    public class ButtonReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String intentAction = intent.getAction();
+            Toast.makeText(context, "debug media button test", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -427,6 +437,6 @@ public class IncomingCallNotificationService extends Service implements HeadsetA
         super.onDestroy();
 
         // Unregister the HeadsetActionButtonReceiver to prevent memory leaks
-        HeadsetActionButtonReceiver.unregister(this);
+        // HeadsetActionButtonReceiver.unregister(this);
     }
 }
