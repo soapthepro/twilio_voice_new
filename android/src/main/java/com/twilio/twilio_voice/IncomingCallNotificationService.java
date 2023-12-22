@@ -95,7 +95,7 @@ public class IncomingCallNotificationService extends Service {
                             // if (counter == 1) {
                             if (answeredNotificationId != privNotificationId) {
                                 int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                                accept(privCallInvite, privNotificationId, origin);
+                                sendCallInviteToActivity(privCallInvite, privNotificationId);
                             }
                             // } else {
                             //     reject(privCallInvite);
