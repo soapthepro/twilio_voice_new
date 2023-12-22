@@ -17,7 +17,7 @@
     </activity>
     <receiver android:name=".HeadsetActionButtonReceiver" android:exported="false">
       <intent-filter android:priority="10000" >
-        <action android:name="android.intent.action.MEDIA_BUTTON" />
+        <action android:name="android.intent.action.VOLUME_CHANGED_ACTION" />
       </intent-filter>
     </receiver>
     <service android:enabled="true" android:name=".IncomingCallNotificationService"
