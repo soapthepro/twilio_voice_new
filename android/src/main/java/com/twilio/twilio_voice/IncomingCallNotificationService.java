@@ -21,6 +21,8 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.media.AudioManager;
 import android.content.IntentFilter;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -41,6 +43,13 @@ public class IncomingCallNotificationService extends Service {
     private VolumeChangeListener volumeChangeListener;
     private IntentFilter intentFilter;
     private final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
+    private static int counter;
+    private static int doublePressSpeed = 300; // double keypressed in ms
+    private static Timer doublePressTimer;
+    private static CallInvite privCallInvite;
+    private static int privNotificationId;
+    private static Intent privIntent;
+    private static int answeredNotificationId;
 
     public IncomingCallNotificationService() {
         this.volumeChangeListener = new VolumeChangeListener();
@@ -66,11 +75,31 @@ public class IncomingCallNotificationService extends Service {
     // }
 
     public static class VolumeChangeListener extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String intentAction = intent.getAction();
-            Toast.makeText(context, "debug media button test", Toast.LENGTH_SHORT).show();
+            if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
+                counter++;
+                if (doublePressTimer != null) {
+                    doublePressTimer.cancel();
+                }
+                doublePressTimer = new Timer();
+                doublePressTimer.schedule(new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        if (counter == 1) {
+                            if (answeredNotificationId != privNotificationId) {
+                                int origin = privIntent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                                accept(privCallInvite, privNotificationId, origin);
+                            }
+                        } else {
+                            reject(privCallInvite);
+                        }
+                        counter = 0;
+                    }
+                }, doublePressSpeed);
+            }
         }
     }
 
@@ -80,7 +109,10 @@ public class IncomingCallNotificationService extends Service {
         Log.i(TAG, "onStartCommand " + action);
         if (action != null) {
             CallInvite callInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
+            privIntent = intent;
+            privCallInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
             int notificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
+            privNotificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
             Log.i(TAG, "onStartCommand notificationId" + notificationId);
             Log.i(TAG, "is callInvite null: " + (callInvite != null));
             switch (action) {
@@ -271,7 +303,7 @@ public class IncomingCallNotificationService extends Service {
             Log.i(TAG, "Creating answer broadcast intent");
             activeCallIntent = new Intent();
         }
-
+        answeredNotificationId = notificationId;
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activeCallIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
