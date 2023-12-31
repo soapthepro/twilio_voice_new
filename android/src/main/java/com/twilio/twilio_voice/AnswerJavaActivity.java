@@ -129,6 +129,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
         if(keyCode == KeyEvent.KEYCODE_HEADSETHOOK){
             //handle click
             Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
@@ -423,6 +424,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
                     voiceBroadcastReceiver, intentFilter);
             IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
             filterUpdate.addAction(Intent.ACTION_MEDIA_BUTTON);
+            filterUpdate.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+            filterUpdate.addAction(BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT);
+            filterUpdate.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
             registerReceiver(voiceBroadcastReceiver, filterUpdate);
             AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             ComponentName componentName = new ComponentName(getPackageName(), VoiceBroadcastReceiver.class.getName());
