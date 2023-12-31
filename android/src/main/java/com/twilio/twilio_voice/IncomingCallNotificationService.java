@@ -83,10 +83,24 @@ public class IncomingCallNotificationService extends Service {
             if (callCount % 3 == 0) {
                 String intentAction = intent.getAction();
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
+                    Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
+                            // privIntentNotif.send();
+                    Intent intent = new Intent(this, AnswerJavaActivity.class);
+                    intent.setAction(Constants.ACTION_INCOMING_CALL_NOTIFICATION);
+                    intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
+                    intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                     if (answeredNotificationId != privNotificationId) {
                         try {
-                            Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
-                            privIntentNotif.send();
+                            // Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
+                            // // privIntentNotif.send();
+                            // Intent intent = new Intent(this, AnswerJavaActivity.class);
+                            // intent.setAction(Constants.ACTION_INCOMING_CALL_NOTIFICATION);
+                            // intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
+                            // intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+                            // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            // startActivity(intent);
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
