@@ -479,10 +479,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         if (resultMic != PackageManager.PERMISSION_GRANTED) {
             return false;
         }
-        int resultMic2 = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT);
-        if (resultMic2 != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
         return true;
     }
 
