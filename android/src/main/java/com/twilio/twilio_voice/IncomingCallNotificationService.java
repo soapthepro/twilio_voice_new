@@ -82,31 +82,11 @@ public class IncomingCallNotificationService extends Service {
             callCount++;
             if (callCount % 3 == 0) {
                 String intentAction = intent.getAction();
-                // Toast.makeText(context, "RECEIVED: " + intentAction, Toast.LENGTH_SHORT).show();
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
                     if (answeredNotificationId != privNotificationId) {
                         try {
-                            Intent acceptIntent;
-                            PendingIntent piAcceptIntent;
-                            // VERSION S = Android 12
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                Log.i(TAG, "building acceptIntent for Android 12+");
-                                acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationActivity.class);
-                                acceptIntent.setAction(Constants.ACTION_ACCEPT);
-                                acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                                acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                                acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                                piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
-                            }
-                            else {
-                                acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
-                                acceptIntent.setAction(Constants.ACTION_ACCEPT);
-                                acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                                acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                                acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                                piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                            }
-                            piAcceptIntent.send();
+                            Toast.makeText(context, "ANSWERING", Toast.LENGTH_SHORT).show();
+                            privIntentNotif.send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
@@ -462,10 +442,10 @@ public class IncomingCallNotificationService extends Service {
         pluginIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         LocalBroadcastManager.getInstance(this).sendBroadcast(pluginIntent);
         Log.i(TAG, "AppHasStarted " + TwilioVoicePlugin.appHasStarted + " sdk>=29 and !isAppVisible() " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
-        if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {            
-            return;
+        // if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {            
+        //     return;
             
-        }
+        // }
         Log.i(TAG, "Starting AnswerActivity from IncomingCallNotificationService");
         startAnswerActivity(callInvite, notificationId);
     }
