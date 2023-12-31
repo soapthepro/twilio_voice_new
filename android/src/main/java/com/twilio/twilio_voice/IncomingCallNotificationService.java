@@ -85,7 +85,7 @@ public class IncomingCallNotificationService extends Service {
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
                     if (answeredNotificationId != privNotificationId) {
                         try {
-                            Toast.makeText(context, "ANSWERING", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
                             privIntentNotif.send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
@@ -231,7 +231,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
-            privIntentNotif = piAcceptIntent;
+            privIntentNotif = pendingIntent;
         }
         else {
             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
@@ -240,7 +240,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            privIntentNotif = piAcceptIntent;
+            privIntentNotif = pendingIntent;
         }
 
         long[] mVibratePattern = new long[]{0, 400, 400, 400, 400, 400, 400, 400};
@@ -442,10 +442,10 @@ public class IncomingCallNotificationService extends Service {
         pluginIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         LocalBroadcastManager.getInstance(this).sendBroadcast(pluginIntent);
         Log.i(TAG, "AppHasStarted " + TwilioVoicePlugin.appHasStarted + " sdk>=29 and !isAppVisible() " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
-        // if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {            
-        //     return;
+        if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {            
+            return;
             
-        // }
+        }
         Log.i(TAG, "Starting AnswerActivity from IncomingCallNotificationService");
         startAnswerActivity(callInvite, notificationId);
     }
