@@ -27,6 +27,7 @@ import android.media.AudioManager;
 import android.view.KeyEvent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothHeadset;
 import android.content.ComponentName;
 
 import androidx.annotation.NonNull;
