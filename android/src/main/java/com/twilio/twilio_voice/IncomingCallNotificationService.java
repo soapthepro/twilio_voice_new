@@ -87,8 +87,8 @@ public class IncomingCallNotificationService extends Service {
                             // privIntentNotif.send();
                     Intent intent = new Intent(this, AnswerJavaActivity.class);
                     intent.setAction(Constants.ACTION_INCOMING_CALL_NOTIFICATION);
-                    intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
-                    intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+                    intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                    intent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     if (answeredNotificationId != privNotificationId) {
