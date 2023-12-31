@@ -85,12 +85,12 @@ public class IncomingCallNotificationService extends Service {
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
                     Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
                             // privIntentNotif.send();
-                    Intent intent = new Intent(this, AnswerJavaActivity.class);
-                    intent.setAction(Constants.ACTION_INCOMING_CALL_NOTIFICATION);
-                    intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                    intent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    Intent intentNew = new Intent(this, AnswerJavaActivity.class);
+                    intentNew.setAction(Constants.ACTION_INCOMING_CALL_NOTIFICATION);
+                    intentNew.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                    intentNew.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                    intentNew.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intentNew);
                     if (answeredNotificationId != privNotificationId) {
                         try {
                             // Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
