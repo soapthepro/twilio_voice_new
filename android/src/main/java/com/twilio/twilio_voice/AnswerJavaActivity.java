@@ -27,6 +27,7 @@ import android.media.AudioManager;
 import android.view.KeyEvent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
+import android.content.ComponentName;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +49,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 
 public class AnswerJavaActivity extends AppCompatActivity {
 
@@ -240,7 +245,34 @@ public class AnswerJavaActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("MissingPermission")
+    private void switchToBluetoothMicrophone() {
+        // Get the Bluetooth adapter
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        // Ensure that Bluetooth is enabled on the device
+        if (bluetoothAdapter.isEnabled()) {
+            // Get a list of paired Bluetooth devices
+            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+            // Iterate over the list of paired devices and find the Bluetooth microphone
+            for (BluetoothDevice device : pairedDevices) {
+                // if (device.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_MICROPHONE) {
+                // print("message4")
+                // Set the Bluetooth microphone as the default audio input device
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                if (audioManager != null) {
+                    audioManager.setMode(AudioManager.MODE_IN_CALL);
+                    audioManager.setBluetoothScoOn(true);
+                    audioManager.startBluetoothSco();
+                    audioManager.setMicrophoneMute(false);
+                    audioManager.setSpeakerphoneOn(false);
+                }
+                break;
+                // }
+            }
+        }
+    }
 
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
@@ -352,7 +384,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Received broadcast for action " + action);
-
+            Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
             if (action != null)
                 switch (action) {
                     case Constants.ACTION_INCOMING_CALL:
@@ -369,6 +401,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                         if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
                             checkPermissionsAndAccept();
+                            switchToBluetoothMicrophone();
                         }
                         break;
                     default:
@@ -389,7 +422,11 @@ public class AnswerJavaActivity extends AppCompatActivity {
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
             IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
+            filterUpdate.addAction(Intent.ACTION_MEDIA_BUTTON);
             registerReceiver(voiceBroadcastReceiver, filterUpdate);
+            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            ComponentName componentName = new ComponentName(getPackageName(), VoiceBroadcastReceiver.class.getName());
+            audioManager.registerMediaButtonEventReceiver(componentName);
             isReceiverRegistered = true;
         }
     }
