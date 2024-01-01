@@ -92,7 +92,7 @@ public class IncomingCallNotificationService extends Service {
                     String packageName = "com.theclosecompany.sales_book";
                     openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
                     if (openAppCallIntent != null) {
-                        openAppCallIntent.setPackage(null)
+                        openAppCallIntent.setPackage(null);
                         openAppCallIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                         startActivity(openAppCallIntent);
                     } 
