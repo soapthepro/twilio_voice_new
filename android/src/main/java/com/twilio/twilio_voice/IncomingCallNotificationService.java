@@ -390,11 +390,17 @@ public class IncomingCallNotificationService extends Service {
 
     private void buildMissedCallNotification(String callerId, String to) {
 
-        String fromId = callerId.replace("client:", "");
         Context context = getApplicationContext();
         SharedPreferences preferences = context.getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
-        String callerName = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
-        String title = getString(R.string.notification_missed_call, callerName);
+        String fromId = callInvite.getFrom().replace("client:", "");
+        Log.i(TAG, "CALLER NAME AFTER REMOVAL = " + fromId);
+        String caller;
+        if (fromId != null) {
+            caller = fromId;
+        } else {
+            caller = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
+        }
+        String title = getString(R.string.notification_missed_call, caller);
 
 
         Intent returnCallIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
