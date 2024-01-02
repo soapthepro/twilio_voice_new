@@ -53,6 +53,10 @@ class TwilioVoice {
     }
   }
 
+  Future<bool?> switchToBluetooth() {
+    return _channel.invokeMethod('switchToBluetooth', {});
+  }
+
   /// register fcm token, and device token for android
   ///
   /// ios device token is obtained internally

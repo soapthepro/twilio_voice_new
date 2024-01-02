@@ -386,7 +386,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Received broadcast for action " + action);
-            // Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
             if (action != null)
                 switch (action) {
                     case Constants.ACTION_INCOMING_CALL:
@@ -401,9 +401,12 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         break;
                     case "android.media.VOLUME_CHANGED_ACTION":
                         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                        if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
-                            checkPermissionsAndAccept();
-                            switchToBluetoothMicrophone();
+                        if (bluetoothAdapter != null) {
+                            int connectionState = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.STATE_CONNECTED);
+                            if (connectionState == BluetoothProfile.STATE_CONNECTED) {
+                                checkPermissionsAndAccept();
+                                switchToBluetoothMicrophone();
+                            }
                         }
                         break;
                     default:

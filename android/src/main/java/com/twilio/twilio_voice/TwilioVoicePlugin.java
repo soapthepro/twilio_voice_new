@@ -53,6 +53,15 @@ import io.flutter.plugin.common.PluginRegistry;
 
 import static java.lang.Boolean.getBoolean;
 
+import java.util.Set;
+
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothHeadset;
+
 public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCallHandler, EventChannel.StreamHandler,
         ActivityAware, PluginRegistry.NewIntentListener {
 
@@ -535,6 +544,9 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         } else if (call.method.equals("setAppHasStarted")) {
             this.appHasStarted = call.argument("appHasStarted");
             result.success(true);
+        } else if (call.method.equals("switchToBluetooth")) {
+            this.switchToBluetoothMicrophone();
+            result.success(true);
         } else {
             result.notImplemented();
         }
@@ -772,6 +784,35 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     new String[]{Manifest.permission.RECORD_AUDIO},
                     MIC_PERMISSION_REQUEST_CODE);
             return true;
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void switchToBluetoothMicrophone() {
+        // Get the Bluetooth adapter
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Ensure that Bluetooth is enabled on the device
+        if (bluetoothAdapter.isEnabled()) {
+            // Get a list of paired Bluetooth devices
+            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+            // Iterate over the list of paired devices and find the Bluetooth microphone
+            for (BluetoothDevice device : pairedDevices) {
+                // if (device.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_MICROPHONE) {
+                // print("message4")
+                // Set the Bluetooth microphone as the default audio input device
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                if (audioManager != null) {
+                    audioManager.setMode(AudioManager.MODE_IN_CALL);
+                    audioManager.setBluetoothScoOn(true);
+                    audioManager.startBluetoothSco();
+                    audioManager.setMicrophoneMute(false);
+                    audioManager.setSpeakerphoneOn(false);
+                }
+                break;
+                // }
+            }
         }
     }
 
