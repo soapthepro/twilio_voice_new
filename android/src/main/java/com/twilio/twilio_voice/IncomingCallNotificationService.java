@@ -34,9 +34,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.CancelledCallInvite;
 
-import android.os.Handler;
-import android.view.View;
-
 public class IncomingCallNotificationService extends Service {
 
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
@@ -57,12 +54,11 @@ public class IncomingCallNotificationService extends Service {
 
     public IncomingCallNotificationService() {
         this.volumeChangeListener = new VolumeChangeListener();
-        this.intentFilter = new IntentFilter(VOLUME_CHANGED_ACTION);
     }
 
-    public void onCreate() {
-        registerReceiver(volumeChangeListener, intentFilter);
-    }
+    // public void onCreate() {
+    //     registerReceiver(volumeChangeListener, intentFilter);
+    // }
 
     // @Override
     // public void onMediaButtonSingleClick() {
@@ -85,41 +81,31 @@ public class IncomingCallNotificationService extends Service {
             callCount++;
             if (callCount % 3 == 0) {
                 String intentAction = intent.getAction();
+                // Toast.makeText(context, "RECEIVED: " + intentAction, Toast.LENGTH_SHORT).show();
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
-                    // Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
-                    // // privIntentNotif.send();
-                    // Intent openAppCallIntent;
-                    // String packageName = "com.theclosecompany.sales_book";
-                    // openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                    // if (openAppCallIntent != null) {
-                    //     openAppCallIntent.setPackage(null);
-                    //     openAppCallIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    //     startActivity(openAppCallIntent);
-                    // } 
-                    // // Delay for 2 seconds and start the second activity
-                    // new Handler().postDelayed(new Runnable() {
-                    //     @Override
-                    //     public void run() {
-                    //         Log.i(TAG, "Starting Activity " + (privCallInvite != null) + "notification " + (privNotificationId));
-                    //         Intent intentNew = new Intent(getApplicationContext(), AnswerJavaActivity.class);
-                    //         intentNew.setAction(Constants.ACTION_INCOMING_CALL);
-                    //         intentNew.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                    //         intentNew.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                    //         intentNew.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    //         intentNew.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    //         startActivity(intentNew);
-                    //     }
-                    // }, 2000);
                     // if (answeredNotificationId != privNotificationId) {
                     //     try {
-                    //         // Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
-                    //         // // privIntentNotif.send();
-                    //         // Intent intent = new Intent(this, AnswerJavaActivity.class);
-                    //         // intent.setAction(Constants.ACTION_INCOMING_CALL_NOTIFICATION);
-                    //         // intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
-                    //         // intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
-                    //         // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    //         // startActivity(intent);
+                    //         Intent acceptIntent;
+                    //         PendingIntent piAcceptIntent;
+                    //         // VERSION S = Android 12
+                    //         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    //             Log.i(TAG, "building acceptIntent for Android 12+");
+                    //             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationActivity.class);
+                    //             acceptIntent.setAction(Constants.ACTION_ACCEPT);
+                    //             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                    //             piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
+                    //         }
+                    //         else {
+                    //             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
+                    //             acceptIntent.setAction(Constants.ACTION_ACCEPT);
+                    //             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
+                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                    //             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                    //         }
+                    //         piAcceptIntent.send();
                     //     } catch (PendingIntent.CanceledException e) {
                     //         e.printStackTrace();
                     //     }
@@ -264,7 +250,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
-            privIntentNotif = pendingIntent;
+            privIntentNotif = piAcceptIntent;
         }
         else {
             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
@@ -273,7 +259,7 @@ public class IncomingCallNotificationService extends Service {
             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            privIntentNotif = pendingIntent;
+            privIntentNotif = piAcceptIntent;
         }
 
         long[] mVibratePattern = new long[]{0, 400, 400, 400, 400, 400, 400, 400};
@@ -390,17 +376,11 @@ public class IncomingCallNotificationService extends Service {
 
     private void buildMissedCallNotification(String callerId, String to) {
 
+        String fromId = callerId.replace("client:", "");
         Context context = getApplicationContext();
         SharedPreferences preferences = context.getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
-        String fromId = callerId.replace("client:", "");
-        Log.i(TAG, "CALLER NAME AFTER REMOVAL = " + fromId);
-        String caller;
-        if (fromId != null) {
-            caller = fromId;
-        } else {
-            caller = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
-        }
-        String title = getString(R.string.notification_missed_call, caller);
+        String callerName = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
+        String title = getString(R.string.notification_missed_call, callerName);
 
 
         Intent returnCallIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
