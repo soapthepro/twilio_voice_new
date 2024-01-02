@@ -100,7 +100,14 @@ public class IncomingCallNotificationService extends Service {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startAnswerActivity(privCallInvite, privNotificationId);
+                            Log.i(TAG, "Starting Activity " + (privCallInvite != null) + "notification " + (privNotificationId != null));
+                            Intent intentNew = new Intent(getApplicationContext(), AnswerJavaActivity.class);
+                            intentNew.setAction(Constants.ACTION_INCOMING_CALL);
+                            intentNew.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                            intentNew.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                            intentNew.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            intentNew.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intentNew);
                         }
                     }, 2000);
                     // if (answeredNotificationId != privNotificationId) {
