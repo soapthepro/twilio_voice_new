@@ -396,14 +396,19 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         handleIncomingCallIntent(intent);
                         break;
                     case "android.media.VOLUME_CHANGED_ACTION":
+                        // BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        // if (bluetoothAdapter != null) {
+                        //     int connectionState = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.STATE_CONNECTED);
+                        //     if (connectionState == BluetoothProfile.STATE_CONNECTED) {
+                        //         Toast.makeText(context, "INSIDE BLUETOOTH CHECK, ANSWERING ", Toast.LENGTH_SHORT).show();
+                        //         checkPermissionsAndAccept();
+                        //         switchToBluetoothMicrophone();
+                        //     }
+                        // }
                         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                        if (bluetoothAdapter != null) {
-                            int connectionState = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.STATE_CONNECTED);
-                            if (connectionState == BluetoothProfile.STATE_CONNECTED) {
-                                Toast.makeText(context, "INSIDE BLUETOOTH CHECK, ANSWERING ", Toast.LENGTH_SHORT).show();
-                                checkPermissionsAndAccept();
-                                switchToBluetoothMicrophone();
-                            }
+                        if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
+                            checkPermissionsAndAccept();
+                            switchToBluetoothMicrophone();
                         }
                         break;
                     default:
@@ -424,11 +429,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
             IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
-            filterUpdate.addAction(Intent.ACTION_MEDIA_BUTTON);
             registerReceiver(voiceBroadcastReceiver, filterUpdate);
-            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            ComponentName componentName = new ComponentName(getPackageName(), VoiceBroadcastReceiver.class.getName());
-            audioManager.registerMediaButtonEventReceiver(componentName);
             isReceiverRegistered = true;
         }
     }
