@@ -130,10 +130,10 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
         if(keyCode == KeyEvent.KEYCODE_HEADSETHOOK){
             //handle click
-            Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getApplicationContext(), "RECEIVED: " + keyCode, Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -386,7 +386,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Received broadcast for action " + action);
-            Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
             if (action != null)
                 switch (action) {
                     case Constants.ACTION_INCOMING_CALL:
@@ -521,7 +521,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             }
         } else if (requestCode == MIC_BLUETOOTH_REQUEST_CODE) {
             if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Bluetooth permissions needed. Please allow in your application settings.", Toast.LENGTH_LONG).show();
+                // Toast.makeText(this, "Bluetooth permissions needed. Please allow in your application settings.", Toast.LENGTH_LONG).show();
                 acceptCall();
             } else {
                 // startAudioSwitch();
