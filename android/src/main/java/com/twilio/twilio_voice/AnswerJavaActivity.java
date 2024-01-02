@@ -262,11 +262,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 // Set the Bluetooth microphone as the default audio input device
                 AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 if (audioManager != null) {
-                    audioManager.setMode(AudioManager.MODE_IN_CALL);
-                    audioManager.setBluetoothScoOn(true);
+                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                     audioManager.startBluetoothSco();
-                    audioManager.setMicrophoneMute(false);
-                    audioManager.setSpeakerphoneOn(false);
+                    audioManager.setBluetoothScoOn(true);
                 }
                 break;
                 // }
@@ -384,7 +382,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Received broadcast for action " + action);
-            Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
             if (action != null)
                 switch (action) {
                     case Constants.ACTION_INCOMING_CALL:
@@ -402,6 +400,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         if (bluetoothAdapter != null) {
                             int connectionState = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.STATE_CONNECTED);
                             if (connectionState == BluetoothProfile.STATE_CONNECTED) {
+                                Toast.makeText(context, "INSIDE BLUETOOTH CHECK, ANSWERING ", Toast.LENGTH_SHORT).show();
                                 checkPermissionsAndAccept();
                                 switchToBluetoothMicrophone();
                             }

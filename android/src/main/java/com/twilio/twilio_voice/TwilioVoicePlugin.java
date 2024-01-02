@@ -803,11 +803,9 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 // print("message4")
                 // Set the Bluetooth microphone as the default audio input device
                 if (audioManager != null) {
-                    audioManager.setMode(AudioManager.MODE_IN_CALL);
-                    audioManager.setBluetoothScoOn(true);
+                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                     audioManager.startBluetoothSco();
-                    audioManager.setMicrophoneMute(false);
-                    audioManager.setSpeakerphoneOn(false);
+                    audioManager.setBluetoothScoOn(true);
                 }
                 break;
                 // }
