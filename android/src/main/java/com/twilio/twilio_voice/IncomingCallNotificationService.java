@@ -86,30 +86,30 @@ public class IncomingCallNotificationService extends Service {
             if (callCount % 3 == 0) {
                 String intentAction = intent.getAction();
                 if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
-                    Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
-                    // privIntentNotif.send();
-                    Intent openAppCallIntent;
-                    String packageName = "com.theclosecompany.sales_book";
-                    openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                    if (openAppCallIntent != null) {
-                        openAppCallIntent.setPackage(null);
-                        openAppCallIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                        startActivity(openAppCallIntent);
-                    } 
-                    // Delay for 2 seconds and start the second activity
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.i(TAG, "Starting Activity " + (privCallInvite != null) + "notification " + (privNotificationId));
-                            Intent intentNew = new Intent(getApplicationContext(), AnswerJavaActivity.class);
-                            intentNew.setAction(Constants.ACTION_INCOMING_CALL);
-                            intentNew.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                            intentNew.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                            intentNew.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            intentNew.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intentNew);
-                        }
-                    }, 2000);
+                    // Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
+                    // // privIntentNotif.send();
+                    // Intent openAppCallIntent;
+                    // String packageName = "com.theclosecompany.sales_book";
+                    // openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+                    // if (openAppCallIntent != null) {
+                    //     openAppCallIntent.setPackage(null);
+                    //     openAppCallIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    //     startActivity(openAppCallIntent);
+                    // } 
+                    // // Delay for 2 seconds and start the second activity
+                    // new Handler().postDelayed(new Runnable() {
+                    //     @Override
+                    //     public void run() {
+                    //         Log.i(TAG, "Starting Activity " + (privCallInvite != null) + "notification " + (privNotificationId));
+                    //         Intent intentNew = new Intent(getApplicationContext(), AnswerJavaActivity.class);
+                    //         intentNew.setAction(Constants.ACTION_INCOMING_CALL);
+                    //         intentNew.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
+                    //         intentNew.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
+                    //         intentNew.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    //         intentNew.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    //         startActivity(intentNew);
+                    //     }
+                    // }, 2000);
                     // if (answeredNotificationId != privNotificationId) {
                     //     try {
                     //         // Toast.makeText(context, "ANSWERING" + intentAction, Toast.LENGTH_SHORT).show();
