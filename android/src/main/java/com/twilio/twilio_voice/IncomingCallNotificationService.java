@@ -392,7 +392,7 @@ public class IncomingCallNotificationService extends Service {
 
         Context context = getApplicationContext();
         SharedPreferences preferences = context.getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
-        String fromId = callInvite.getFrom().replace("client:", "");
+        String fromId = callerId.replace("client:", "");
         Log.i(TAG, "CALLER NAME AFTER REMOVAL = " + fromId);
         String caller;
         if (fromId != null) {
