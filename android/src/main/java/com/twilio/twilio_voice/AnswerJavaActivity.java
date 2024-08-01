@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +54,9 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 
+import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothHeadset;
+
 public class AnswerJavaActivity extends AppCompatActivity {
 
     private static String TAG = "AnswerActivity";
@@ -80,7 +82,27 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private MenuItem audioDeviceMenuItem;
 
     Call.Listener callListener = callListener();
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothHeadset bluetoothHeadset;
+    private IntentFilter headsetFilter;
 
+    private BluetoothProfile.ServiceListener profileListener = new BluetoothProfile.ServiceListener() {
+        @Override
+        public void onServiceConnected(int profile, BluetoothProfile proxy) {
+            if (profile == BluetoothProfile.HEADSET) {
+                bluetoothHeadset = (BluetoothHeadset) proxy;
+                Log.d("MainActivity", "BluetoothHeadset connected");
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(int profile) {
+            if (profile == BluetoothProfile.HEADSET) {
+                bluetoothHeadset = null;
+                Log.d("MainActivity", "BluetoothHeadset disconnected");
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,9 +120,18 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // voiceBroadcastReceiver = new VoiceBroadcastReceiver();
         // registerReceiver();
         voiceBroadcastReceiver = new VoiceBroadcastReceiver();
-        IntentFilter filter = new IntentFilter(BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT);
-        registerReceiver(vendorSpecificHeadsetReceiver, filter);
         registerReceiver();
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        headsetFilter = new IntentFilter();
+        headsetFilter.addAction(BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT);
+        headsetFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+        headsetFilter.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
+        headsetFilter.addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
+        headsetFilter.addAction(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED);
+        headsetFilter.addAction(Intent.ACTION_MEDIA_BUTTON);
+
+        bluetoothAdapter.getProfileProxy(this, profileListener, BluetoothProfile.HEADSET);
 
         Log.d(TAG, "isKeyguardUp $isKeyguardUp");
         if (isKeyguardUp) {
@@ -139,22 +170,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-    private BroadcastReceiver vendorSpecificHeadsetReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT.equals(intent.getAction())) {
-                String command = intent.getStringExtra(BluetoothHeadset.EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD);
-                int type = intent.getIntExtra(BluetoothHeadset.EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD_TYPE, -1);
-
-                Log.d(TAG, "Received vendor-specific event: " + command + ", Type: " + type);
-                Toast.makeText(context, "Received vendor-specific event: " + command + ", Type: " + type, Toast.LENGTH_LONG).show();
-                // Check the command or type here to decide what to do
-                // This is where you would add logic based on the command if needed
-//                checkPermissionsAndAccept(); // Assuming you want to accept on any vendor-specific command
-            }
-        }
-    };
 
     private void handleIncomingCallIntent(Intent intent) {
         if (intent != null && intent.getAction() != null) {
@@ -450,6 +465,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
             registerReceiver(voiceBroadcastReceiver, filterUpdate);
             isReceiverRegistered = true;
+            registerReceiver(bluetoothHeadsetBroadcastReceiver, headsetFilter);
         }
     }
 
@@ -458,8 +474,46 @@ public class AnswerJavaActivity extends AppCompatActivity {
         if (isReceiverRegistered) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(voiceBroadcastReceiver);
             isReceiverRegistered = false;
+            unregisterReceiver(bluetoothHeadsetBroadcastReceiver);
+
         }
     }
+
+
+    private BroadcastReceiver bluetoothHeadsetBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED:
+                    int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothProfile.STATE_DISCONNECTED);
+                    Log.d("MainActivity", "BluetoothHeadset state: " + state);
+                    break;
+                case BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED:
+                    state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothProfile.STATE_DISCONNECTED);
+                    Log.d("MainActivity", "BluetoothHeadset audio state: " + state);
+                    break;
+                case BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT:
+                    String command = intent.getStringExtra(BluetoothHeadset.EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD);
+                    int[] args = intent.getIntArrayExtra(BluetoothHeadset.EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_ARGS);
+                    Log.d("MainActivity", "BluetoothHeadset event: " + command + ", args: " + (args != null ? Arrays.toString(args) : "null"));
+                    break;
+                case BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED:
+                    state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothProfile.STATE_DISCONNECTED);
+                    Log.d("MainActivity", "BluetoothA2dp connection state: " + state);
+                    break;
+                case BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED:
+                    state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothProfile.STATE_DISCONNECTED);
+                    Log.d("MainActivity", "BluetoothA2dp playing state: " + state);
+                    break;
+                case Intent.ACTION_MEDIA_BUTTON:
+                    KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                    if (keyEvent != null) {
+                        Log.d("MainActivity", "Media button event: " + keyEvent.getKeyCode());
+                    }
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -615,7 +669,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         Log.d(TAG, "AnwserJAvaActivity ondestroy");
         super.onDestroy();
         // audioSwitch.stop();
-        unregisterReceiver(vendorSpecificHeadsetReceiver);
         setVolumeControlStream(savedVolumeControlStream);
         unregisterReceiver();
         if (wakeLock != null) {
