@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -97,6 +98,8 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // voiceBroadcastReceiver = new VoiceBroadcastReceiver();
         // registerReceiver();
         voiceBroadcastReceiver = new VoiceBroadcastReceiver();
+        IntentFilter filter = new IntentFilter(BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT);
+        registerReceiver(vendorSpecificHeadsetReceiver, filter);
         registerReceiver();
 
         Log.d(TAG, "isKeyguardUp $isKeyguardUp");
@@ -136,6 +139,22 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    private BroadcastReceiver vendorSpecificHeadsetReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT.equals(intent.getAction())) {
+                String command = intent.getStringExtra(BluetoothHeadset.EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD);
+                int type = intent.getIntExtra(BluetoothHeadset.EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD_TYPE, -1);
+
+                Log.d(TAG, "Received vendor-specific event: " + command + ", Type: " + type);
+                Toast.makeText(context, "Received vendor-specific event: " + command + ", Type: " + type, Toast.LENGTH_LONG).show();
+                // Check the command or type here to decide what to do
+                // This is where you would add logic based on the command if needed
+//                checkPermissionsAndAccept(); // Assuming you want to accept on any vendor-specific command
+            }
+        }
+    };
 
     private void handleIncomingCallIntent(Intent intent) {
         if (intent != null && intent.getAction() != null) {
@@ -596,6 +615,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         Log.d(TAG, "AnwserJAvaActivity ondestroy");
         super.onDestroy();
         // audioSwitch.stop();
+        unregisterReceiver(vendorSpecificHeadsetReceiver);
         setVolumeControlStream(savedVolumeControlStream);
         unregisterReceiver();
         if (wakeLock != null) {
