@@ -341,7 +341,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CALL_FROM, call.getFrom());
-        startActivity(intent);
+//        startActivity(intent);
         Log.d(TAG, "Connected");
     }
 
@@ -354,7 +354,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Constants.ACTION_CANCEL_CALL);
 
-            this.startActivity(intent);
+//            this.startActivity(intent);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAndRemoveTask();
             }

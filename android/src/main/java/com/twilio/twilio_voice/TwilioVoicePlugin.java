@@ -263,13 +263,16 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     private void startAnswerActivity(Call call) {
         Intent intent = new Intent(getApplicationContext(), BackgroundCallJavaActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        SoundPoolManager.getInstance(context).stopRinging();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CALL_FROM, call.getFrom());
         activity.startActivity(intent);
+        backgroundCallUI = true;
         Log.d(TAG, "Connected");
     }
 
     private void handleIncomingCall(String from, String to) {
+        SoundPoolManager.getInstance(context).playRinging();
         sendPhoneCallEvents("Ringing|" + from + "|" + to + "|" + "Incoming" + formatCustomParams(activeCallInvite.getCustomParameters()));
     }
 
@@ -609,6 +612,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
      */
     private void answer() {
         Log.d(TAG, "Answering call in answer function 545 line TwilioVoicePlugin");
+        SoundPoolManager.getInstance(context).stopRinging();
         activeCallInvite.accept(this.activity, callListener);
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
@@ -761,7 +765,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         backgroundCallUI = false;
         callOutgoing = false;
         activeCall = null;
-
     }
 
     private void hold() {
