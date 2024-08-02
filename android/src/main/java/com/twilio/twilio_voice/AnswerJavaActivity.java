@@ -198,7 +198,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     if (audioManager.isBluetoothScoAvailableOffCall()) {
                         Log.d(TAG, "SCO AVAILABLE");
                         Toast.makeText(getApplicationContext(), "SCO AVAILABLE", Toast.LENGTH_SHORT).show();
-                        startBluetoothScoIfNeeded(audioManager);
+//                        startBluetoothScoIfNeeded(audioManager);
                     } else {
                     }
                     break;
