@@ -507,7 +507,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onPause() {
         super.onPause();
 //        unregisterReceiver();
-        HeadsetActionButtonReceiver.unregister(this);
+//        HeadsetActionButtonReceiver.unregister(this);
     }
 
     private void newCancelCallClickListener() {
