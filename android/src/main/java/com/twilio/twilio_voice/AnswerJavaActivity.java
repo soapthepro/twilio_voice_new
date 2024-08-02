@@ -55,6 +55,7 @@ import java.util.Set;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import androidx.media.session.MediaButtonReceiver;
 
 public class AnswerJavaActivity extends AppCompatActivity {
 
@@ -420,6 +421,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Received broadcast for action " + action);
+            MediaButtonReceiver.handleIntent(mediaSession, intent);
             // Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
             if (action != null)
                 switch (action) {
