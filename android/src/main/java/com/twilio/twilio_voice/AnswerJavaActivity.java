@@ -313,6 +313,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
+        switchToBluetoothMicrophone();
         Intent acceptIntent = new Intent(this, IncomingCallNotificationService.class);
         acceptIntent.setAction(Constants.ACTION_ACCEPT);
         acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite);
@@ -447,7 +448,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         // }
                         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                         if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
-                            checkPermissionsAndAccept();
+//                            checkPermissionsAndAccept();
                             switchToBluetoothMicrophone();
                         }
                         break;
