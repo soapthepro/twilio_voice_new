@@ -491,7 +491,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
             IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
             filterUpdate.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
             filterUpdate.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
-            filterUpdate.addAction(Intent.ACTION_MEDIA_BUTTON);
             filterUpdate.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
             registerReceiver(voiceBroadcastReceiver, filterUpdate);
             isReceiverRegistered = true;
