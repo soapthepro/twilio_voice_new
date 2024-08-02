@@ -140,6 +140,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             activeCallInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
             activeCallNotificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
             callOutgoing = false;
+            Log.d(TAG, "NOTIFICATION ID IS " + activeCallNotificationId);
 
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
@@ -208,6 +209,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     }
 
     private void startAnswerActivity(CallInvite callInvite, int notificationId) {
+        Log.d(TAG, "START ANSWER JAVA ACTIVITY LINE 212");
         Intent intent = new Intent(activity, AnswerJavaActivity.class);
         intent.setAction(Constants.ACTION_INCOMING_CALL);
         intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
@@ -219,7 +221,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private void handleIncomingCall(String from, String to) {
         sendPhoneCallEvents("Ringing|" + from + "|" + to + "|" + "Incoming" + formatCustomParams(activeCallInvite.getCustomParameters()));
-
     }
 
     private String formatCustomParams(Map<String,String> customParameters){

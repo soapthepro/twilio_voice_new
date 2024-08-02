@@ -88,6 +88,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "CREATED ANSWER JAVA ACTIVITY");
         setContentView(R.layout.activity_answer);
 
         tvUserName = (TextView) findViewById(R.id.tvUserName);
