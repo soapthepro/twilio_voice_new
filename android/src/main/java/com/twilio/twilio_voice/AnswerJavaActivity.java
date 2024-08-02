@@ -446,11 +446,11 @@ public class AnswerJavaActivity extends AppCompatActivity {
                         //         switchToBluetoothMicrophone();
                         //     }
                         // }
-                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                        if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
-//                            checkPermissionsAndAccept();
-                            switchToBluetoothMicrophone();
-                        }
+//                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//                        if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
+////                            checkPermissionsAndAccept();
+//                            switchToBluetoothMicrophone();
+//                        }
                         break;
                     default:
                         Log.d(TAG, "Received broadcast for other action " + action);
