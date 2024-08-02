@@ -162,7 +162,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         });
 
         mediaSession.setActive(true);
-        MediaButtonReceiver.handleIntent(mediaSession, getIntent());
 
         // audioSwitch = new AudioSwitch(getApplicationContext());
         // savedVolumeControlStream = getVolumeControlStream();
@@ -224,6 +223,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent-");
+        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+            MediaButtonReceiver.handleIntent(mediaSession, intent);
+        }
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, intent.getAction());
             switch (intent.getAction()) {
