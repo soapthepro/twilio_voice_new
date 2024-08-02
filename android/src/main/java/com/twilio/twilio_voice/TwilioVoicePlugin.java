@@ -53,6 +53,8 @@ import io.flutter.plugin.common.PluginRegistry;
 
 import static java.lang.Boolean.getBoolean;
 
+import static tvo.webrtc.ContextUtils.getApplicationContext;
+
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -209,15 +211,24 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         }
     }
 
-    private void startAnswerActivity(CallInvite callInvite, int notificationId) {
-        Log.d(TAG, "START ANSWER JAVA ACTIVITY LINE 212");
-        Intent intent = new Intent(activity, AnswerJavaActivity.class);
-        intent.setAction(Constants.ACTION_INCOMING_CALL);
-        intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
-        intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+//    private void startAnswerActivity(CallInvite callInvite, int notificationId) {
+//        Log.d(TAG, "START ANSWER JAVA ACTIVITY LINE 212");
+//        Intent intent = new Intent(activity, AnswerJavaActivity.class);
+//        intent.setAction(Constants.ACTION_INCOMING_CALL);
+//        intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
+//        intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        activity.startActivity(intent);
+//    }
+
+    private void startAnswerActivity(Call call) {
+        Intent intent = new Intent(getApplicationContext(), BackgroundCallJavaActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.CALL_FROM, call.getFrom());
         activity.startActivity(intent);
+        Log.d(TAG, "Connected");
     }
 
     private void handleIncomingCall(String from, String to) {
@@ -655,6 +666,10 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 savedVolumeControlStream = activity.getVolumeControlStream();
                 activity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                 sendPhoneCallEvents("Connected|" + call.getFrom() + "|" + call.getTo() + "|" + (callOutgoing ? "Outgoing" : "Incoming"));
+                startAnswerActivity(call);
+                Intent intent = new Intent(context, AnswerJavaActivity.class);
+                intent.putExtra("EXIT", true);
+                context.startActivity(intent);
             }
 
             @Override
