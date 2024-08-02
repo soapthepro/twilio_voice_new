@@ -128,8 +128,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         handleIncomingCallIntent(getIntent());
 
         mediaSession = new MediaSessionCompat(this, "MediaSession");
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public void onPlay() {
@@ -187,6 +185,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
                 case Constants.ACTION_INCOMING_CALL_NOTIFICATION:
+                    MediaButtonReceiver.handleIntent(mediaSession, intent);
                     configCallUI();
                     break;
                 case Constants.ACTION_CANCEL_CALL:
@@ -422,7 +421,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Received broadcast for action " + action);
-            MediaButtonReceiver.handleIntent(mediaSession, intent);
             // Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
             if (action != null)
                 switch (action) {
