@@ -219,6 +219,21 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
     }
 
+    public static class MediaButtonIntentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (Intent.ACTION_MEDIA_BUTTON.equals(action)) {
+                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    // Handle the key press here
+                    Log.d("AyushReceiver", "Key Event Received: " + keyEvent.getKeyCode());
+                }
+            }
+        }
+    }
+
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
