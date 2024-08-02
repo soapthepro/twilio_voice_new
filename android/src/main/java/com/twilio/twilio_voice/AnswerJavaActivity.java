@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -128,6 +129,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
         handleIncomingCallIntent(getIntent());
 
         mediaSession = new MediaSessionCompat(this, "MediaSession");
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
+        PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        mediaSession.setMediaButtonReceiver(mbrIntent);
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public void onPlay() {
@@ -158,6 +162,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         });
 
         mediaSession.setActive(true);
+        MediaButtonReceiver.handleIntent(mediaSession, getIntent());
 
         // audioSwitch = new AudioSwitch(getApplicationContext());
         // savedVolumeControlStream = getVolumeControlStream();
@@ -185,7 +190,6 @@ public class AnswerJavaActivity extends AppCompatActivity {
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
                 case Constants.ACTION_INCOMING_CALL_NOTIFICATION:
-                    MediaButtonReceiver.handleIntent(mediaSession, intent);
                     configCallUI();
                     break;
                 case Constants.ACTION_CANCEL_CALL:
