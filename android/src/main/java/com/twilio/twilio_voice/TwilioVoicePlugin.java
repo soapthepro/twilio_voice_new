@@ -111,41 +111,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         register(flutterPluginBinding.getBinaryMessenger(), this, flutterPluginBinding.getApplicationContext());
-        mediaSession = new MediaSessionCompat(context, "MediaSession");
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-        PendingIntent mbrIntent = PendingIntent.getBroadcast(context, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        mediaSession.setMediaButtonReceiver(mbrIntent);
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPlay() {
-                super.onPlay();
-                // Handle play
-            }
-
-            @Override
-            public void onPause() {
-                super.onPause();
-                // Handle pause
-            }
-
-            @Override
-            public boolean onMediaButtonEvent(Intent intent) {
-                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (keyEvent.getKeyCode()) {
-                        case KeyEvent.KEYCODE_HEADSETHOOK:
-                        case KeyEvent.KEYCODE_MEDIA_PLAY:
-                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                            Log.d(TAG, "Inside Media Listner");
-                            answer();
-                            return true;
-                    }
-                }
-                return super.onMediaButtonEvent(intent);
-            }
-        });
-
-        mediaSession.setActive(true);
     }
 
     private static void register(BinaryMessenger messenger, TwilioVoicePlugin plugin, Context context) {
@@ -184,6 +149,41 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
+                    mediaSession = new MediaSessionCompat(context, "MediaSession");
+                    mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
+                    PendingIntent mbrIntent = PendingIntent.getBroadcast(context, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                    mediaSession.setMediaButtonReceiver(mbrIntent);
+                    mediaSession.setCallback(new MediaSessionCompat.Callback() {
+                        @Override
+                        public void onPlay() {
+                            super.onPlay();
+                            // Handle play
+                        }
+
+                        @Override
+                        public void onPause() {
+                            super.onPause();
+                            // Handle pause
+                        }
+
+                        @Override
+                        public boolean onMediaButtonEvent(Intent intent) {
+                            KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                            if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                                switch (keyEvent.getKeyCode()) {
+                                    case KeyEvent.KEYCODE_HEADSETHOOK:
+                                    case KeyEvent.KEYCODE_MEDIA_PLAY:
+                                    case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                                        Log.d(TAG, "Inside Media Listner");
+                                        answer();
+                                        return true;
+                                }
+                            }
+                            return super.onMediaButtonEvent(intent);
+                        }
+                    });
+
+                    mediaSession.setActive(true);
                     handleIncomingCall(activeCallInvite.getFrom(), activeCallInvite.getTo());
                     Log.d(TAG, "SDK >= 29 and !isAppVisible(): " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
                     if (Build.VERSION.SDK_INT >= 29 && !isAppVisible()) {
