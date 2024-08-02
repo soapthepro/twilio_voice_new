@@ -427,6 +427,8 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     @Override
     public void onMediaButtonSingleClick() {
         Log.d(TAG, "THIS IS A SINGLE CLICK");
+        switchToBluetoothMicrophone();
+        checkPermissionsAndAccept();
     }
 
     @Override

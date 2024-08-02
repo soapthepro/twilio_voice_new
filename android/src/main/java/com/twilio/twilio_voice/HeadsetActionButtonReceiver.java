@@ -31,6 +31,7 @@ public class HeadsetActionButtonReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        Log.d("BUTTONHEADSET", "RECEIVED");
         Toast.makeText(context, "RECEIVED: " + action, Toast.LENGTH_SHORT).show();
         delegate.onMediaButtonSingleClick();
         if (intent == null || delegate == null || !Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction()))
