@@ -107,7 +107,7 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/btnOutput"
+                    android:id="@+id/menu_audio_device"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/bg_full_rounded"
@@ -115,7 +115,7 @@
                     android:scaleType="centerInside"
                     android:tint="@color/white"
                     android:tintMode="src_in"
-                    app:srcCompat="@drawable/ic_volume_2" />
+                    app:srcCompat="@drawable/ic_phonelink_ring_white_24dp" />
             </LinearLayout>
 
             <LinearLayout

@@ -60,6 +60,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     private TextView tvUserName;
     private TextView tvCallStatus;
     private ImageView btnMute;
+    private ImageView menu_audio_device;
     private ImageView btnSalescaptain;
     private ImageView btnOutput;
     private ImageView btnHangUp;
@@ -77,9 +78,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         tvCallStatus = (TextView) findViewById(R.id.tvCallStatus);
         btnMute = (ImageView) findViewById(R.id.btnMute);
         btnSalescaptain = (ImageView) findViewById(R.id.btnSalescaptain);
-        btnOutput = (ImageView) findViewById(R.id.btnOutput);
+//        btnOutput = (ImageView) findViewById(R.id.btnOutput);
         btnHangUp = (ImageView) findViewById(R.id.btnHangUp);
-
+        menu_audio_device = (ImageView) findViewById(R.id.menu_audio_device);
         KeyguardManager kgm = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         Boolean isKeyguardUp = kgm.inKeyguardRestrictedInputMode();
 
@@ -193,6 +194,14 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     private void configCallUI() {
         Log.d(TAG, "configCallUI");
 
+        menu_audio_device.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onCLick");
+                showAudioDevices();
+            }
+        });
+
         btnMute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,15 +229,15 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             }
         });
 
-        btnOutput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-                boolean isOnSpeaker = !audioManager.isSpeakerphoneOn();
-                audioManager.setSpeakerphoneOn(isOnSpeaker);
-                applyFabState(btnOutput, isOnSpeaker);
-            }
-        });
+//        btnOutput.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+//                boolean isOnSpeaker = !audioManager.isSpeakerphoneOn();
+//                audioManager.setSpeakerphoneOn(isOnSpeaker);
+//                applyFabState(btnOutput, isOnSpeaker);
+//            }
+//        });
 
     }
 

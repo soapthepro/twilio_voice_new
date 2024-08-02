@@ -193,6 +193,14 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                 case Constants.ACTION_INCOMING_CALL:
                 case Constants.ACTION_INCOMING_CALL_NOTIFICATION:
                     configCallUI();
+                    AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+                    if (audioManager.isBluetoothScoAvailableOffCall()) {
+                        Log.d(TAG, "SCO AVAILABLE");
+                        Toast.makeText(getApplicationContext(), "SCO AVAILABLE", Toast.LENGTH_SHORT).show();
+                        startBluetoothScoIfNeeded(audioManager);
+                    } else {
+                    }
                     break;
                 case Constants.ACTION_CANCEL_CALL:
                     newCancelCallClickListener();
@@ -205,12 +213,16 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     Log.d(TAG, "ending call" + activeCall != null ? "True" : "False");
                     if (activeCall == null) {
                         Log.d(TAG, "No active call to end. Returning");
-                        finishAndRemoveTask();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            finishAndRemoveTask();
+                        }
                         break;
                     }
                     activeCall.disconnect();
                     initiatedDisconnect = true;
-                    finishAndRemoveTask();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        finishAndRemoveTask();
+                    }
                     break;
                 case Constants.ACTION_TOGGLE_MUTE:
                     boolean muted = activeCall.isMuted();
@@ -219,6 +231,15 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                 default: {
                 }
             }
+        }
+    }
+
+    void startBluetoothScoIfNeeded(AudioManager audioManager) {
+        // You can add specific conditions based on device or OS version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !audioManager.isBluetoothScoOn()) {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            audioManager.startBluetoothSco();
+            audioManager.setBluetoothScoOn(true);
         }
     }
 
@@ -321,7 +342,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
-        switchToBluetoothMicrophone();
         Intent acceptIntent = new Intent(this, IncomingCallNotificationService.class);
         acceptIntent.setAction(Constants.ACTION_ACCEPT);
         acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite);
@@ -427,7 +447,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     @Override
     public void onMediaButtonSingleClick() {
         Log.d(TAG, "THIS IS A SINGLE CLICK");
-        switchToBluetoothMicrophone();
         checkPermissionsAndAccept();
     }
 
@@ -577,6 +596,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MIC_PERMISSION_REQUEST_CODE) {
             if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Microphone permissions needed. Please allow in your application settings.", Toast.LENGTH_LONG).show();
