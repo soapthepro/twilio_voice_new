@@ -83,7 +83,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     private MenuItem audioDeviceMenuItem;
 
     Call.Listener callListener = callListener();
-    public static MediaSessionCompat mediaSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,44 +128,8 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
         handleIncomingCallIntent(getIntent());
 
-        mediaSession = new MediaSessionCompat(this, "MediaSession");
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-        PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        mediaSession.setMediaButtonReceiver(mbrIntent);
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPlay() {
-                super.onPlay();
-                // Handle play
-            }
-
-            @Override
-            public void onPause() {
-                super.onPause();
-                // Handle pause
-            }
-
-            @Override
-            public boolean onMediaButtonEvent(Intent intent) {
-                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (keyEvent.getKeyCode()) {
-                        case KeyEvent.KEYCODE_HEADSETHOOK:
-                        case KeyEvent.KEYCODE_MEDIA_PLAY:
-                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                            Log.d(TAG, "Inside Media Listner");
-                            checkPermissionsAndAccept();
-                            return true;
-                    }
-                }
-                return super.onMediaButtonEvent(intent);
-            }
-        });
-
-        mediaSession.setActive(true);
-
-        HeadsetActionButtonReceiver.delegate = this;
-        HeadsetActionButtonReceiver.register(this);
+//        HeadsetActionButtonReceiver.delegate = this;
+//        HeadsetActionButtonReceiver.register(this);
 
         // audioSwitch = new AudioSwitch(getApplicationContext());
         // savedVolumeControlStream = getVolumeControlStream();
@@ -190,6 +153,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             activeCallInvite = intent.getParcelableExtra(Constants.INCOMING_CALL_INVITE);
             activeCallNotificationId = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
             tvCallStatus.setText(R.string.incoming_call_title);
+            Log.d(TAG, "NOTIFICATION ID : " + activeCallNotificationId);
             Log.d(TAG, action);
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
@@ -249,9 +213,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent-");
-        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-            MediaButtonReceiver.handleIntent(mediaSession, intent);
-        }
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, intent.getAction());
             switch (intent.getAction()) {

@@ -15,7 +15,9 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -30,6 +32,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.media.session.MediaButtonReceiver;
 
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.CancelledCallInvite;
@@ -51,6 +54,9 @@ public class IncomingCallNotificationService extends Service {
     private static Intent privIntent;
     private static PendingIntent privIntentNotif;
     private static int answeredNotificationId;
+
+    public static MediaSessionCompat mediaSession;
+
 
     public IncomingCallNotificationService() {
         this.volumeChangeListener = new VolumeChangeListener();
@@ -148,6 +154,45 @@ public class IncomingCallNotificationService extends Service {
                 default:
                     break;
             }
+        }
+        mediaSession = new MediaSessionCompat(this, "MediaSession");
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
+        PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        mediaSession.setMediaButtonReceiver(mbrIntent);
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onPlay() {
+                super.onPlay();
+                // Handle play
+            }
+
+            @Override
+            public void onPause() {
+                super.onPause();
+                // Handle pause
+            }
+
+            @Override
+            public boolean onMediaButtonEvent(Intent intent) {
+                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyEvent.getKeyCode()) {
+                        case KeyEvent.KEYCODE_HEADSETHOOK:
+                        case KeyEvent.KEYCODE_MEDIA_PLAY:
+                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                            Log.d(TAG, "Inside Media Listner");
+                            Log.d(TAG, "NOTIFICATION ID HERE: " + privNotificationId);
+                            accept(privCallInvite, privNotificationId, 0);
+                            return true;
+                    }
+                }
+                return super.onMediaButtonEvent(intent);
+            }
+        });
+
+        mediaSession.setActive(true);
+        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+            MediaButtonReceiver.handleIntent(mediaSession, intent);
         }
         return START_NOT_STICKY;
     }
@@ -425,6 +470,7 @@ public class IncomingCallNotificationService extends Service {
 
     private void handleIncomingCall(CallInvite callInvite, int notificationId) {
         Log.i(TAG, "handle incoming call");
+        Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationId);
         SoundPoolManager.getInstance(this).playRinging();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setCallInProgressNotification(callInvite, notificationId);
@@ -452,6 +498,7 @@ public class IncomingCallNotificationService extends Service {
      */
     private void sendCallInviteToActivity(CallInvite callInvite, int notificationId) {
 
+        Log.d(TAG, "NOTIFICATION ID 455 LINE: " + notificationId);
 
         Log.i(TAG, "sendCallInviteToActivity.");
 
@@ -470,6 +517,7 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void startAnswerActivity(CallInvite callInvite, int notificationId) {
+        Log.d(TAG, "NOTIFICATION ID 473 LINE: " + notificationId);
         Intent intent = new Intent(this, AnswerJavaActivity.class);
         intent.setAction(Constants.ACTION_INCOMING_CALL);
         intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
