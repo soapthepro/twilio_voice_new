@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -429,6 +430,10 @@ public class AnswerJavaActivity extends AppCompatActivity {
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
             IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
+            filterUpdate.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
+            filterUpdate.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+            filterUpdate.addAction(Intent.ACTION_MEDIA_BUTTON);
+            filterUpdate.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
             registerReceiver(voiceBroadcastReceiver, filterUpdate);
             isReceiverRegistered = true;
         }
