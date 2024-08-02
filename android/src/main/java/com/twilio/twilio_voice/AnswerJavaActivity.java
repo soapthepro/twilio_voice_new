@@ -15,6 +15,7 @@ import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -80,6 +81,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private MenuItem audioDeviceMenuItem;
 
     Call.Listener callListener = callListener();
+    private MediaSessionCompat mediaSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,41 @@ public class AnswerJavaActivity extends AppCompatActivity {
         }
 
         handleIncomingCallIntent(getIntent());
+
+        mediaSession = new MediaSessionCompat(this, "MediaSession");
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onPlay() {
+                super.onPlay();
+                // Handle play
+            }
+
+            @Override
+            public void onPause() {
+                super.onPause();
+                // Handle pause
+            }
+
+            @Override
+            public boolean onMediaButtonEvent(Intent intent) {
+                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyEvent.getKeyCode()) {
+                        case KeyEvent.KEYCODE_HEADSETHOOK:
+                        case KeyEvent.KEYCODE_MEDIA_PLAY:
+                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                            Log.d(TAG, "Inside Media Listner");
+                            return true;
+                    }
+                }
+                return super.onMediaButtonEvent(intent);
+            }
+        });
+
+        mediaSession.setActive(true);
+
         // audioSwitch = new AudioSwitch(getApplicationContext());
         // savedVolumeControlStream = getVolumeControlStream();
         // setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
@@ -603,6 +640,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // audioSwitch.stop();
         setVolumeControlStream(savedVolumeControlStream);
         unregisterReceiver();
+        mediaSession.release();
         if (wakeLock != null) {
             wakeLock.release();
         }
