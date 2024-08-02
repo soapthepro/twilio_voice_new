@@ -89,7 +89,10 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         super.onCreate(savedInstanceState);
         Log.d(TAG, "CREATED ANSWER JAVA ACTIVITY");
         setContentView(R.layout.activity_answer);
-
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            finish();
+            return;
+        }
         tvUserName = (TextView) findViewById(R.id.tvUserName);
         tvCallStatus = (TextView) findViewById(R.id.tvCallStatus);
         btnAnswer = (ImageView) findViewById(R.id.btnAnswer);
@@ -213,6 +216,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent-");
+        if (intent.getBooleanExtra("EXIT", false)) {
+            finish();
+        }
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, intent.getAction());
             switch (intent.getAction()) {
