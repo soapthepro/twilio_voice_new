@@ -301,7 +301,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
                 // Set the Bluetooth microphone as the default audio input device
                 AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 if (audioManager != null) {
-                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                    audioManager.setMode(AudioManager.MODE_NORMAL);
                     audioManager.startBluetoothSco();
                     audioManager.setBluetoothScoOn(true);
                 }
