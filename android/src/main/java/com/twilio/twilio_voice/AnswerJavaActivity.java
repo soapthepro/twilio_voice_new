@@ -128,40 +128,40 @@ public class AnswerJavaActivity extends AppCompatActivity {
 
         handleIncomingCallIntent(getIntent());
 
-        mediaSession = new MediaSessionCompat(this, "MediaSession");
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-        PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        mediaSession.setMediaButtonReceiver(mbrIntent);
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPlay() {
-                super.onPlay();
-                // Handle play
-            }
+//        mediaSession = new MediaSessionCompat(this, "MediaSession");
+//        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
+//        PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+//        mediaSession.setMediaButtonReceiver(mbrIntent);
+//        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+//            @Override
+//            public void onPlay() {
+//                super.onPlay();
+//                // Handle play
+//            }
+//
+//            @Override
+//            public void onPause() {
+//                super.onPause();
+//                // Handle pause
+//            }
+//
+//            @Override
+//            public boolean onMediaButtonEvent(Intent intent) {
+//                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+//                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+//                    switch (keyEvent.getKeyCode()) {
+//                        case KeyEvent.KEYCODE_HEADSETHOOK:
+//                        case KeyEvent.KEYCODE_MEDIA_PLAY:
+//                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
+//                            Log.d(TAG, "Inside Media Listner");
+//                            return true;
+//                    }
+//                }
+//                return super.onMediaButtonEvent(intent);
+//            }
+//        });
 
-            @Override
-            public void onPause() {
-                super.onPause();
-                // Handle pause
-            }
-
-            @Override
-            public boolean onMediaButtonEvent(Intent intent) {
-                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (keyEvent.getKeyCode()) {
-                        case KeyEvent.KEYCODE_HEADSETHOOK:
-                        case KeyEvent.KEYCODE_MEDIA_PLAY:
-                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                            Log.d(TAG, "Inside Media Listner");
-                            return true;
-                    }
-                }
-                return super.onMediaButtonEvent(intent);
-            }
-        });
-
-        mediaSession.setActive(true);
+//        mediaSession.setActive(true);
 
         // audioSwitch = new AudioSwitch(getApplicationContext());
         // savedVolumeControlStream = getVolumeControlStream();
@@ -238,9 +238,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent-");
-        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-            MediaButtonReceiver.handleIntent(mediaSession, intent);
-        }
+//        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+//            MediaButtonReceiver.handleIntent(mediaSession, intent);
+//        }
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, intent.getAction());
             switch (intent.getAction()) {
@@ -661,7 +661,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
         // audioSwitch.stop();
         setVolumeControlStream(savedVolumeControlStream);
         unregisterReceiver();
-        mediaSession.release();
+//        mediaSession.release();
         if (wakeLock != null) {
             wakeLock.release();
         }
