@@ -267,6 +267,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private void unregisterReceiver() {
         if (isReceiverRegistered) {
+            Log.d(TAG, "RUNREGISTERING LINE 270");
             LocalBroadcastManager.getInstance(activity).unregisterReceiver(voiceBroadcastReceiver);
             isReceiverRegistered = false;
         }
