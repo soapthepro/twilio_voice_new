@@ -26,7 +26,7 @@
         android:name=".IncomingCallNotificationActivity" android:turnScreenOn="true" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/Theme.AppCompat">
     </activity>
     <service android:enabled="true" android:name=".IncomingCallNotificationService"
-        android:exported="true">
+        android:exported="false">
       <intent-filter>
         <action android:name="ACTION_ACCEPT" />
         <action android:name="ACTION_REJECT" />
