@@ -335,7 +335,7 @@ public class IncomingCallNotificationService extends Service {
             if (openAppCallIntent != null) {
                 startActivity(openAppCallIntent);
             } 
-             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+//             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
