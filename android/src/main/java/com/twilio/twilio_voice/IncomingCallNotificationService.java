@@ -182,7 +182,7 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
                             Log.d(TAG, "NOTIFICATION ID HERE: " + privNotificationId);
-                            accept(privCallInvite, privNotificationId, 0);
+                            accept(privCallInvite, privNotificationId, 10);
                             return true;
                     }
                 }
@@ -380,7 +380,7 @@ public class IncomingCallNotificationService extends Service {
             if (openAppCallIntent != null) {
                 startActivity(openAppCallIntent);
             } 
-//             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
