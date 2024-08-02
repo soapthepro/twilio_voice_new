@@ -18,7 +18,6 @@ import java.util.Map;
 import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.os.Build;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -40,7 +38,6 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.media.session.MediaButtonReceiver;
 
 import org.json.JSONObject;
 
@@ -56,8 +53,6 @@ import io.flutter.plugin.common.PluginRegistry;
 
 import static java.lang.Boolean.getBoolean;
 
-import static tvo.webrtc.ContextUtils.getApplicationContext;
-
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -66,7 +61,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothHeadset;
-import android.view.KeyEvent;
 
 public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCallHandler, EventChannel.StreamHandler,
         ActivityAware, PluginRegistry.NewIntentListener {
@@ -106,11 +100,10 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private SharedPreferences pSharedPref;
 
-    public static MediaSessionCompat mediaSession;
-
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         register(flutterPluginBinding.getBinaryMessenger(), this, flutterPluginBinding.getApplicationContext());
+        /*hasStarted = true;*/
     }
 
     private static void register(BinaryMessenger messenger, TwilioVoicePlugin plugin, Context context) {
@@ -134,6 +127,8 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         plugin.audioManager.setSpeakerphoneOn(false);
 
         plugin.pSharedPref = context.getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
+
+
     }
 
 
@@ -149,41 +144,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
-                    mediaSession = new MediaSessionCompat(context, "MediaSession");
-                    mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-                    PendingIntent mbrIntent = PendingIntent.getBroadcast(context, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-                    mediaSession.setMediaButtonReceiver(mbrIntent);
-                    mediaSession.setCallback(new MediaSessionCompat.Callback() {
-                        @Override
-                        public void onPlay() {
-                            super.onPlay();
-                            // Handle play
-                        }
-
-                        @Override
-                        public void onPause() {
-                            super.onPause();
-                            // Handle pause
-                        }
-
-                        @Override
-                        public boolean onMediaButtonEvent(Intent intent) {
-                            KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-                            if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                                switch (keyEvent.getKeyCode()) {
-                                    case KeyEvent.KEYCODE_HEADSETHOOK:
-                                    case KeyEvent.KEYCODE_MEDIA_PLAY:
-                                    case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                                        Log.d(TAG, "Inside Media Listner");
-                                        answer();
-                                        return true;
-                                }
-                            }
-                            return super.onMediaButtonEvent(intent);
-                        }
-                    });
-
-                    mediaSession.setActive(true);
                     handleIncomingCall(activeCallInvite.getFrom(), activeCallInvite.getTo());
                     Log.d(TAG, "SDK >= 29 and !isAppVisible(): " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
                     if (Build.VERSION.SDK_INT >= 29 && !isAppVisible()) {
@@ -212,7 +172,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             activity.startActivity(answerIntent);
                         }else{
-                             answer();
+                            // answer();
                         }
 
                     break;
@@ -249,30 +209,18 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         }
     }
 
-//    private void startAnswerActivity(CallInvite callInvite, int notificationId) {
-//        Log.d(TAG, "START ANSWER JAVA ACTIVITY LINE 212");
-//        Intent intent = new Intent(activity, AnswerJavaActivity.class);
-//        intent.setAction(Constants.ACTION_INCOMING_CALL);
-//        intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
-//        intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        activity.startActivity(intent);
-//    }
-
-    private void startAnswerActivity(Call call) {
-        Intent intent = new Intent(getApplicationContext(), BackgroundCallJavaActivity.class);
+    private void startAnswerActivity(CallInvite callInvite, int notificationId) {
+        Log.d(TAG, "START ANSWER JAVA ACTIVITY LINE 212");
+        Intent intent = new Intent(activity, AnswerJavaActivity.class);
+        intent.setAction(Constants.ACTION_INCOMING_CALL);
+        intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
+        intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        SoundPoolManager.getInstance(context).stopRinging();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.CALL_FROM, call.getFrom());
         activity.startActivity(intent);
-        backgroundCallUI = true;
-        Log.d(TAG, "Connected");
     }
 
     private void handleIncomingCall(String from, String to) {
-        SoundPoolManager.getInstance(context).playRinging();
         sendPhoneCallEvents("Ringing|" + from + "|" + to + "|" + "Incoming" + formatCustomParams(activeCallInvite.getCustomParameters()));
     }
 
@@ -612,7 +560,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
      */
     private void answer() {
         Log.d(TAG, "Answering call in answer function 545 line TwilioVoicePlugin");
-        SoundPoolManager.getInstance(context).stopRinging();
         activeCallInvite.accept(this.activity, callListener);
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
@@ -708,11 +655,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 savedVolumeControlStream = activity.getVolumeControlStream();
                 activity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                 sendPhoneCallEvents("Connected|" + call.getFrom() + "|" + call.getTo() + "|" + (callOutgoing ? "Outgoing" : "Incoming"));
-                startAnswerActivity(call);
-                Intent intent = new Intent(context, AnswerJavaActivity.class);
-                intent.putExtra("EXIT", true);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
             }
 
             @Override
@@ -765,6 +707,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         backgroundCallUI = false;
         callOutgoing = false;
         activeCall = null;
+
     }
 
     private void hold() {

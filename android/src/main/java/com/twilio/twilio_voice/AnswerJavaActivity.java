@@ -89,10 +89,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         super.onCreate(savedInstanceState);
         Log.d(TAG, "CREATED ANSWER JAVA ACTIVITY");
         setContentView(R.layout.activity_answer);
-        if (getIntent().getBooleanExtra("EXIT", false)) {
-            finish();
-            return;
-        }
+
         tvUserName = (TextView) findViewById(R.id.tvUserName);
         tvCallStatus = (TextView) findViewById(R.id.tvCallStatus);
         btnAnswer = (ImageView) findViewById(R.id.btnAnswer);
@@ -216,9 +213,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent-");
-        if (intent.getBooleanExtra("EXIT", false)) {
-            finish();
-        }
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, intent.getAction());
             switch (intent.getAction()) {
@@ -325,9 +319,8 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         }
         else {
             Log.d(TAG, "Answering call in AnswerjavaActivity 244 with id: " + activeCallNotificationId);
-//            notificationManager.cancel(activeCallNotificationId);
-//            activeCallInvite.accept(this, callListener);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(acceptIntent);
+            notificationManager.cancel(activeCallNotificationId);
+            activeCallInvite.accept(this, callListener);
         }
     }
 
@@ -341,7 +334,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CALL_FROM, call.getFrom());
-//        startActivity(intent);
+        startActivity(intent);
         Log.d(TAG, "Connected");
     }
 
@@ -354,7 +347,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Constants.ACTION_CANCEL_CALL);
 
-//            this.startActivity(intent);
+            this.startActivity(intent);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAndRemoveTask();
             }
@@ -507,7 +500,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onPause() {
         super.onPause();
 //        unregisterReceiver();
-//        HeadsetActionButtonReceiver.unregister(this);
+        HeadsetActionButtonReceiver.unregister(this);
     }
 
     private void newCancelCallClickListener() {

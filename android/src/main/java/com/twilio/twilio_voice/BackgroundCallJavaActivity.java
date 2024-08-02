@@ -326,7 +326,6 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 
     private void callCanceled() {
         Log.d(TAG, "Call is cancelled");
-        stopService(new Intent(getApplicationContext(), IncomingCallNotificationService.class));
         finish();
     }
 
