@@ -508,8 +508,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onResume() {
         super.onResume();
         registerReceiver();
-        HeadsetActionButtonReceiver.delegate = this;
-        HeadsetActionButtonReceiver.register(this);
         // startAudioSwitch();
     }
 

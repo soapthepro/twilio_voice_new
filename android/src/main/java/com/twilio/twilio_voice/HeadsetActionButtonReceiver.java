@@ -58,7 +58,8 @@ public class HeadsetActionButtonReceiver extends BroadcastReceiver {
     }
 
     public static void register(final Context context) {
-        Toast.makeText(context, "REGISTERED", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "REGISTERED", Toast.LENGTH_SHORT).show();
+        Log.d("BUTTONHEADSET", "REGISTERED");
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mRemoteControlResponder = new ComponentName(context, HeadsetActionButtonReceiver.class);
         mAudioManager.registerMediaButtonEventReceiver(mRemoteControlResponder);
