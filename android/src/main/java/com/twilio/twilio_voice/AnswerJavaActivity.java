@@ -58,7 +58,7 @@ import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import androidx.media.session.MediaButtonReceiver;
 
-public class AnswerJavaActivity extends AppCompatActivity {
+public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetActionButtonReceiver.Delegate {
 
     private static String TAG = "AnswerActivity";
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
@@ -162,6 +162,9 @@ public class AnswerJavaActivity extends AppCompatActivity {
 //        });
 
 //        mediaSession.setActive(true);
+
+        HeadsetActionButtonReceiver.delegate = this;
+        HeadsetActionButtonReceiver.register(this);
 
         // audioSwitch = new AudioSwitch(getApplicationContext());
         // savedVolumeControlStream = getVolumeControlStream();
@@ -421,6 +424,16 @@ public class AnswerJavaActivity extends AppCompatActivity {
         };
     }
 
+    @Override
+    public void onMediaButtonSingleClick() {
+        Log.d(TAG, "THIS IS A SINGLE CLICK");
+    }
+
+    @Override
+    public void onMediaButtonDoubleClick() {
+        Log.d(TAG, "THIS IS A DOUBLE CLICK");
+    }
+
     private class VoiceBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -495,15 +508,18 @@ public class AnswerJavaActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver();
+        HeadsetActionButtonReceiver.delegate = this;
+        HeadsetActionButtonReceiver.register(this);
         // startAudioSwitch();
     }
 
     // We still want to listen messages from backgroundCallJavaActivity
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
+    @Override
+    protected void onPause() {
+        super.onPause();
 //        unregisterReceiver();
-//    }
+        HeadsetActionButtonReceiver.unregister(this);
+    }
 
     private void newCancelCallClickListener() {
         finish();

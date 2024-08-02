@@ -21,8 +21,8 @@
 <!--        <action android:name="android.intent.action.MEDIA_BUTTON" />-->
 <!--      </intent-filter>-->
 <!--    </receiver>-->
-    <receiver android:name=".MediaButtonsReceiver" android:exported="true">
-      <intent-filter>
+    <receiver android:name=".HeadsetActionButtonReceiver" android:exported="true">
+      <intent-filter android:priority="10000">
         <action android:name="android.intent.action.MEDIA_BUTTON" />
       </intent-filter>
     </receiver>
