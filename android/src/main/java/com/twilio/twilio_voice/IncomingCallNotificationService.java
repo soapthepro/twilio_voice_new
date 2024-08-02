@@ -55,7 +55,6 @@ public class IncomingCallNotificationService extends Service {
     private static PendingIntent privIntentNotif;
     private static int answeredNotificationId;
 
-    public static MediaSessionCompat mediaSession;
 
 
     public IncomingCallNotificationService() {
@@ -155,45 +154,7 @@ public class IncomingCallNotificationService extends Service {
                     break;
             }
         }
-        mediaSession = new MediaSessionCompat(this, "MediaSession");
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-        PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        mediaSession.setMediaButtonReceiver(mbrIntent);
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPlay() {
-                super.onPlay();
-                // Handle play
-            }
 
-            @Override
-            public void onPause() {
-                super.onPause();
-                // Handle pause
-            }
-
-            @Override
-            public boolean onMediaButtonEvent(Intent intent) {
-                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (keyEvent.getKeyCode()) {
-                        case KeyEvent.KEYCODE_HEADSETHOOK:
-                        case KeyEvent.KEYCODE_MEDIA_PLAY:
-                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                            Log.d(TAG, "Inside Media Listner");
-                            Log.d(TAG, "NOTIFICATION ID HERE: " + privNotificationId);
-                            accept(privCallInvite, privNotificationId, 10);
-                            return true;
-                    }
-                }
-                return super.onMediaButtonEvent(intent);
-            }
-        });
-
-        mediaSession.setActive(true);
-        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-            MediaButtonReceiver.handleIntent(mediaSession, intent);
-        }
         return START_NOT_STICKY;
     }
 
