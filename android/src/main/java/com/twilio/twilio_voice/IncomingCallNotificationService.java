@@ -491,6 +491,6 @@ public class IncomingCallNotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "Destroying IncomingCallNotificationService");
-        unregisterReceiver(volumeChangeListener);
+//        unregisterReceiver(volumeChangeListener);
     }
 }
