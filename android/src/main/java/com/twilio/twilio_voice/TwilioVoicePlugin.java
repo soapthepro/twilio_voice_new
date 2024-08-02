@@ -669,6 +669,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 startAnswerActivity(call);
                 Intent intent = new Intent(context, AnswerJavaActivity.class);
                 intent.putExtra("EXIT", true);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
 
