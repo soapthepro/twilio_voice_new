@@ -82,7 +82,7 @@ public class AnswerJavaActivity extends AppCompatActivity {
     private MenuItem audioDeviceMenuItem;
 
     Call.Listener callListener = callListener();
-    private MediaSessionCompat mediaSession;
+    public static MediaSessionCompat mediaSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
