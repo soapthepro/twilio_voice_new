@@ -180,6 +180,7 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_HEADSETHOOK:
                         case KeyEvent.KEYCODE_MEDIA_PLAY:
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                            Toast.makeText(context, "RECEIVED HEADSET CLICK", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "Inside Media Listner");
                             Log.d(TAG, "NOTIFICATION ID HERE: " + privNotificationId);
                             accept(privCallInvite, privNotificationId, 10);
