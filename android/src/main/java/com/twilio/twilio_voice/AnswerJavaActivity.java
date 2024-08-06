@@ -219,6 +219,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                 case Constants.ACTION_CANCEL_CALL:
                     newCancelCallClickListener();
                     break;
+                case Constants.ACTION_ACCEPT:
+                    checkPermissionsAndAccept();
+                    break;
                 default: {
                 }
             }
