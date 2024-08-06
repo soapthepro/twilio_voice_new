@@ -171,8 +171,8 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             activity.startActivity(answerIntent);
-                        }else{
-                            // answer();
+                        }else if (acceptOrigin == 10){
+                             answer();
                         }
 
                     break;

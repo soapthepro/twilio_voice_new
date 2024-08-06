@@ -333,7 +333,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        audioSwitch.stop();
+        audioSwitch.deactivate();
         setVolumeControlStream(savedVolumeControlStream);
         deactivateSensor();
     }
