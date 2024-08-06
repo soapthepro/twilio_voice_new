@@ -437,22 +437,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                         Log.d(TAG, "received intent to answerActivity");
                         handleIncomingCallIntent(intent);
                         break;
-                    case "android.media.VOLUME_CHANGED_ACTION":
-                        // BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                        // if (bluetoothAdapter != null) {
-                        //     int connectionState = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.STATE_CONNECTED);
-                        //     if (connectionState == BluetoothProfile.STATE_CONNECTED) {
-                        //         Toast.makeText(context, "INSIDE BLUETOOTH CHECK, ANSWERING ", Toast.LENGTH_SHORT).show();
-                        //         checkPermissionsAndAccept();
-                        //         switchToBluetoothMicrophone();
-                        //     }
-                        // }
-//                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//                        if ((bluetoothAdapter != null && BluetoothProfile.STATE_CONNECTED == bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET))) {
-////                            checkPermissionsAndAccept();
-//                            switchToBluetoothMicrophone();
-//                        }
-                        break;
                     default:
                         Log.d(TAG, "Received broadcast for other action " + action);
                         break;
@@ -470,11 +454,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             intentFilter.addAction(Constants.ACTION_END_CALL);
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
-            IntentFilter filterUpdate = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
-            filterUpdate.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
-            filterUpdate.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
-            filterUpdate.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-            registerReceiver(voiceBroadcastReceiver, filterUpdate);
             isReceiverRegistered = true;
         }
     }
@@ -500,7 +479,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     protected void onPause() {
         super.onPause();
 //        unregisterReceiver();
-        HeadsetActionButtonReceiver.unregister(this);
     }
 
     private void newCancelCallClickListener() {
