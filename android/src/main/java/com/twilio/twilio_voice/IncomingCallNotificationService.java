@@ -182,7 +182,14 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
                             Log.d(TAG, "NOTIFICATION ID HERE: " + privNotificationId);
-                            accept(privCallInvite, privNotificationId, 10);
+//                            accept(privCallInvite, privNotificationId, 10);
+                            if (privIntentNotif != null) {
+                                try {
+                                    privIntentNotif.send();
+                                } catch (PendingIntent.CanceledException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
                             return true;
                     }
                 }
