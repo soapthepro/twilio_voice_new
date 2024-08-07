@@ -154,7 +154,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         if (!wakeLock.isHeld()) {
             Log.d(TAG, "wakeLog acquire");
             wakeLock.acquire();
-        } 
+        }
     }
 
     private void deactivateSensor() {
@@ -170,6 +170,13 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             Log.d(TAG, "Updating AudioDeviceIcon");
             return Unit.INSTANCE;
         });
+        try {
+            Thread.sleep(200);
+        }  catch (InterruptedException e) {
+
+        }
+        List<AudioDevice> devices = audioSwitch.getAvailableAudioDevices();
+        selectPreferredAudioDevice(devices);
     }
 
     @Override
@@ -331,12 +338,12 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                         updateAudioDeviceIcon(selectedAudioDevice);
                         audioSwitch.deactivate();
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                         }
                         audioSwitch.selectDevice(selectedAudioDevice);
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                         }
                         audioSwitch.activate();
