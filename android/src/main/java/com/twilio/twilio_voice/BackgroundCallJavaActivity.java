@@ -165,21 +165,16 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     }
 
     private void startAudioSwitch() {
-//        audioSwitch.start((audioDevices, audioDevice) -> {
-//            Log.d(TAG, "Updating AudioDeviceIcon");
-//            selectPreferredAudioDevice(audioDevices);
-//            return Unit.INSTANCE;
-//        });
+        audioSwitch.start((audioDevices, audioDevice) -> {
+            Log.d(TAG, "Updating AudioDeviceIcon");
+            selectPreferredAudioDevice(audioDevices);
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        audioSwitch.start((audioDevices, selectedAudioDevice) -> {
-            Log.d(TAG, audioDevices.toString());
-            Log.d(TAG, selectedAudioDevice.getName());
-            return Unit.INSTANCE;
-        });
     }
 
     @Override
@@ -190,13 +185,13 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 
 
     private void selectPreferredAudioDevice(List<? extends AudioDevice> audioDevices) {
-//        for (AudioDevice device : audioDevices) {
-//            if (device instanceof AudioDevice.BluetoothHeadset) {
-//                audioSwitch.selectDevice(device);
-//                updateAudioDeviceIcon(device);
-//                return;
-//            }
-//        }
+        for (AudioDevice device : audioDevices) {
+            if (device instanceof AudioDevice.BluetoothHeadset) {
+                audioSwitch.selectDevice(device);
+                updateAudioDeviceIcon(device);
+                return;
+            }
+        }
         // Optionally, select another device if no Bluetooth devices are connected
         audioSwitch.selectDevice(audioSwitch.getAvailableAudioDevices().get(0));
         updateAudioDeviceIcon(audioSwitch.getAvailableAudioDevices().get(0));
@@ -332,7 +327,8 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                         dialog.dismiss();                            
                         AudioDevice selectedAudioDevice = availableAudioDevices.get(index);                            
                         updateAudioDeviceIcon(selectedAudioDevice);                            
-                        audioSwitch.selectDevice(selectedAudioDevice);                        
+                        audioSwitch.selectDevice(selectedAudioDevice);
+                        audioSwitch.activate();
                     }).create().show();    
         }
     }
