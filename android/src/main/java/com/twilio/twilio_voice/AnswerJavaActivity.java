@@ -159,20 +159,19 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                 case Constants.ACTION_INCOMING_CALL:
                 case Constants.ACTION_INCOMING_CALL_NOTIFICATION:
                     configCallUI();
-                    AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-                    if (audioManager.isBluetoothScoAvailableOffCall()) {
-                        Log.d(TAG, "SCO AVAILABLE");
-                        Toast.makeText(getApplicationContext(), "SCO AVAILABLE", Toast.LENGTH_SHORT).show();
-                        startBluetoothScoIfNeeded(audioManager);
-                    } else {
-                    }
                     break;
                 case Constants.ACTION_CANCEL_CALL:
                     newCancelCallClickListener();
                     break;
                 case Constants.ACTION_ACCEPT:
                     Log.d(TAG, "ACTION ACCEPT IN AnswerJavaActivity");
+                    AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+                    if (audioManager.isBluetoothScoAvailableOffCall()) {
+                        Toast.makeText(getApplicationContext(), "SWITCH TO SCO AA BITCH", Toast.LENGTH_SHORT).show();
+                        startBluetoothScoIfNeeded(audioManager);
+                    } else {
+                    }
                     checkPermissionsAndAccept();
                     break;
                 case Constants.ACTION_END_CALL:
@@ -185,6 +184,13 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                         break;
                     }
                     activeCall.disconnect();
+                    AudioManager audioManagerN = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+                    if (audioManagerN.isBluetoothScoAvailableOffCall()) {
+                        Toast.makeText(getApplicationContext(), "STOP SCO AA JAVA BITCH", Toast.LENGTH_SHORT).show();
+                        stopBluetoothScoIfNeeded(audioManagerN);
+                    } else {
+                    }
                     initiatedDisconnect = true;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         finishAndRemoveTask();
@@ -206,6 +212,15 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
             audioManager.startBluetoothSco();
             audioManager.setBluetoothScoOn(true);
+        }
+    }
+
+    void stopBluetoothScoIfNeeded(AudioManager audioManager) {
+        // You can add specific conditions based on device or OS version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && audioManager.isBluetoothScoOn()) {
+            audioManager.setMode(AudioManager.MODE_NORMAL);
+            audioManager.stopBluetoothSco();
+            audioManager.setBluetoothScoOn(false);
         }
     }
 
@@ -241,7 +256,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             } else {
                 caller = preferences.getString(fromId, preferences.getString("defaultCaller", getString(R.string.unknown_caller)));
             }
-            tvUserName.setText(caller);
+            tvUserName.setText(caller.replaceAll("_", " "));
 
             btnAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override

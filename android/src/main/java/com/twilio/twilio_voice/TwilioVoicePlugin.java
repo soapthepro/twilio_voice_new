@@ -61,6 +61,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothHeadset;
+import android.widget.Toast;
 
 public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCallHandler, EventChannel.StreamHandler,
         ActivityAware, PluginRegistry.NewIntentListener {
@@ -172,6 +173,13 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             activity.startActivity(answerIntent);
                         } else if (acceptOrigin == 10){
+                            AudioManager audioManagerN = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+                            if (audioManagerN.isBluetoothScoAvailableOffCall()) {
+                                Toast.makeText(context, "SCO SWITCH TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
+                                startBluetoothScoIfNeeded(audioManagerN);
+                            } else {
+                            }
                              answer();
                         }
 
@@ -235,6 +243,24 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     private void handleReject() {
         sendPhoneCallEvents("LOG|Call Rejected");
 
+    }
+
+    void startBluetoothScoIfNeeded(AudioManager audioManager) {
+        // You can add specific conditions based on device or OS version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !audioManager.isBluetoothScoOn()) {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            audioManager.startBluetoothSco();
+            audioManager.setBluetoothScoOn(true);
+        }
+    }
+
+    void stopBluetoothScoIfNeeded(AudioManager audioManager) {
+        // You can add specific conditions based on device or OS version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && audioManager.isBluetoothScoOn()) {
+            audioManager.setMode(AudioManager.MODE_NORMAL);
+            audioManager.stopBluetoothSco();
+            audioManager.setBluetoothScoOn(false);
+        }
     }
 
     private void handleCancel() {
@@ -687,6 +713,14 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         if (activeCall != null) {
             activeCall.disconnect();
             disconnected();
+            AudioManager audioManagerN = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+            if (audioManagerN.isBluetoothScoAvailableOffCall()) {
+                Log.d(TAG, "SCO AVAILABLE");
+                Toast.makeText(context, "STOP SCO TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
+                stopBluetoothScoIfNeeded(audioManagerN);
+            } else {
+            }
         }
     }
 
