@@ -108,7 +108,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         
-        audioSwitch = new AudioSwitch(getApplicationContext());
+        audioSwitch = new AudioSwitch(getApplicationContext(), true);
         savedVolumeControlStream = getVolumeControlStream();
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
         handleCallIntent(getIntent());
@@ -175,10 +175,10 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        audioSwitch.start((audioDevices, selectedAudioDevice) -> {
-            selectPreferredAudioDevice(audioDevices);
-            return Unit.INSTANCE;
-        });
+//        audioSwitch.start((audioDevices, selectedAudioDevice) -> {
+//            selectPreferredAudioDevice(audioDevices);
+//            return Unit.INSTANCE;
+//        });
     }
 
     @Override
