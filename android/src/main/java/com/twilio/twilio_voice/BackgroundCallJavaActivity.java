@@ -176,6 +176,8 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         audioSwitch.start((audioDevices, selectedAudioDevice) -> {
+            Log.d(TAG, audioDevices.toString());
+            Log.d(TAG, selectedAudioDevice.getName());
             selectPreferredAudioDevice(audioDevices);
             return Unit.INSTANCE;
         });
