@@ -198,7 +198,6 @@ public class IncomingCallNotificationService extends Service {
                 return super.onMediaButtonEvent(intent);
             }
         });
-
         mediaSession.setActive(true);
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
             MediaButtonReceiver.handleIntent(mediaSession, intent);
@@ -533,7 +532,6 @@ public class IncomingCallNotificationService extends Service {
         intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mediaSession.setActive(true);
         startActivity(intent);
     }
 
