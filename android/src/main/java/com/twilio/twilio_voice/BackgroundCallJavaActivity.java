@@ -332,10 +332,14 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                         audioSwitch.deactivate();
                         try {
                             Thread.sleep(2000);
-                            audioSwitch.selectDevice(selectedAudioDevice);
-                            audioSwitch.activate();
                         } catch (InterruptedException e) {
                         }
+                        audioSwitch.selectDevice(selectedAudioDevice);
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                        }
+                        audioSwitch.activate();
                     }).create().show();    
         }
     }

@@ -2,7 +2,6 @@ package com.twilio.twilio_voice;
 
 import androidx.annotation.NonNull;
 
-import com.twilio.audioswitch.AudioSwitch;
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
@@ -51,7 +50,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
-import kotlin.Unit;
 
 import static java.lang.Boolean.getBoolean;
 
@@ -103,8 +101,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private SharedPreferences pSharedPref;
 
-    private AudioSwitch audioSwitch;
-
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         register(flutterPluginBinding.getBinaryMessenger(), this, flutterPluginBinding.getApplicationContext());
@@ -133,11 +129,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
         plugin.pSharedPref = context.getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
 
-        plugin.audioSwitch = new AudioSwitch(context, true);
-        plugin.audioSwitch.start((audioDevices, audioDevice) -> {
-            Log.d(TAG, "Updating AudioDeviceIcon");
-            return Unit.INSTANCE;
-        });
+
     }
 
 
@@ -245,6 +237,25 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         sendPhoneCallEvents("LOG|Call Rejected");
 
     }
+
+    void startBluetoothScoIfNeeded(AudioManager audioManager) {
+        // You can add specific conditions based on device or OS version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !audioManager.isBluetoothScoOn()) {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            audioManager.startBluetoothSco();
+            audioManager.setBluetoothScoOn(true);
+        }
+    }
+
+    void stopBluetoothScoIfNeeded(AudioManager audioManager) {
+        // You can add specific conditions based on device or OS version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && audioManager.isBluetoothScoOn()) {
+            audioManager.setMode(AudioManager.MODE_NORMAL);
+            audioManager.stopBluetoothSco();
+            audioManager.setBluetoothScoOn(false);
+        }
+    }
+
     private void handleCancel() {
         callOutgoing = false;
         sendPhoneCallEvents("Missed Call");
@@ -572,7 +583,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
         notificationManager.cancel(activeCallNotificationId);
-        audioSwitch.activate();
 //        Intent intent = new Intent(activity, BackgroundCallJavaActivity.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -667,8 +677,8 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 /*
                  * Enable changing the volume using the up/down keys during a conversation
                  */
-//                savedVolumeControlStream = activity.getVolumeControlStream();
-//                activity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+                savedVolumeControlStream = activity.getVolumeControlStream();
+                activity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                 sendPhoneCallEvents("Connected|" + call.getFrom() + "|" + call.getTo() + "|" + (callOutgoing ? "Outgoing" : "Incoming"));
             }
 
@@ -686,7 +696,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             public void onDisconnected(Call call, CallException error) {
                 // setAudioFocus(false);
                 Log.d(TAG, "Disconnected");
-                audioSwitch.deactivate();
                 if (error != null) {
                     String message = String.format("Call Error: %d, %s", error.getErrorCode(), error.getMessage());
                     Log.e(TAG, message);
