@@ -5,7 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
-        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 
     dependencies {
@@ -17,7 +17,7 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
-        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -43,7 +43,8 @@ android {
 
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
-    implementation 'com.twilio:audioswitch:1.1.8'
+//    implementation 'com.twilio:audioswitch:1.1.8'
+    implementation 'com.github.davidliu:audioswitch:dl~jitpack-SNAPSHOT'
     implementation("com.twilio:voice-android:6.6.1")
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.firebase:firebase-messaging'
