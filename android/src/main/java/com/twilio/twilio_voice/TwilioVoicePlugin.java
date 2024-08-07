@@ -173,12 +173,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             answerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             activity.startActivity(answerIntent);
                         } else if (acceptOrigin == 10){
-                            AudioManager audioManagerN = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-                            if (audioManagerN.isBluetoothScoAvailableOffCall()) {
-                                Toast.makeText(context, "SCO SWITCH TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
-//                                startBluetoothScoIfNeeded(audioManagerN);
-                            }
                              answer();
                         }
 
@@ -589,6 +583,12 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
         notificationManager.cancel(activeCallNotificationId);
+        Intent intent = new Intent(activity, BackgroundCallJavaActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.CALL_FROM, activeCall.getFrom());
+        activity.startActivity(intent);
+        backgroundCallUI = true;
     }
 
     private void sendPhoneCallEvents(String description) {
@@ -712,14 +712,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         if (activeCall != null) {
             activeCall.disconnect();
             disconnected();
-            AudioManager audioManagerN = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-            if (audioManagerN.isBluetoothScoAvailableOffCall()) {
-                Log.d(TAG, "SCO AVAILABLE");
-                Toast.makeText(context, "STOP SCO TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
-//                stopBluetoothScoIfNeeded(audioManagerN);
-            } else {
-            }
         }
     }
 

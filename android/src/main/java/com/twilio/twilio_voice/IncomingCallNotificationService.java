@@ -181,7 +181,6 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PLAY:
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
-                            Log.d(TAG, "NOTIFICATION ID HERE: " + privNotificationId);
                             accept(privCallInvite, privNotificationId, 10);
                             return true;
                     }

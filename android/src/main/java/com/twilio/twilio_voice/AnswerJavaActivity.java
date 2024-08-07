@@ -165,13 +165,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     break;
                 case Constants.ACTION_ACCEPT:
                     Log.d(TAG, "ACTION ACCEPT IN AnswerJavaActivity");
-                    AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-                    if (audioManager.isBluetoothScoAvailableOffCall()) {
-                        Toast.makeText(getApplicationContext(), "SWITCH TO SCO AA BITCH", Toast.LENGTH_SHORT).show();
-//                        startBluetoothScoIfNeeded(audioManager);
-                    } else {
-                    }
                     checkPermissionsAndAccept();
                     break;
                 case Constants.ACTION_END_CALL:
@@ -184,13 +177,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                         break;
                     }
                     activeCall.disconnect();
-                    AudioManager audioManagerN = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-                    if (audioManagerN.isBluetoothScoAvailableOffCall()) {
-                        Toast.makeText(getApplicationContext(), "STOP SCO AA JAVA BITCH", Toast.LENGTH_SHORT).show();
-//                        stopBluetoothScoIfNeeded(audioManagerN);
-                    } else {
-                    }
                     initiatedDisconnect = true;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         finishAndRemoveTask();
