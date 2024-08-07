@@ -331,11 +331,11 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                         updateAudioDeviceIcon(selectedAudioDevice);
                         audioSwitch.deactivate();
                         try {
-                            Thread.sleep(200);
+                            Thread.sleep(2000);
+                            audioSwitch.selectDevice(selectedAudioDevice);
+                            audioSwitch.activate();
                         } catch (InterruptedException e) {
                         }
-                        audioSwitch.selectDevice(selectedAudioDevice);
-                        audioSwitch.activate();
                     }).create().show();    
         }
     }

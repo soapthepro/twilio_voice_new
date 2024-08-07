@@ -359,8 +359,7 @@ public class IncomingCallNotificationService extends Service {
             activeCallIntent = new Intent(this, AnswerJavaActivity.class);
         } else {
             Log.i(TAG, "Creating answer broadcast intent");
-//            activeCallIntent = new Intent();
-            activeCallIntent = new Intent(this, AnswerJavaActivity.class);
+            activeCallIntent = new Intent();
         }
         answeredNotificationId = notificationId;
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -374,15 +373,13 @@ public class IncomingCallNotificationService extends Service {
             startActivity(activeCallIntent);
             Log.i(TAG, "starting activity");
         } else {
-            startActivity(activeCallIntent);
-
-//            Intent openAppCallIntent;
-//            String packageName = "com.theclosecompany.sales_book";
-//            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-//            if (openAppCallIntent != null) {
-//                startActivity(openAppCallIntent);
-//            }
-//             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            Intent openAppCallIntent;
+            String packageName = "com.theclosecompany.sales_book";
+            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+            if (openAppCallIntent != null) {
+                startActivity(openAppCallIntent);
+            }
+             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
@@ -488,7 +485,7 @@ public class IncomingCallNotificationService extends Service {
     private void setCallInProgressNotification(CallInvite callInvite, int notificationId) {
         if (isAppVisible()) {
             Log.i(TAG, "setCallInProgressNotification - app is visible.");
-            startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
+            startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW));
         } else {
             Log.i(TAG, "setCallInProgressNotification - app is NOT visible.");
             startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
