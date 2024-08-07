@@ -197,8 +197,10 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     }
                     break;
                 case Constants.ACTION_TOGGLE_MUTE:
-                    boolean muted = activeCall.isMuted();
-                    activeCall.mute(!muted);
+                    if (activeCall != null) {
+                        boolean muted = activeCall.isMuted();
+                        activeCall.mute(!muted);
+                    }
                     break;
                 default: {
                 }
