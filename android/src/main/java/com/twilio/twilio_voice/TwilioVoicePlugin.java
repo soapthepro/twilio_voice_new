@@ -145,6 +145,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
             switch (action) {
                 case Constants.ACTION_INCOMING_CALL:
+                    setAudioFocus(true);
                     handleIncomingCall(activeCallInvite.getFrom(), activeCallInvite.getTo());
                     Log.d(TAG, "SDK >= 29 and !isAppVisible(): " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
                     if (Build.VERSION.SDK_INT >= 29 && !isAppVisible()) {
@@ -753,6 +754,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     private void setAudioFocus(boolean setFocus) {
         if (audioManager != null) {
             if (setFocus) {
+                Log.d(TAG, "FOCUSING AUDIO");
                 savedAudioMode = audioManager.getMode();
                 // Request audio focus before making any device switch.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
