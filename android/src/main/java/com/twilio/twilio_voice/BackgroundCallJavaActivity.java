@@ -188,12 +188,14 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         for (AudioDevice device : audioDevices) {
             if (device instanceof AudioDevice.BluetoothHeadset) {
                 audioSwitch.selectDevice(device);
+                audioSwitch.activate();
                 updateAudioDeviceIcon(device);
                 return;
             }
         }
         // Optionally, select another device if no Bluetooth devices are connected
         audioSwitch.selectDevice(audioSwitch.getAvailableAudioDevices().get(0));
+        audioSwitch.activate();
         updateAudioDeviceIcon(audioSwitch.getAvailableAudioDevices().get(0));
     }
 
@@ -326,7 +328,12 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                     (dialog, index) -> {                            
                         dialog.dismiss();                            
                         AudioDevice selectedAudioDevice = availableAudioDevices.get(index);                            
-                        updateAudioDeviceIcon(selectedAudioDevice);                            
+                        updateAudioDeviceIcon(selectedAudioDevice);
+                        audioSwitch.deactivate();
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                        }
                         audioSwitch.selectDevice(selectedAudioDevice);
                         audioSwitch.activate();
                     }).create().show();    
