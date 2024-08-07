@@ -359,7 +359,8 @@ public class IncomingCallNotificationService extends Service {
             activeCallIntent = new Intent(this, AnswerJavaActivity.class);
         } else {
             Log.i(TAG, "Creating answer broadcast intent");
-            activeCallIntent = new Intent();
+//            activeCallIntent = new Intent();
+            activeCallIntent = new Intent(this, AnswerJavaActivity.class);
         }
         answeredNotificationId = notificationId;
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
