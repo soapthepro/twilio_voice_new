@@ -293,34 +293,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             return Unit.INSTANCE;
         });
     }
-
-    @SuppressLint("MissingPermission")
-    private void switchToBluetoothMicrophone() {
-        // Get the Bluetooth adapter
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        // Ensure that Bluetooth is enabled on the device
-        if (bluetoothAdapter.isEnabled()) {
-            // Get a list of paired Bluetooth devices
-            Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-
-            // Iterate over the list of paired devices and find the Bluetooth microphone
-            for (BluetoothDevice device : pairedDevices) {
-                // if (device.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.AUDIO_VIDEO_MICROPHONE) {
-                // print("message4")
-                // Set the Bluetooth microphone as the default audio input device
-                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                if (audioManager != null) {
-                    audioManager.setMode(AudioManager.MODE_NORMAL);
-                    audioManager.startBluetoothSco();
-                    audioManager.setBluetoothScoOn(true);
-                }
-                break;
-                // }
-            }
-        }
-    }
-
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
         Intent acceptIntent = new Intent(this, IncomingCallNotificationService.class);

@@ -178,7 +178,6 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                             if (audioManagerN.isBluetoothScoAvailableOffCall()) {
                                 Toast.makeText(context, "SCO SWITCH TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
                                 startBluetoothScoIfNeeded(audioManagerN);
-                            } else {
                             }
                              answer();
                         }
@@ -574,7 +573,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             this.appHasStarted = call.argument("appHasStarted");
             result.success(true);
         } else if (call.method.equals("switchToBluetooth")) {
-            this.switchToBluetoothMicrophone();
+//            this.switchToBluetoothMicrophone();
             result.success(true);
         } else {
             result.notImplemented();
