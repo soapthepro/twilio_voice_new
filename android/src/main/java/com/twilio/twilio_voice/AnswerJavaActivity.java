@@ -169,7 +169,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
                     if (audioManager.isBluetoothScoAvailableOffCall()) {
                         Toast.makeText(getApplicationContext(), "SWITCH TO SCO AA BITCH", Toast.LENGTH_SHORT).show();
-                        startBluetoothScoIfNeeded(audioManager);
+//                        startBluetoothScoIfNeeded(audioManager);
                     } else {
                     }
                     checkPermissionsAndAccept();
@@ -188,7 +188,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
                     if (audioManagerN.isBluetoothScoAvailableOffCall()) {
                         Toast.makeText(getApplicationContext(), "STOP SCO AA JAVA BITCH", Toast.LENGTH_SHORT).show();
-                        stopBluetoothScoIfNeeded(audioManagerN);
+//                        stopBluetoothScoIfNeeded(audioManagerN);
                     } else {
                     }
                     initiatedDisconnect = true;

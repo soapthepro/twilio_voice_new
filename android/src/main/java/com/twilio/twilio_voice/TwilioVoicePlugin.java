@@ -177,7 +177,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
                             if (audioManagerN.isBluetoothScoAvailableOffCall()) {
                                 Toast.makeText(context, "SCO SWITCH TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
-                                startBluetoothScoIfNeeded(audioManagerN);
+//                                startBluetoothScoIfNeeded(audioManagerN);
                             }
                              answer();
                         }
@@ -717,7 +717,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             if (audioManagerN.isBluetoothScoAvailableOffCall()) {
                 Log.d(TAG, "SCO AVAILABLE");
                 Toast.makeText(context, "STOP SCO TVPLUGIN BHENCHOD", Toast.LENGTH_SHORT).show();
-                stopBluetoothScoIfNeeded(audioManagerN);
+//                stopBluetoothScoIfNeeded(audioManagerN);
             } else {
             }
         }

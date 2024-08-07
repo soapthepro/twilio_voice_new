@@ -167,9 +167,38 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     private void startAudioSwitch() {
         audioSwitch.start((audioDevices, audioDevice) -> {
             Log.d(TAG, "Updating AudioDeviceIcon");
-            updateAudioDeviceIcon(audioDevice);
+            selectPreferredAudioDevice(audioDevices);
             return Unit.INSTANCE;
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        audioSwitch.start((audioDevices, selectedAudioDevice) -> {
+            selectPreferredAudioDevice(audioDevices);
+            return Unit.INSTANCE;
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        audioSwitch.stop();
+    }
+
+
+    private void selectPreferredAudioDevice(List<? extends AudioDevice> audioDevices) {
+        for (AudioDevice device : audioDevices) {
+            if (device instanceof AudioDevice.BluetoothHeadset) {
+                audioSwitch.selectDevice(device);
+                updateAudioDeviceIcon(device);
+                return;
+            }
+        }
+        // Optionally, select another device if no Bluetooth devices are connected
+        audioSwitch.selectDevice(audioSwitch.getAvailableAudioDevices().get(0));
+        updateAudioDeviceIcon(audioSwitch.getAvailableAudioDevices().get(0));
     }
 
     @Override
@@ -333,7 +362,6 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        audioSwitch.deactivate();
         setVolumeControlStream(savedVolumeControlStream);
         deactivateSensor();
     }
