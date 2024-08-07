@@ -165,20 +165,20 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     }
 
     private void startAudioSwitch() {
-        audioSwitch.start((audioDevices, audioDevice) -> {
-            Log.d(TAG, "Updating AudioDeviceIcon");
-            selectPreferredAudioDevice(audioDevices);
-            return Unit.INSTANCE;
-        });
+//        audioSwitch.start((audioDevices, audioDevice) -> {
+//            Log.d(TAG, "Updating AudioDeviceIcon");
+//            selectPreferredAudioDevice(audioDevices);
+//            return Unit.INSTANCE;
+//        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        audioSwitch.start((audioDevices, selectedAudioDevice) -> {
-//            selectPreferredAudioDevice(audioDevices);
-//            return Unit.INSTANCE;
-//        });
+        audioSwitch.start((audioDevices, selectedAudioDevice) -> {
+            selectPreferredAudioDevice(audioDevices);
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
