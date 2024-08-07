@@ -165,9 +165,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     }
 
     private void startAudioSwitch() {
+        Log.d(TAG, "IM INSIDE START AUDIO SWITCH");
         audioSwitch.start((audioDevices, audioDevice) -> {
             Log.d(TAG, "Updating AudioDeviceIcon");
-            selectPreferredAudioDevice(audioDevices);
             return Unit.INSTANCE;
         });
     }
