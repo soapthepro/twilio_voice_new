@@ -178,7 +178,6 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         audioSwitch.start((audioDevices, selectedAudioDevice) -> {
             Log.d(TAG, audioDevices.toString());
             Log.d(TAG, selectedAudioDevice.getName());
-            selectPreferredAudioDevice(audioDevices);
             return Unit.INSTANCE;
         });
     }
