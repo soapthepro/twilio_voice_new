@@ -187,7 +187,6 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        audioSwitch.stop();
     }
 
 
