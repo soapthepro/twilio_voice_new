@@ -583,12 +583,12 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
         notificationManager.cancel(activeCallNotificationId);
-        Intent intent = new Intent(activity, BackgroundCallJavaActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.CALL_FROM, activeCall.getFrom());
-        activity.startActivity(intent);
-        backgroundCallUI = true;
+//        Intent intent = new Intent(activity, BackgroundCallJavaActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.putExtra(Constants.CALL_FROM, activeCallInvite.getFrom().replaceAll("_", ""));
+//        activity.startActivity(intent);
+//        backgroundCallUI = true;
     }
 
     private void sendPhoneCallEvents(String description) {
