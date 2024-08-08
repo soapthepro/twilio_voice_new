@@ -131,7 +131,8 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
 //                            accept(privCallInvite, privNotificationId, 10);
-                            if (privIntentNotif != null) {
+                            Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
+                            if (privIntentNotif != null && SoundPoolManager.getInstance(getApplicationContext()).isRinging()) {
                                 try {
                                     privIntentNotif.send();
                                     Log.d(TAG, "Intent sent successfully");

@@ -6,7 +6,6 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 
 import static android.content.Context.AUDIO_SERVICE;
 
@@ -62,6 +61,10 @@ public class SoundPoolManager {
             instance = new SoundPoolManager(context);
         }
         return instance;
+    }
+
+    public boolean isRinging() {
+        return playing;
     }
 
     public void playRinging() {
