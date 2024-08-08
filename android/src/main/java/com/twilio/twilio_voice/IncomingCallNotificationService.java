@@ -28,6 +28,7 @@ import android.content.IntentFilter;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -36,6 +37,8 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media.session.MediaButtonReceiver;
 
+import com.twilio.voice.Call;
+import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.CancelledCallInvite;
 
@@ -56,6 +59,8 @@ public class IncomingCallNotificationService extends Service {
     private static int answeredNotificationId;
 
     public static MediaSessionCompat mediaSession;
+
+    Call activeCall;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -142,6 +147,65 @@ public class IncomingCallNotificationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private Call.Listener callListener() {
+        return new Call.Listener() {
+
+
+            @Override
+            public void onConnectFailure(@NonNull Call call, @NonNull CallException error) {
+                // audioSwitch.deactivate();
+                Log.d(TAG, "Connect failure");
+                Log.e(TAG, "Call Error: %d, %s" + error.getErrorCode() + error.getMessage());
+            }
+
+            @Override
+            public void onRinging(@NonNull Call call) {
+
+            }
+
+            @Override
+            public void onConnected(@NonNull Call call) {
+                // audioSwitch.activate();
+                activeCall = call;
+                if (!TwilioVoicePlugin.appHasStarted) {
+                    Log.d(TAG, "Connected from BackgroundUI");
+                    TwilioVoicePlugin.activeCall = call;
+                    startAnswerActivity(call);
+                    stopSelf();
+                }
+            }
+
+            @Override
+            public void onReconnecting(@NonNull Call call, @NonNull CallException callException) {
+                Log.d(TAG, "onReconnecting");
+            }
+
+            @Override
+            public void onReconnected(@NonNull Call call) {
+                Log.d(TAG, "onReconnected");
+            }
+
+            @Override
+            public void onDisconnected(@NonNull Call call, CallException error) {
+                // audioSwitch.deactivate();
+                if (!TwilioVoicePlugin.appHasStarted) {
+                    Log.d(TAG, "Disconnected");
+//                    endCall();
+                }
+            }
+
+        };
+    }
+
+    private void startAnswerActivity(Call call) {
+        Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.CALL_FROM, call.getFrom());
+        startActivity(intent);
+        Log.d(TAG, "Connected");
     }
 
     private Notification createNotification(CallInvite callInvite, int notificationId, int channelImportance) {
@@ -297,15 +361,13 @@ public class IncomingCallNotificationService extends Service {
         SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
-//        if (origin == 0 && !isAppVisible()) {
-//            Log.i(TAG, "Creating answerJavaActivity intent");
-//            activeCallIntent = new Intent(this, AnswerJavaActivity.class);
-//        } else {
-//            Log.i(TAG, "Creating answer broadcast intent");
-//            activeCallIntent = new Intent();
-//        }
-        activeCallIntent = new Intent(this, AnswerJavaActivity.class);
-
+        if (origin == 0 && !isAppVisible()) {
+            Log.i(TAG, "Creating answerJavaActivity intent");
+            activeCallIntent = new Intent(this, AnswerJavaActivity.class);
+        } else {
+            Log.i(TAG, "Creating answer broadcast intent");
+            activeCallIntent = new Intent();
+        }
         answeredNotificationId = notificationId;
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -314,21 +376,20 @@ public class IncomingCallNotificationService extends Service {
         activeCallIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, origin);
         activeCallIntent.setAction(Constants.ACTION_ACCEPT);
         Log.i(TAG, "Launch IsAppVisible && !isAppVisible: " + (origin == 0 && !isAppVisible()));
-        startActivity(activeCallIntent);
-
-//        if (origin == 0 && !isAppVisible()) {
-//            startActivity(activeCallIntent);
-//            Log.i(TAG, "starting activity");
-//        } else {
-//            Intent openAppCallIntent;
-//            String packageName = "com.theclosecompany.sales_book";
-//            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-//            if (openAppCallIntent != null) {
-//                startActivity(openAppCallIntent);
-//            }
-//             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
-//            Log.i(TAG, "sending broadcast intent");
-//        }
+        if (origin == 0 && !isAppVisible()) {
+            startActivity(activeCallIntent);
+            Log.i(TAG, "starting activity");
+        } else {
+            Intent openAppCallIntent;
+            String packageName = "com.theclosecompany.sales_book";
+            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+            if (openAppCallIntent != null) {
+                startActivity(openAppCallIntent);
+            }
+            callInvite.accept(this, callListener());
+             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            Log.i(TAG, "sending broadcast intent");
+        }
     }
 
     private void reject(CallInvite callInvite) {
