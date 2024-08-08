@@ -409,6 +409,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     case Constants.ACTION_CANCEL_CALL:
                     case Constants.ACTION_TOGGLE_MUTE:
                     case Constants.ACTION_END_CALL:
+                    case Constants.ACTION_ACCEPT:
                         /*
                          * Handle the incoming or cancelled call invite
                          */
@@ -429,6 +430,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.ACTION_TOGGLE_MUTE);
             intentFilter.addAction(Constants.ACTION_CANCEL_CALL);
+            intentFilter.addAction(Constants.ACTION_ACCEPT);
             intentFilter.addAction(Constants.ACTION_END_CALL);
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
