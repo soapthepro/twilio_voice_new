@@ -380,13 +380,21 @@ public class IncomingCallNotificationService extends Service {
             startActivity(activeCallIntent);
             Log.i(TAG, "starting activity");
         } else {
-            Intent openAppCallIntent;
-            String packageName = "com.theclosecompany.sales_book";
-            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-            if (openAppCallIntent != null) {
-                startActivity(openAppCallIntent);
+//            Intent openAppCallIntent;
+//            String packageName = "com.theclosecompany.sales_book";
+//            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+//            if (openAppCallIntent != null) {
+//                startActivity(openAppCallIntent);
+//            }
+            if (privIntentNotif != null) {
+                try {
+                    privIntentNotif.send();
+                } catch (PendingIntent.CanceledException e) {
+                    Log.e(TAG, "PendingIntent was cancelled", e);
+                }
+            } else {
+                Log.e(TAG, "PendingIntent is null");
             }
-            callInvite.accept(this, callListener());
              LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
