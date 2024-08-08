@@ -60,7 +60,7 @@
                     android:shadowDy="4"
                     android:shadowRadius="4"
                     android:gravity="center"
-                    android:text="User Name"
+                    android:text="Loading..."
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="32sp"
