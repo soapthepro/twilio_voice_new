@@ -297,13 +297,15 @@ public class IncomingCallNotificationService extends Service {
         SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
-        if (origin == 0 && !isAppVisible()) {
-            Log.i(TAG, "Creating answerJavaActivity intent");
-            activeCallIntent = new Intent(this, AnswerJavaActivity.class);
-        } else {
-            Log.i(TAG, "Creating answer broadcast intent");
-            activeCallIntent = new Intent();
-        }
+//        if (origin == 0 && !isAppVisible()) {
+//            Log.i(TAG, "Creating answerJavaActivity intent");
+//            activeCallIntent = new Intent(this, AnswerJavaActivity.class);
+//        } else {
+//            Log.i(TAG, "Creating answer broadcast intent");
+//            activeCallIntent = new Intent();
+//        }
+        activeCallIntent = new Intent(this, AnswerJavaActivity.class);
+
         answeredNotificationId = notificationId;
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activeCallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -312,19 +314,21 @@ public class IncomingCallNotificationService extends Service {
         activeCallIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, origin);
         activeCallIntent.setAction(Constants.ACTION_ACCEPT);
         Log.i(TAG, "Launch IsAppVisible && !isAppVisible: " + (origin == 0 && !isAppVisible()));
-        if (origin == 0 && !isAppVisible()) {
-            startActivity(activeCallIntent);
-            Log.i(TAG, "starting activity");
-        } else {
-            Intent openAppCallIntent;
-            String packageName = "com.theclosecompany.sales_book";
-            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-            if (openAppCallIntent != null) {
-                startActivity(openAppCallIntent);
-            }
-             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
-            Log.i(TAG, "sending broadcast intent");
-        }
+        startActivity(activeCallIntent);
+
+//        if (origin == 0 && !isAppVisible()) {
+//            startActivity(activeCallIntent);
+//            Log.i(TAG, "starting activity");
+//        } else {
+//            Intent openAppCallIntent;
+//            String packageName = "com.theclosecompany.sales_book";
+//            openAppCallIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+//            if (openAppCallIntent != null) {
+//                startActivity(openAppCallIntent);
+//            }
+//             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+//            Log.i(TAG, "sending broadcast intent");
+//        }
     }
 
     private void reject(CallInvite callInvite) {
