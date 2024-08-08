@@ -44,8 +44,6 @@ public class IncomingCallNotificationService extends Service {
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
     private Context context;
-    // THE STREAM TYPE YOU WANT VOLUME FROM
-    private VolumeChangeListener volumeChangeListener;
     private IntentFilter intentFilter;
     private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
     private static int counter;
@@ -58,70 +56,6 @@ public class IncomingCallNotificationService extends Service {
     private static int answeredNotificationId;
 
     public static MediaSessionCompat mediaSession;
-
-
-    public IncomingCallNotificationService() {
-        this.volumeChangeListener = new VolumeChangeListener();
-    }
-
-    // public void onCreate() {
-    //     registerReceiver(volumeChangeListener, intentFilter);
-    // }
-
-    // @Override
-    // public void onMediaButtonSingleClick() {
-    //     // Handle single press
-    //     Toast.makeText(this, "Single Click", Toast.LENGTH_SHORT).show();
-    //     // Add your logic for a single press, e.g., accept the call
-    // }
-
-    // @Override
-    // public void onMediaButtonDoubleClick() {
-    //     // Handle double press
-    //     Toast.makeText(this, "Double Click", Toast.LENGTH_SHORT).show();
-    //     // Add your logic for a double press, e.g., reject the call
-    // }
-
-    public class VolumeChangeListener extends BroadcastReceiver {
-        private int callCount = 0;
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            callCount++;
-            if (callCount % 3 == 0) {
-                String intentAction = intent.getAction();
-                // Toast.makeText(context, "RECEIVED: " + intentAction, Toast.LENGTH_SHORT).show();
-                if (intent.getAction().equals(VOLUME_CHANGED_ACTION)) {
-                    // if (answeredNotificationId != privNotificationId) {
-                    //     try {
-                    //         Intent acceptIntent;
-                    //         PendingIntent piAcceptIntent;
-                    //         // VERSION S = Android 12
-                    //         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    //             Log.i(TAG, "building acceptIntent for Android 12+");
-                    //             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationActivity.class);
-                    //             acceptIntent.setAction(Constants.ACTION_ACCEPT);
-                    //             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                    //             piAcceptIntent = PendingIntent.getActivity(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT |  PendingIntent.FLAG_IMMUTABLE);
-                    //         }
-                    //         else {
-                    //             acceptIntent = new Intent(getApplicationContext(), IncomingCallNotificationService.class);
-                    //             acceptIntent.setAction(Constants.ACTION_ACCEPT);
-                    //             acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
-                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, privCallInvite);
-                    //             acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, privNotificationId);
-                    //             piAcceptIntent = PendingIntent.getService(getApplicationContext(), 0, acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                    //         }
-                    //         piAcceptIntent.send();
-                    //     } catch (PendingIntent.CanceledException e) {
-                    //         e.printStackTrace();
-                    //     }
-                    // }
-                }
-            }
-        }
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -516,12 +450,12 @@ public class IncomingCallNotificationService extends Service {
         pluginIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         LocalBroadcastManager.getInstance(this).sendBroadcast(pluginIntent);
         Log.i(TAG, "AppHasStarted " + TwilioVoicePlugin.appHasStarted + " sdk>=29 and !isAppVisible() " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
-        if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {            
+        startAnswerActivity(callInvite, notificationId);
+        if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {
             return;
             
         }
         Log.i(TAG, "Starting AnswerActivity from IncomingCallNotificationService");
-        startAnswerActivity(callInvite, notificationId);
     }
 
     private void startAnswerActivity(CallInvite callInvite, int notificationId) {
@@ -547,6 +481,5 @@ public class IncomingCallNotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "Destroying IncomingCallNotificationService");
-//        unregisterReceiver(volumeChangeListener);
     }
 }

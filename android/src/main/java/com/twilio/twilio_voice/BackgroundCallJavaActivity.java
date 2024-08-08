@@ -108,7 +108,8 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         
-        audioSwitch = new AudioSwitch(getApplicationContext(), true);
+//        audioSwitch = new AudioSwitch(getApplicationContext(), true);
+        audioSwitch = AudioSwitchManager.getInstance(getApplicationContext());
         savedVolumeControlStream = getVolumeControlStream();
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
         handleCallIntent(getIntent());
@@ -166,17 +167,19 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 
     private void startAudioSwitch() {
         Log.d(TAG, "IM INSIDE START AUDIO SWITCH");
-        audioSwitch.start((audioDevices, audioDevice) -> {
-            Log.d(TAG, "Updating AudioDeviceIcon");
-            return Unit.INSTANCE;
-        });
+//        audioSwitch.start((audioDevices, audioDevice) -> {
+//            Log.d(TAG, "Updating AudioDeviceIcon");
+//            return Unit.INSTANCE;
+//        });
         try {
             Thread.sleep(200);
         }  catch (InterruptedException e) {
 
         }
-        List<AudioDevice> devices = audioSwitch.getAvailableAudioDevices();
-        selectPreferredAudioDevice(devices);
+        if (audioSwitch != null) {
+            List<AudioDevice> devices = audioSwitch.getAvailableAudioDevices();
+            selectPreferredAudioDevice(devices);
+        }
     }
 
     @Override
