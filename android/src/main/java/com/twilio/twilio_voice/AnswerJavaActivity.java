@@ -165,7 +165,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     break;
                 case Constants.ACTION_ACCEPT:
                     Log.d(TAG, "ACTION ACCEPT IN AnswerJavaActivity");
-                    checkPermissionsAndAccept();
+                    checkPermissionsAndAccept(true);
                     break;
                 case Constants.ACTION_END_CALL:
                     Log.d(TAG, "ending call" + activeCall != null ? "True" : "False");
@@ -262,15 +262,21 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             });
         }
     }
-
     private void checkPermissionsAndAccept() {
+        checkPermissionsAndAccept(false);  // Default behavior assumes isBroadcast is false
+    }
+    private void checkPermissionsAndAccept(boolean isBroadcast) {
         Log.d(TAG, "Clicked accept");
         if (!checkPermissionForMicrophone()) {
             Log.d(TAG, "configCallUI-requestAudioPermissions");
             requestAudioPermissions();
         } else {    
             Log.d(TAG, "configCallUI-newAnswerCallClickListener");
-            acceptCall();
+            if (isBroadcast) {
+                acceptCallBroadcast();
+            } else {
+                acceptCall();
+            }
         }
     }
 
@@ -290,6 +296,27 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, activeCallNotificationId);
         Log.d(TAG, "Clicked accept startService");
         startService(acceptIntent);
+        Log.d(TAG, "isLocked: " + isLocked() + " appHasStarted: " + TwilioVoicePlugin.appHasStarted);
+        if (TwilioVoicePlugin.appHasStarted) {
+            Log.d(TAG, "AnswerJavaActivity Finish");
+            finish();
+        }
+        else {
+            Log.d(TAG, "Answering call in AnswerjavaActivity 244 with id: " + activeCallNotificationId);
+            notificationManager.cancel(activeCallNotificationId);
+            activeCallInvite.accept(this, callListener);
+        }
+    }
+
+    private void acceptCallBroadcast() {
+        Log.d(TAG, "Accepting call");
+        Intent acceptIntent = new Intent(this, IncomingCallNotificationService.class);
+        acceptIntent.setAction(Constants.ACTION_ACCEPT);
+        acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite);
+        acceptIntent.putExtra(Constants.ACCEPT_CALL_ORIGIN, 1);
+        acceptIntent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, activeCallNotificationId);
+        Log.d(TAG, "Clicked accept startService");
+//        startService(acceptIntent);
         Log.d(TAG, "isLocked: " + isLocked() + " appHasStarted: " + TwilioVoicePlugin.appHasStarted);
         if (TwilioVoicePlugin.appHasStarted) {
             Log.d(TAG, "AnswerJavaActivity Finish");

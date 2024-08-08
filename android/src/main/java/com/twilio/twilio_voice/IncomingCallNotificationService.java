@@ -134,6 +134,7 @@ public class IncomingCallNotificationService extends Service {
                             if (privIntentNotif != null) {
                                 try {
                                     privIntentNotif.send();
+                                    Log.d(TAG, "Intent sent successfully");
                                 } catch (PendingIntent.CanceledException e) {
                                     Log.e(TAG, "PendingIntent was cancelled", e);
                                 }
@@ -363,7 +364,7 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
-//        endForeground();
+        endForeground();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
@@ -395,7 +396,7 @@ public class IncomingCallNotificationService extends Service {
 //            if (openAppCallIntent != null) {
 //                startActivity(openAppCallIntent);
 //            }
-             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
     }
@@ -541,11 +542,11 @@ public class IncomingCallNotificationService extends Service {
         pluginIntent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
         LocalBroadcastManager.getInstance(this).sendBroadcast(pluginIntent);
         Log.i(TAG, "AppHasStarted " + TwilioVoicePlugin.appHasStarted + " sdk>=29 and !isAppVisible() " + (Build.VERSION.SDK_INT >= 29 && !isAppVisible()));
-        startAnswerActivity(callInvite, notificationId);
         if (TwilioVoicePlugin.appHasStarted || (Build.VERSION.SDK_INT >= 29 && !isAppVisible())) {
             return;
             
         }
+        startAnswerActivity(callInvite, notificationId);
         Log.i(TAG, "Starting AnswerActivity from IncomingCallNotificationService");
     }
 
