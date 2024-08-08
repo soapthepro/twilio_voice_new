@@ -414,6 +414,24 @@ public class IncomingCallNotificationService extends Service {
         Log.i(TAG, "handle incoming call");
         Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationId);
         SoundPoolManager.getInstance(this).playRinging();
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                switch (focusChange) {
+                    case AudioManager.AUDIOFOCUS_GAIN:
+                        mediaSession.setActive(true);
+                        break;
+                    case AudioManager.AUDIOFOCUS_LOSS:
+                        mediaSession.setActive(false);
+                        break;
+                }
+            }
+        };
+
+        int result = audioManager.requestAudioFocus(afChangeListener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setCallInProgressNotification(callInvite, notificationId);
         }
