@@ -22,12 +22,11 @@ import android.provider.Settings;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.media.AudioManager;
 import android.view.KeyEvent;
@@ -93,6 +92,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         checkPermissionForOverlay();
         Log.d(TAG, "CREATED ANSWER JAVA ACTIVITY");
         setContentView(R.layout.activity_answer);
