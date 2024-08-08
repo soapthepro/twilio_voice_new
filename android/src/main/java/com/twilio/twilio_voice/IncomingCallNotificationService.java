@@ -130,7 +130,16 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PLAY:
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
-                            accept(privCallInvite, privNotificationId, 10);
+//                            accept(privCallInvite, privNotificationId, 10);
+                            if (privIntentNotif != null) {
+                                try {
+                                    privIntentNotif.send();
+                                } catch (PendingIntent.CanceledException e) {
+                                    Log.e(TAG, "PendingIntent was cancelled", e);
+                                }
+                            } else {
+                                Log.e(TAG, "PendingIntent is null");
+                            }
                             return true;
                     }
                 }
@@ -354,7 +363,7 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
-        endForeground();
+//        endForeground();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
@@ -386,15 +395,6 @@ public class IncomingCallNotificationService extends Service {
 //            if (openAppCallIntent != null) {
 //                startActivity(openAppCallIntent);
 //            }
-            if (privIntentNotif != null) {
-                try {
-                    privIntentNotif.send();
-                } catch (PendingIntent.CanceledException e) {
-                    Log.e(TAG, "PendingIntent was cancelled", e);
-                }
-            } else {
-                Log.e(TAG, "PendingIntent is null");
-            }
              LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
