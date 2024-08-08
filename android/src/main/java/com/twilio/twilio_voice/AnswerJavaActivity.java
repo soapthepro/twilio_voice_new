@@ -1,6 +1,7 @@
 package com.twilio.twilio_voice;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.AlertDialog;
@@ -12,10 +13,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.View;
@@ -73,6 +76,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     private int activeCallNotificationId;
     private static final int MIC_PERMISSION_REQUEST_CODE = 17893;
     private static final int MIC_BLUETOOTH_REQUEST_CODE = 17693;
+
+    public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
+
     private PowerManager.WakeLock wakeLock;
     private TextView tvUserName;
     private TextView tvCallStatus;
@@ -87,6 +93,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermissionForOverlay();
         Log.d(TAG, "CREATED ANSWER JAVA ACTIVITY");
         setContentView(R.layout.activity_answer);
 
@@ -146,7 +153,34 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         return super.onKeyDown(keyCode, event);
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
+            if (!Settings.canDrawOverlays(this)) {
+                // You don't have permission
+                checkPermissionForOverlay();
+            } else {
+                // Do as per your logic
+            }
+
+        }
+    }
+
+    public void checkPermissionForOverlay() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
     private void handleIncomingCallIntent(Intent intent) {
+
         if (intent != null && intent.getAction() != null) {
             Log.d(TAG, "handleIncomingCallIntent-");
             String action = intent.getAction();
