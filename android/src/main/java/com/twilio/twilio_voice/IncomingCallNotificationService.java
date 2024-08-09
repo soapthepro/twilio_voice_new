@@ -161,6 +161,7 @@ public class IncomingCallNotificationService extends Service {
 
         mediaSession.setActive(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
             mMediaSessionManager.addOnActiveSessionsChangedListener(controllers -> {
                 boolean updateButtonReceiver = false;
                 Log.d(TAG, "MEDIA SESSIO CHANGED");
