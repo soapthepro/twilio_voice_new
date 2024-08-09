@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -160,32 +161,38 @@ public class IncomingCallNotificationService extends Service {
         });
 
         mediaSession.setActive(true);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
-//            mMediaSessionManager.addOnActiveSessionsChangedListener(controllers -> {
-//                boolean updateButtonReceiver = false;
-//                Log.d(TAG, "MEDIA SESSIO CHANGED");
-//                // recreate MediaSession if another app handles media buttons
-//                for (MediaController mediaController : controllers) {
-//                    Log.d(TAG, "MEDIA SESSIO CHANGED NAME: " + mediaController.getPackageName());
-//                    if (!TextUtils.equals(getPackageName(), mediaController.getPackageName())) {
-//                        if ((mediaController.getFlags() & (MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)) != 0L) {
-//                            updateButtonReceiver = true;
-//                        }
-//                    }
-//
+        requestNotificationListenerPermission();
+        ComponentName componentName = new ComponentName(this, MyNotificationListenerService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
+            mMediaSessionManager.addOnActiveSessionsChangedListener(controllers -> {
+                boolean updateButtonReceiver = false;
+                Log.d(TAG, "MEDIA SESSIO CHANGED");
+                // recreate MediaSession if another app handles media buttons
+                for (MediaController mediaController : controllers) {
+                    Log.d(TAG, "MEDIA SESSIO CHANGED NAME: " + mediaController.getPackageName());
+                    if (!TextUtils.equals(getPackageName(), mediaController.getPackageName())) {
+                        if ((mediaController.getFlags() & (MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)) != 0L) {
+                            updateButtonReceiver = true;
+                        }
+                    }
+
+                }
+
+//                if (updateButtonReceiver) {
+//                    // using a handler with a delay of about 2 seconds because this listener fires very often.
+//                    mAudioFocusHandler.removeCallbacksAndMessages(null);
+//                    mAudioFocusHandler.sendEmptyMessageDelayed(0, AUDIO_FOCUS_DELAY_MS);
 //                }
-//
-////                if (updateButtonReceiver) {
-////                    // using a handler with a delay of about 2 seconds because this listener fires very often.
-////                    mAudioFocusHandler.removeCallbacksAndMessages(null);
-////                    mAudioFocusHandler.sendEmptyMessageDelayed(0, AUDIO_FOCUS_DELAY_MS);
-////                }
-//            }, null);
-//        }
+            }, componentName);
+        }
         return START_NOT_STICKY;
     }
 
+    public void requestNotificationListenerPermission() {
+        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+        startActivity(intent);
+    }
     private void handleActiveSessionsChanged(List<MediaController> controllers) {
         boolean isTopPriority = true;
         String ourPackageName = getPackageName();
@@ -608,9 +615,9 @@ public class IncomingCallNotificationService extends Service {
                     case AudioManager.AUDIOFOCUS_LOSS:
                         Log.d(TAG, "AUDIO FOCUS LOST");
                         mediaSession.setActive(false);
-                        new Handler().postDelayed(() -> {
-                            audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-                        }, 1000);
+//                        new Handler().postDelayed(() -> {
+//                            audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+//                        }, 1000);
                         break;
                 }
             }
