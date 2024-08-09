@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -50,7 +49,6 @@ import android.media.session.MediaSessionManager;
 import android.media.session.MediaController;
 import android.text.TextUtils;
 
-
 public class IncomingCallNotificationService extends Service {
 
     private static final String TAG = IncomingCallNotificationService.class.getSimpleName();
@@ -70,6 +68,7 @@ public class IncomingCallNotificationService extends Service {
     public static MediaSessionCompat mediaSession;
 
     private MediaSessionManager mMediaSessionManager;
+    private Handler handler = new Handler();
 
     Call activeCall;
 
@@ -161,38 +160,9 @@ public class IncomingCallNotificationService extends Service {
         });
 
         mediaSession.setActive(true);
-        requestNotificationListenerPermission();
-        ComponentName componentName = new ComponentName(this, MyNotificationListenerService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
-            mMediaSessionManager.addOnActiveSessionsChangedListener(controllers -> {
-                boolean updateButtonReceiver = false;
-                Log.d(TAG, "MEDIA SESSIO CHANGED");
-                // recreate MediaSession if another app handles media buttons
-                for (MediaController mediaController : controllers) {
-                    Log.d(TAG, "MEDIA SESSIO CHANGED NAME: " + mediaController.getPackageName());
-                    if (!TextUtils.equals(getPackageName(), mediaController.getPackageName())) {
-                        if ((mediaController.getFlags() & (MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)) != 0L) {
-                            updateButtonReceiver = true;
-                        }
-                    }
-
-                }
-
-//                if (updateButtonReceiver) {
-//                    // using a handler with a delay of about 2 seconds because this listener fires very often.
-//                    mAudioFocusHandler.removeCallbacksAndMessages(null);
-//                    mAudioFocusHandler.sendEmptyMessageDelayed(0, AUDIO_FOCUS_DELAY_MS);
-//                }
-            }, componentName);
-        }
         return START_NOT_STICKY;
     }
 
-    public void requestNotificationListenerPermission() {
-        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-        startActivity(intent);
-    }
     private void handleActiveSessionsChanged(List<MediaController> controllers) {
         boolean isTopPriority = true;
         String ourPackageName = getPackageName();
@@ -267,6 +237,37 @@ public class IncomingCallNotificationService extends Service {
         });
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setActive(true);
+    }
+
+    private Runnable mediaSessionControlRunnable = new Runnable() {
+        @Override
+        public void run() {
+            regainMediaSessionControl();
+
+            // Schedule the next execution
+            handler.postDelayed(this, 1000); // 1-second delay
+        }
+    };
+
+    private void startMediaSessionControlLoop() {
+        handler.post(mediaSessionControlRunnable); // Start the recurring task
+    }
+
+    // Stop the loop when the call is answered or ringing stops
+    private void stopMediaSessionControlLoop() {
+        handler.removeCallbacks(mediaSessionControlRunnable); // Stop the recurring task
+    }
+
+    // Call this function when you need to regain control repeatedly
+    private void regainMediaSessionControl() {
+        Log.d(TAG, "INSIDE REGAIN MEDIA SESSION");
+        if (mediaSession != null) {
+            Log.d(TAG, "Regaining MEDIA SESSION");
+            mediaSession.setActive(true);
+            mediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
+                    .build());
+        }
     }
 
     @Override
@@ -484,6 +485,7 @@ public class IncomingCallNotificationService extends Service {
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
         SoundPoolManager.getInstance(this).stopRinging();
+        stopMediaSessionControlLoop();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
         if (origin == 0 && !isAppVisible()) {
@@ -603,6 +605,7 @@ public class IncomingCallNotificationService extends Service {
         Log.i(TAG, "handle incoming call");
         Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationId);
         SoundPoolManager.getInstance(this).playRinging();
+        startMediaSessionControlLoop();
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
             @Override
