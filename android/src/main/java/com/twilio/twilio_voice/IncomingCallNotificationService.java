@@ -160,29 +160,29 @@ public class IncomingCallNotificationService extends Service {
         });
 
         mediaSession.setActive(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
-            mMediaSessionManager.addOnActiveSessionsChangedListener(controllers -> {
-                boolean updateButtonReceiver = false;
-                Log.d(TAG, "MEDIA SESSIO CHANGED");
-                // recreate MediaSession if another app handles media buttons
-                for (MediaController mediaController : controllers) {
-                    Log.d(TAG, "MEDIA SESSIO CHANGED NAME: " + mediaController.getPackageName());
-                    if (!TextUtils.equals(getPackageName(), mediaController.getPackageName())) {
-                        if ((mediaController.getFlags() & (MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)) != 0L) {
-                            updateButtonReceiver = true;
-                        }
-                    }
-
-                }
-
-//                if (updateButtonReceiver) {
-//                    // using a handler with a delay of about 2 seconds because this listener fires very often.
-//                    mAudioFocusHandler.removeCallbacksAndMessages(null);
-//                    mAudioFocusHandler.sendEmptyMessageDelayed(0, AUDIO_FOCUS_DELAY_MS);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
+//            mMediaSessionManager.addOnActiveSessionsChangedListener(controllers -> {
+//                boolean updateButtonReceiver = false;
+//                Log.d(TAG, "MEDIA SESSIO CHANGED");
+//                // recreate MediaSession if another app handles media buttons
+//                for (MediaController mediaController : controllers) {
+//                    Log.d(TAG, "MEDIA SESSIO CHANGED NAME: " + mediaController.getPackageName());
+//                    if (!TextUtils.equals(getPackageName(), mediaController.getPackageName())) {
+//                        if ((mediaController.getFlags() & (MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)) != 0L) {
+//                            updateButtonReceiver = true;
+//                        }
+//                    }
+//
 //                }
-            }, null);
-        }
+//
+////                if (updateButtonReceiver) {
+////                    // using a handler with a delay of about 2 seconds because this listener fires very often.
+////                    mAudioFocusHandler.removeCallbacksAndMessages(null);
+////                    mAudioFocusHandler.sendEmptyMessageDelayed(0, AUDIO_FOCUS_DELAY_MS);
+////                }
+//            }, null);
+//        }
         return START_NOT_STICKY;
     }
 
