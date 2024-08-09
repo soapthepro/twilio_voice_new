@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -25,6 +26,8 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.media.AudioManager;
 import android.content.IntentFilter;
+
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,6 +44,11 @@ import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.CancelledCallInvite;
+
+import android.media.session.MediaSessionManager;
+import android.media.session.MediaController;
+import android.text.TextUtils;
+
 
 public class IncomingCallNotificationService extends Service {
 
@@ -59,6 +67,8 @@ public class IncomingCallNotificationService extends Service {
     private static int answeredNotificationId;
 
     public static MediaSessionCompat mediaSession;
+
+    private MediaSessionManager mMediaSessionManager;
 
     Call activeCall;
 
@@ -98,7 +108,7 @@ public class IncomingCallNotificationService extends Service {
         }
         mediaSession = new MediaSessionCompat(this, "MediaSession");
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             PlaybackState state = new PlaybackState.Builder()
                     .setActions(PlaybackState.ACTION_PLAY_PAUSE)
                     .setState(PlaybackState.STATE_PLAYING, 0, 0, 0)
@@ -148,11 +158,95 @@ public class IncomingCallNotificationService extends Service {
                 return super.onMediaButtonEvent(intent);
             }
         });
+
         mediaSession.setActive(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
+        }
+        ComponentName mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mMediaSessionManager.addOnActiveSessionsChangedListener(this::handleActiveSessionsChanged, mediaButtonReceiver);
+        }
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
             MediaButtonReceiver.handleIntent(mediaSession, intent);
         }
         return START_NOT_STICKY;
+    }
+
+    private void handleActiveSessionsChanged(List<MediaController> controllers) {
+        boolean isTopPriority = true;
+        String ourPackageName = getPackageName();
+        Log.d(TAG, "RECEIVED MEDIA SESSION CHANGE");
+        for (MediaController mediaController : controllers) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // Our session is top priority, break early
+                Log.d(TAG, "MEDIA CONTROLLER NAME : " + mediaController.getPackageName());
+                if (!mediaController.getPackageName().equals(ourPackageName)) {
+                    isTopPriority = false;
+                }
+                break;
+            }
+        }
+
+        if (!isTopPriority) {
+            handleMediaSessionPriority();
+        }
+    }
+
+    private void handleMediaSessionPriority() {
+        // Re-setup Media Session after a short delay
+        new Handler().postDelayed(this::setupMediaSession, 1000);
+    }
+
+    private void setupMediaSession() {
+        if (mediaSession != null) {
+            mediaSession.setActive(false);
+            mediaSession.release();
+        }
+
+        mediaSession = new MediaSessionCompat(this, "MyMediaSession");
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onPlay() {
+                super.onPlay();
+                // Handle play
+            }
+
+            @Override
+            public void onPause() {
+                super.onPause();
+                // Handle pause
+            }
+
+            @Override
+            public boolean onMediaButtonEvent(Intent intent) {
+                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyEvent.getKeyCode()) {
+                        case KeyEvent.KEYCODE_HEADSETHOOK:
+                        case KeyEvent.KEYCODE_MEDIA_PLAY:
+                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                            Log.d(TAG, "Inside Media Listner");
+//                            accept(privCallInvite, privNotificationId, 10);
+                            Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
+                            if (privIntentNotif != null && SoundPoolManager.getInstance(getApplicationContext()).isRinging()) {
+                                try {
+                                    privIntentNotif.send();
+                                    Log.d(TAG, "Intent sent successfully");
+                                } catch (PendingIntent.CanceledException e) {
+                                    Log.e(TAG, "PendingIntent was cancelled", e);
+                                }
+                            } else {
+                                Log.e(TAG, "PendingIntent is null");
+                            }
+                            return true;
+                    }
+                }
+                return super.onMediaButtonEvent(intent);
+            }
+        });
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setActive(true);
     }
 
     @Override
