@@ -112,8 +112,7 @@ public class IncomingCallNotificationService extends Service {
             }
         }
         mediaPlayer = MediaPlayer.create(this, R.raw.incoming);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
+
         isPlaying = true;
         mediaSession = new MediaSessionCompat(this, "MediaSession");
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
@@ -622,6 +621,8 @@ public class IncomingCallNotificationService extends Service {
         Log.i(TAG, "handle incoming call");
         Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationId);
 //        SoundPoolManager.getInstance(this).playRinging();
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
         startMediaSessionControlLoop();
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
