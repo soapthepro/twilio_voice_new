@@ -145,7 +145,7 @@ public class IncomingCallNotificationService extends Service {
                             mediaPlayer.release();
 //                            accept(privCallInvite, privNotificationId, 10);
                             Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
-                            if (privIntentNotif != null && SoundPoolManager.getInstance(getApplicationContext()).isRinging()) {
+                            if (privIntentNotif != null) {
                                 try {
                                     privIntentNotif.send();
                                     Log.d(TAG, "Intent sent successfully");
