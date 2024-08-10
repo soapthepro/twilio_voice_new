@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Bundle;
@@ -245,7 +247,7 @@ public class IncomingCallNotificationService extends Service {
             regainMediaSessionControl();
 
             // Schedule the next execution
-            handler.postDelayed(this, 1000); // 1-second delay
+            handler.postDelayed(this, 2500); // 1-second delay
         }
     };
 
@@ -626,9 +628,26 @@ public class IncomingCallNotificationService extends Service {
             }
         };
 
-        int result = audioManager.requestAudioFocus(afChangeListener,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN);
+        AudioAttributes audioAttributes = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build();
+        }
+
+        AudioFocusRequest focusRequest = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(audioAttributes)
+                    .setOnAudioFocusChangeListener(afChangeListener)
+                    .build();
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            int result = audioManager.requestAudioFocus(focusRequest);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setCallInProgressNotification(callInvite, notificationId);
         }
