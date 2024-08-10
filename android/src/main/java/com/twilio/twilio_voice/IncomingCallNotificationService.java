@@ -14,6 +14,7 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
+import android.media.MediaPlayer;
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Bundle;
@@ -72,6 +73,7 @@ public class IncomingCallNotificationService extends Service {
 
     private MediaSessionManager mMediaSessionManager;
     private Handler handler = new Handler();
+    private MediaPlayer mediaPlayer;
 
     Call activeCall;
 
@@ -109,6 +111,9 @@ public class IncomingCallNotificationService extends Service {
                     break;
             }
         }
+        mediaPlayer = MediaPlayer.create(this, R.raw.incoming);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
         mediaSession = new MediaSessionCompat(this, "MediaSession");
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
 
@@ -136,6 +141,8 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PLAY:
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
+                            mediaPlayer.stop();
+                            mediaPlayer.release();
 //                            accept(privCallInvite, privNotificationId, 10);
                             Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
                             if (privIntentNotif != null && SoundPoolManager.getInstance(getApplicationContext()).isRinging()) {
@@ -608,7 +615,7 @@ public class IncomingCallNotificationService extends Service {
     private void handleIncomingCall(CallInvite callInvite, int notificationId) {
         Log.i(TAG, "handle incoming call");
         Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationId);
-        SoundPoolManager.getInstance(this).playRinging();
+//        SoundPoolManager.getInstance(this).playRinging();
         startMediaSessionControlLoop();
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
