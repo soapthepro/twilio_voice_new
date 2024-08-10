@@ -139,8 +139,10 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PLAY:
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
-                            mediaPlayer.stop();
-                            mediaPlayer.release();
+                            if (mediaPlayer != null) {
+                                mediaPlayer.stop();
+                                mediaPlayer.release();
+                            }
 //                            accept(privCallInvite, privNotificationId, 10);
                             Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
                             if (privIntentNotif != null && isPlaying) {
@@ -531,8 +533,10 @@ public class IncomingCallNotificationService extends Service {
     private void reject(CallInvite callInvite) {
         callInvite.reject(getApplicationContext());
 //        SoundPoolManager.getInstance(this).stopRinging();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
         SoundPoolManager.getInstance(this).playDisconnect();
-        mediaPlayer.stop();
         isPlaying = false;
         Intent rejectCallIntent = new Intent();
         rejectCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -545,7 +549,9 @@ public class IncomingCallNotificationService extends Service {
 
     private void handleCancelledCall(Intent intent) {
 //        SoundPoolManager.getInstance(this).stopRinging();
-        mediaPlayer.stop();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
         isPlaying = false;
         CancelledCallInvite cancelledCallInvite = intent.getParcelableExtra(Constants.CANCELLED_CALL_INVITE);
         SharedPreferences preferences = getApplicationContext().getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
@@ -725,7 +731,11 @@ public class IncomingCallNotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "Destroying IncomingCallNotificationService");
-        mediaSession.release();
-        mediaPlayer.release();
+        if (mediaSession != null) {
+            mediaSession.release();
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
     }
 }
