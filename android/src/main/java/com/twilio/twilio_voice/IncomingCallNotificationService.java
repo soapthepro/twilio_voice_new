@@ -68,7 +68,7 @@ public class IncomingCallNotificationService extends Service {
     private static Intent privIntent;
     private static PendingIntent privIntentNotif;
     private static int answeredNotificationId;
-
+    private boolean isPlaying = false;
     public static MediaSessionCompat mediaSession;
 
     private MediaSessionManager mMediaSessionManager;
@@ -114,6 +114,7 @@ public class IncomingCallNotificationService extends Service {
         mediaPlayer = MediaPlayer.create(this, R.raw.incoming);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
+        isPlaying = true;
         mediaSession = new MediaSessionCompat(this, "MediaSession");
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
 
@@ -145,8 +146,9 @@ public class IncomingCallNotificationService extends Service {
                             mediaPlayer.release();
 //                            accept(privCallInvite, privNotificationId, 10);
                             Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
-                            if (privIntentNotif != null) {
+                            if (privIntentNotif != null && isPlaying) {
                                 try {
+                                    isPlaying = false;
                                     privIntentNotif.send();
                                     Log.d(TAG, "Intent sent successfully");
                                 } catch (PendingIntent.CanceledException e) {
@@ -495,7 +497,7 @@ public class IncomingCallNotificationService extends Service {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
-        SoundPoolManager.getInstance(this).stopRinging();
+//        SoundPoolManager.getInstance(this).stopRinging();
         stopMediaSessionControlLoop();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
@@ -531,8 +533,10 @@ public class IncomingCallNotificationService extends Service {
 
     private void reject(CallInvite callInvite) {
         callInvite.reject(getApplicationContext());
-        SoundPoolManager.getInstance(this).stopRinging();
+//        SoundPoolManager.getInstance(this).stopRinging();
         SoundPoolManager.getInstance(this).playDisconnect();
+        mediaPlayer.stop();
+        isPlaying = false;
         Intent rejectCallIntent = new Intent();
         rejectCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         rejectCallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -543,7 +547,9 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void handleCancelledCall(Intent intent) {
-        SoundPoolManager.getInstance(this).stopRinging();
+//        SoundPoolManager.getInstance(this).stopRinging();
+        mediaPlayer.stop();
+        isPlaying = false;
         CancelledCallInvite cancelledCallInvite = intent.getParcelableExtra(Constants.CANCELLED_CALL_INVITE);
         SharedPreferences preferences = getApplicationContext().getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
         boolean prefsShow = preferences.getBoolean("show-notifications", true);
@@ -719,5 +725,7 @@ public class IncomingCallNotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "Destroying IncomingCallNotificationService");
+        mediaSession.release();
+        mediaPlayer.release();
     }
 }
