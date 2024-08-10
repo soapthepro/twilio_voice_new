@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -110,13 +111,6 @@ public class IncomingCallNotificationService extends Service {
         }
         mediaSession = new MediaSessionCompat(this, "MediaSession");
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            PlaybackState state = new PlaybackState.Builder()
-                    .setActions(PlaybackState.ACTION_PLAY_PAUSE)
-                    .setState(PlaybackState.STATE_PLAYING, 0, 0, 0)
-                    .build();
-            mediaSession.setPlaybackState(PlaybackStateCompat.fromPlaybackState(state));
-        }
 
         PendingIntent mbrIntent = PendingIntent.getBroadcast(this, 0, new Intent(Intent.ACTION_MEDIA_BUTTON), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         mediaSession.setMediaButtonReceiver(mbrIntent);
@@ -162,6 +156,14 @@ public class IncomingCallNotificationService extends Service {
         });
 
         mediaSession.setActive(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
+                    .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_STOP)
+                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 0, SystemClock.elapsedRealtime())
+                    .build();
+
+            mediaSession.setPlaybackState(playbackState);
+        }
         return START_NOT_STICKY;
     }
 
@@ -628,18 +630,13 @@ public class IncomingCallNotificationService extends Service {
             }
         };
 
-        AudioAttributes audioAttributes = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build();
-        }
-
         AudioFocusRequest focusRequest = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                    .setAudioAttributes(audioAttributes)
+            focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+                    .setAudioAttributes(new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                            .build())
                     .setOnAudioFocusChangeListener(afChangeListener)
                     .build();
         }
