@@ -178,7 +178,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         }
         if (audioSwitch != null) {
             List<AudioDevice> devices = audioSwitch.getAvailableAudioDevices();
-//            selectPreferredAudioDevice(devices);
+            selectPreferredAudioDevice(devices);
         }
     }
 
@@ -261,6 +261,11 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 sendIntent(Constants.ACTION_END_CALL);
                 AudioSwitchManager.closeAudioSwitch();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                }
+                audioSwitch = AudioSwitchManager.getInstance(getApplicationContext());
                 finish();
             }
         });
