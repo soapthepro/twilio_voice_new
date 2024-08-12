@@ -197,16 +197,20 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             if (device instanceof AudioDevice.BluetoothHeadset) {
                 audioSwitch.selectDevice(device);
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(400);
+                    audioSwitch.activate();
                 } catch (InterruptedException e) {
                 }
-                audioSwitch.activate();
                 updateAudioDeviceIcon(device);
                 return;
             }
         }
         // Optionally, select another device if no Bluetooth devices are connected
         audioSwitch.selectDevice(audioSwitch.getAvailableAudioDevices().get(0));
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+        }
         audioSwitch.activate();
         updateAudioDeviceIcon(audioSwitch.getAvailableAudioDevices().get(0));
     }
