@@ -170,6 +170,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 //            Log.d(TAG, "Updating AudioDeviceIcon");
 //            return Unit.INSTANCE;
 //        });
+        audioSwitch.deactivate();
         try {
             Thread.sleep(200);
         }  catch (InterruptedException e) {
