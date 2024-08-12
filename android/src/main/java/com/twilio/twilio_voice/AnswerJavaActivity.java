@@ -422,7 +422,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     Log.d(TAG, "Connected from BackgroundUI");
                     TwilioVoicePlugin.activeCall = call;
                     startAnswerActivity(call);
-//                    finish();
+                    finish();
                 }
             }
 
