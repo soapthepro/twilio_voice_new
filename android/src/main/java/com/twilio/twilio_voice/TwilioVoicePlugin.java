@@ -835,7 +835,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         return true;
     }
 
-    private List<AudioDevice> getAudioDevices() {
+    private List<String> getAudioDevices() {
         sendPhoneCallEvents("LOG|getAudioDevices");
         return AudioSwitchManager.getAudioDevices();
     }

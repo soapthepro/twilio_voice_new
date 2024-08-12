@@ -5,6 +5,7 @@ import android.content.Context;
 import com.twilio.audioswitch.AudioDevice;
 import com.twilio.audioswitch.AudioSwitch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kotlin.Unit;
@@ -39,9 +40,15 @@ public class AudioSwitchManager {
         }
     }
 
-    public static List<AudioDevice> getAudioDevices() {
+    public static List<String> getAudioDevices() {
         if (isActive && audioSwitch != null) {
-            return audioSwitch.getAvailableAudioDevices();
+            List<AudioDevice> availableDevices = audioSwitch.getAvailableAudioDevices();
+            List<String> deviceNames = new ArrayList<>();
+
+            for (AudioDevice device : availableDevices) {
+                deviceNames.add(device.getName());
+            }
+            return deviceNames;
         }
         return null;
     }
