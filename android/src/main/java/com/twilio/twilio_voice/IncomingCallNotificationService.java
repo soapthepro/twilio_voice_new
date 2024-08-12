@@ -175,113 +175,6 @@ public class IncomingCallNotificationService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void handleActiveSessionsChanged(List<MediaController> controllers) {
-        boolean isTopPriority = true;
-        String ourPackageName = getPackageName();
-        Log.d(TAG, "RECEIVED MEDIA SESSION CHANGE");
-        for (MediaController mediaController : controllers) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // Our session is top priority, break early
-                Log.d(TAG, "MEDIA CONTROLLER NAME : " + mediaController.getPackageName());
-                if (!mediaController.getPackageName().equals(ourPackageName)) {
-                    isTopPriority = false;
-                }
-                break;
-            }
-        }
-
-        if (!isTopPriority) {
-            handleMediaSessionPriority();
-        }
-    }
-
-    private void handleMediaSessionPriority() {
-        // Re-setup Media Session after a short delay
-        new Handler().postDelayed(this::setupMediaSession, 1000);
-    }
-
-    private void setupMediaSession() {
-        if (mediaSession != null) {
-            mediaSession.setActive(false);
-            mediaSession.release();
-        }
-
-        mediaSession = new MediaSessionCompat(this, "MyMediaSession");
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPlay() {
-                super.onPlay();
-                // Handle play
-            }
-
-            @Override
-            public void onPause() {
-                super.onPause();
-                // Handle pause
-            }
-
-            @Override
-            public boolean onMediaButtonEvent(Intent intent) {
-                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-                if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (keyEvent.getKeyCode()) {
-                        case KeyEvent.KEYCODE_HEADSETHOOK:
-                        case KeyEvent.KEYCODE_MEDIA_PLAY:
-                        case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                            Log.d(TAG, "Inside Media Listner");
-//                            accept(privCallInvite, privNotificationId, 10);
-                            Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
-                            if (privIntentNotif != null && SoundPoolManager.getInstance(getApplicationContext()).isRinging()) {
-                                try {
-                                    privIntentNotif.send();
-                                    Log.d(TAG, "Intent sent successfully");
-                                } catch (PendingIntent.CanceledException e) {
-                                    Log.e(TAG, "PendingIntent was cancelled", e);
-                                }
-                            } else {
-                                Log.e(TAG, "PendingIntent is null");
-                            }
-                            return true;
-                    }
-                }
-                return super.onMediaButtonEvent(intent);
-            }
-        });
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mediaSession.setActive(true);
-    }
-
-    private Runnable mediaSessionControlRunnable = new Runnable() {
-        @Override
-        public void run() {
-            regainMediaSessionControl();
-
-            // Schedule the next execution
-            handler.postDelayed(this, 2500); // 1-second delay
-        }
-    };
-
-    private void startMediaSessionControlLoop() {
-        handler.post(mediaSessionControlRunnable); // Start the recurring task
-    }
-
-    // Stop the loop when the call is answered or ringing stops
-    private void stopMediaSessionControlLoop() {
-        handler.removeCallbacks(mediaSessionControlRunnable); // Stop the recurring task
-    }
-
-    // Call this function when you need to regain control repeatedly
-    private void regainMediaSessionControl() {
-        Log.d(TAG, "INSIDE REGAIN MEDIA SESSION");
-        if (mediaSession != null) {
-            Log.d(TAG, "Regaining MEDIA SESSION");
-            mediaSession.setActive(true);
-            mediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
-                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
-                    .build());
-        }
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -497,7 +390,6 @@ public class IncomingCallNotificationService extends Service {
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
 //        SoundPoolManager.getInstance(this).stopRinging();
-        stopMediaSessionControlLoop();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);
         Intent activeCallIntent;
         if (origin == 0 && !isAppVisible()) {
@@ -628,7 +520,7 @@ public class IncomingCallNotificationService extends Service {
         mediaPlayer = MediaPlayer.create(this, R.raw.incoming);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
-        startMediaSessionControlLoop();
+//        startMediaSessionControlLoop();
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
             @Override

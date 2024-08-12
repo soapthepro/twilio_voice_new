@@ -104,6 +104,17 @@ class TwilioVoice {
         'hasMicPermission', {}).then<bool>((bool? value) => value ?? false);
   }
 
+  /// Checks if device has audio switch active
+  Future<bool> isAudioSwitchActive() {
+    return _channel.invokeMethod<bool?>(
+        'isAudioSwitchActive', {}).then<bool>((bool? value) => value ?? false);
+  }
+
+  /// Stops audio switch
+  Future<void> stopAudioSwitch() {
+    await _channel.invokeMethod('disableAudioSwitch', <String, dynamic>{"disableAudioSwitch": disableAudioSwitch});
+  }
+
   /// Request microphone permission
   Future<bool?> requestMicAccess() {
     return _channel.invokeMethod('requestMicPermission', {});

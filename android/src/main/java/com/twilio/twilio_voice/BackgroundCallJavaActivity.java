@@ -108,7 +108,6 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         
-//        audioSwitch = new AudioSwitch(getApplicationContext(), true);
         audioSwitch = AudioSwitchManager.getInstance(getApplicationContext());
         savedVolumeControlStream = getVolumeControlStream();
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
@@ -379,7 +378,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        audioSwitch.stop();
+//        audioSwitch.stop();
         setVolumeControlStream(savedVolumeControlStream);
         deactivateSensor();
     }

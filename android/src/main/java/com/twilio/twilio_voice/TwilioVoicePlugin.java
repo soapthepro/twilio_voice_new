@@ -2,6 +2,7 @@ package com.twilio.twilio_voice;
 
 import androidx.annotation.NonNull;
 
+import com.twilio.audioswitch.AudioSwitch;
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
 import com.twilio.voice.CallInvite;
@@ -53,6 +54,8 @@ import io.flutter.plugin.common.PluginRegistry;
 
 import static java.lang.Boolean.getBoolean;
 
+import static tvo.webrtc.ContextUtils.getApplicationContext;
+
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -101,6 +104,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
     private SharedPreferences pSharedPref;
 
+    private AudioSwitch audioSwitch;
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         register(flutterPluginBinding.getBinaryMessenger(), this, flutterPluginBinding.getApplicationContext());
@@ -129,7 +133,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
         plugin.pSharedPref = context.getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
 
-
+        plugin.audioSwitch = AudioSwitchManager.getInstance(context);
     }
 
 
@@ -521,6 +525,10 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             result.success(added);
         } else if (call.method.equals("hasMicPermission")) {
             result.success(this.checkPermissionForMicrophone());
+        } else if (call.method.equals("isAudioSwitchActive")) {
+            result.success(this.checkAudioSwitchStatus());
+        } else if (call.method.equals("disableAudioSwitch")) {
+            result.success(this.disableAudioSwitch());
         } else if (call.method.equals("requestMicPermission")) {
             sendPhoneCallEvents("LOG|requesting mic permission");
             if (!this.checkPermissionForMicrophone()) {
@@ -802,6 +810,16 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         sendPhoneCallEvents("LOG|checkPermissionForMicrophone");
         int resultMic = ContextCompat.checkSelfPermission(this.context, Manifest.permission.RECORD_AUDIO);
         return resultMic == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean checkAudioSwitchStatus() {
+        sendPhoneCallEvents("LOG|checkAudioSwitchStatus");
+        return AudioSwitchManager.isActive();
+    }
+
+    private void disableAudioSwitch() {
+        sendPhoneCallEvents("LOG|disableAudioSwitch");
+        AudioSwitchManager.closeAudioSwitch();
     }
 
     private boolean requestPermissionForMicrophone() {
