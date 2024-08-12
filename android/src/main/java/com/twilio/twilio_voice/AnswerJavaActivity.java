@@ -423,6 +423,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     TwilioVoicePlugin.activeCall = call;
                     startAnswerActivity(call);
                     finish();
+
                 }
             }
 
