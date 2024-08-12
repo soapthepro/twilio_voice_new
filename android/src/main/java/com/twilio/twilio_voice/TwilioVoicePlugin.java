@@ -290,6 +290,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             intentFilter.addAction(Constants.ACTION_END_CALL);
             intentFilter.addAction(Constants.ACTION_TOGGLE_MUTE);
             intentFilter.addAction(Constants.ACTION_RETURN_CALL);
+            intentFilter.addAction("ACTION_CALL_ENDED_HERE");
             LocalBroadcastManager.getInstance(this.activity).registerReceiver(
                     voiceBroadcastReceiver, intentFilter);
             isReceiverRegistered = true;
@@ -356,6 +357,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     case Constants.ACTION_TOGGLE_MUTE:
                     case Constants.ACTION_END_CALL:
                     case Constants.ACTION_RETURN_CALL:
+                    case "ACTION_CALL_ENDED_HERE":
 
                         /*
                          * Handle the incoming or cancelled call invite
