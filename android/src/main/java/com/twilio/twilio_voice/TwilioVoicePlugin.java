@@ -534,7 +534,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         } else if (call.method.equals("getAudioDevices")) {
             result.success(this.getAudioDevices());
         } else if (call.method.equals("selectAudioDevice")) {
-            AudioDevice ndevice = call.argument("device");
+            String ndevice = call.argument("device");
             result.success(this.selectAudioDevice(ndevice));
         } else if (call.method.equals("requestMicPermission")) {
             sendPhoneCallEvents("LOG|requesting mic permission");
