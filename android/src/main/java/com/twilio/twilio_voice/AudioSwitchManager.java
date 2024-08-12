@@ -35,6 +35,7 @@ public class AudioSwitchManager {
         if (isActive && audioSwitch != null) {
             isActive = false;
             audioSwitch.stop();
+            audioSwitch = null;
         }
     }
 
