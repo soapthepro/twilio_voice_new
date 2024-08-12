@@ -2,6 +2,7 @@ package com.twilio.twilio_voice;
 
 import androidx.annotation.NonNull;
 
+import com.twilio.audioswitch.AudioDevice;
 import com.twilio.audioswitch.AudioSwitch;
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
@@ -14,6 +15,7 @@ import com.twilio.voice.Voice;
 import com.twilio.twilio_voice.AnswerJavaActivity;
 import com.twilio.twilio_voice.HeadsetActionButtonReceiver;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.Manifest;
@@ -529,6 +531,11 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             result.success(this.checkAudioSwitchStatus());
         } else if (call.method.equals("disableAudioSwitch")) {
             result.success(this.disableAudioSwitch());
+        } else if (call.method.equals("getAudioDevices")) {
+            result.success(this.getAudioDevices());
+        } else if (call.method.equals("selectAudioDevice")) {
+            AudioDevice ndevice = call.argument("device");
+            result.success(this.selectAudioDevice(ndevice));
         } else if (call.method.equals("requestMicPermission")) {
             sendPhoneCallEvents("LOG|requesting mic permission");
             if (!this.checkPermissionForMicrophone()) {
@@ -820,6 +827,23 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     private void disableAudioSwitch() {
         sendPhoneCallEvents("LOG|disableAudioSwitch");
         AudioSwitchManager.closeAudioSwitch();
+    }
+
+    private List<AudioDevice> getAudioDevices() {
+        sendPhoneCallEvents("LOG|getAudioDevices");
+        return AudioSwitchManager.getAudioDevices();
+    }
+
+    private void selectAudioDevice(String device) {
+        sendPhoneCallEvents("LOG|selectAudioDevice");
+        AudioSwitch audioSwitch = AudioSwitchManager.getInstance(getApplicationContext());
+        List<AudioDevice> availableDevices = audioSwitch.getAvailableAudioDevices();
+
+        for (AudioDevice dev : availableDevices) {
+            if (dev.getName().equals(device)) {
+                AudioSwitchManager.setAudioDevice(dev);
+            }
+        }
     }
 
     private boolean requestPermissionForMicrophone() {

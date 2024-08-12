@@ -1,7 +1,12 @@
 package com.twilio.twilio_voice;
 
 import android.content.Context;
+
+import com.twilio.audioswitch.AudioDevice;
 import com.twilio.audioswitch.AudioSwitch;
+
+import java.util.List;
+
 import kotlin.Unit;
 
 public class AudioSwitchManager {
@@ -30,6 +35,29 @@ public class AudioSwitchManager {
         if (isActive && audioSwitch != null) {
             isActive = false;
             audioSwitch.stop();
+        }
+    }
+
+    public static List<AudioDevice> getAudioDevices() {
+        if (isActive && audioSwitch != null) {
+            return audioSwitch.getAvailableAudioDevices();
+        }
+        return null;
+    }
+
+    public static void setAudioDevice(AudioDevice device) {
+        if (isActive && audioSwitch != null) {
+            audioSwitch.deactivate();
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            audioSwitch.selectDevice(device);
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            audioSwitch.activate();
         }
     }
 }

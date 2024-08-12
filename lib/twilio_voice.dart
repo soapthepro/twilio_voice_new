@@ -115,6 +115,16 @@ class TwilioVoice {
     await _channel.invokeMethod('disableAudioSwitch', <String, dynamic>{"disableAudioSwitch": disableAudioSwitch});
   }
 
+  Future<List<String>> getAllAvailableDevices() async {
+    final List<dynamic> devices = await _channel.invokeMethod('getAudioDevices');
+    return devices.cast<String>();
+  }
+
+  /// Select a device
+  Future<void> selectAudioDevice(String deviceName) async {
+    await _channel.invokeMethod('selectAudioDevice', {'device': deviceName});
+  }
+
   /// Request microphone permission
   Future<bool?> requestMicAccess() {
     return _channel.invokeMethod('requestMicPermission', {});
