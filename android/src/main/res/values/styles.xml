@@ -9,4 +9,9 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/white</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <!-- Add more customization here -->
+    </style>
 </resources>

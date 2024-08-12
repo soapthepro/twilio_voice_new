@@ -341,27 +341,27 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             for (AudioDevice a : availableAudioDevices) {
                 audioDeviceNames.add(a.getName());
             }
-            new AlertDialog.Builder(this)
-                .setTitle("Select Audio Device")                
-                .setSingleChoiceItems(                    
-                    audioDeviceNames.toArray(new CharSequence[0]),                      
-                    selectedDeviceIndex,                       
-                    (dialog, index) -> {                            
-                        dialog.dismiss();                            
-                        AudioDevice selectedAudioDevice = availableAudioDevices.get(index);                            
-                        updateAudioDeviceIcon(selectedAudioDevice);
-                        audioSwitch.deactivate();
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                        }
-                        audioSwitch.selectDevice(selectedAudioDevice);
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                        }
-                        audioSwitch.activate();
-                    }).create().show();    
+            new AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
+                    .setTitle("Select Audio Device")
+                    .setSingleChoiceItems(
+                            audioDeviceNames.toArray(new CharSequence[0]),
+                            selectedDeviceIndex,
+                            (dialog, index) -> {
+                                dialog.dismiss();
+                                AudioDevice selectedAudioDevice = availableAudioDevices.get(index);
+                                updateAudioDeviceIcon(selectedAudioDevice);
+                                audioSwitch.deactivate();
+                                try {
+                                    Thread.sleep(200);
+                                } catch (InterruptedException e) {
+                                }
+                                audioSwitch.selectDevice(selectedAudioDevice);
+                                try {
+                                    Thread.sleep(200);
+                                } catch (InterruptedException e) {
+                                }
+                                audioSwitch.activate();
+                            }).create().show();
         }
     }
 

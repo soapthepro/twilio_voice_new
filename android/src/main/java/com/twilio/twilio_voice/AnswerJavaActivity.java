@@ -439,6 +439,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             @Override
             public void onDisconnected(@NonNull Call call, CallException error) {
                 // audioSwitch.deactivate();
+                Intent disconnectIntent = new Intent();;
+                disconnectIntent.setAction("ACTION_CALL_ENDED_HERE");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(disconnectIntent);
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Disconnected");
                     endCall();
