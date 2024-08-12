@@ -112,7 +112,7 @@ class TwilioVoice {
 
   /// Stops audio switch
   Future<void> stopAudioSwitch() {
-    await _channel.invokeMethod('disableAudioSwitch', <String, dynamic>{"disableAudioSwitch": disableAudioSwitch});
+    return _channel.invokeMethod('disableAudioSwitch');
   }
 
   Future<List<String>> getAllAvailableDevices() async {
