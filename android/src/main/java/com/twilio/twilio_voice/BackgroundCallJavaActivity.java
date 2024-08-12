@@ -251,8 +251,8 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendIntent(Constants.ACTION_END_CALL);
+                AudioSwitchManager.closeAudioSwitch();
                 finish();
-
             }
         });
 
