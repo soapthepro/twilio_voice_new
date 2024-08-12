@@ -265,7 +265,6 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                 }
-                audioSwitch = AudioSwitchManager.getInstance(getApplicationContext());
                 finish();
             }
         });
