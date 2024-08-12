@@ -824,9 +824,10 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         return AudioSwitchManager.isActive();
     }
 
-    private void disableAudioSwitch() {
+    private boolean disableAudioSwitch() {
         sendPhoneCallEvents("LOG|disableAudioSwitch");
         AudioSwitchManager.closeAudioSwitch();
+        return true;
     }
 
     private List<AudioDevice> getAudioDevices() {
@@ -834,7 +835,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         return AudioSwitchManager.getAudioDevices();
     }
 
-    private void selectAudioDevice(String device) {
+    private boolean selectAudioDevice(String device) {
         sendPhoneCallEvents("LOG|selectAudioDevice");
         AudioSwitch audioSwitch = AudioSwitchManager.getInstance(getApplicationContext());
         List<AudioDevice> availableDevices = audioSwitch.getAvailableAudioDevices();
@@ -844,6 +845,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 AudioSwitchManager.setAudioDevice(dev);
             }
         }
+        return true;
     }
 
     private boolean requestPermissionForMicrophone() {
