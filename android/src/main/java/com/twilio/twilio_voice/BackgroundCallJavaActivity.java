@@ -178,7 +178,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         }
         if (audioSwitch != null) {
             List<AudioDevice> devices = audioSwitch.getAvailableAudioDevices();
-            selectPreferredAudioDevice(devices);
+//            selectPreferredAudioDevice(devices);
         }
     }
 
