@@ -212,6 +212,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     }
                     break;
                 case "ACTION_CALL_ENDED_HERE":
+                    activeCall = null;
                     sendPhoneCallEvents("Call Ended");
                     break;
                 default:
