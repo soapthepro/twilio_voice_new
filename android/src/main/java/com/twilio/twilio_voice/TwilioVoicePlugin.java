@@ -536,6 +536,8 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             result.success(this.checkAudioSwitchStatus());
         } else if (call.method.equals("disableAudioSwitch")) {
             result.success(this.disableAudioSwitch());
+        } else if (call.method.equals("enableAudioSwitch")) {
+            result.success(this.enableAudioSwitch());
         } else if (call.method.equals("getAudioDevices")) {
             result.success(this.getAudioDevices());
         } else if (call.method.equals("selectAudioDevice")) {
@@ -832,6 +834,17 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     private boolean disableAudioSwitch() {
         sendPhoneCallEvents("LOG|disableAudioSwitch");
         AudioSwitchManager.closeAudioSwitch();
+        return true;
+    }
+
+    private boolean enableAudioSwitch() {
+        sendPhoneCallEvents("LOG|enableAudioSwitch");
+        AudioSwitchManager.getInstance(getApplicationContext());
+        try {
+            Thread.sleep(400);
+            AudioSwitchManager.setPreferredAudioDevice();
+        } catch (InterruptedException e) {
+        }
         return true;
     }
 

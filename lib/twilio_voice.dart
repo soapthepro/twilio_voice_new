@@ -115,6 +115,10 @@ class TwilioVoice {
     return _channel.invokeMethod('disableAudioSwitch');
   }
 
+  Future<void> enableAudioSwitch() {
+    return _channel.invokeMethod('enableAudioSwitch');
+  }
+
   Future<List<String>> getAllAvailableDevices() async {
     final List<dynamic> devices = await _channel.invokeMethod('getAudioDevices');
     return devices.cast<String>();

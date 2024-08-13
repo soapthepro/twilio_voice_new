@@ -68,4 +68,27 @@ public class AudioSwitchManager {
             audioSwitch.activate();
         }
     }
+
+    public static void setPreferredAudioDevice() {
+        if (isActive && audioSwitch != null) {
+            List<? extends AudioDevice> audioDevices = audioSwitch.getAvailableAudioDevices();
+            for (AudioDevice device : audioDevices) {
+                if (device instanceof AudioDevice.BluetoothHeadset) {
+                    audioSwitch.selectDevice(device);
+                    try {
+                        Thread.sleep(400);
+                        audioSwitch.activate();
+                    } catch (InterruptedException e) {
+                    }
+                    return;
+                }
+            }
+            audioSwitch.selectDevice(audioSwitch.getAvailableAudioDevices().get(0));
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            audioSwitch.activate();
+        }
+    }
 }
