@@ -442,10 +442,10 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                 Intent disconnectIntent = new Intent();;
                 disconnectIntent.setAction("ACTION_CALL_ENDED_HERE");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(disconnectIntent);
-                if (!TwilioVoicePlugin.appHasStarted) {
-                    Log.d(TAG, "Disconnected");
-                    endCall();
-                }
+//                if (!TwilioVoicePlugin.appHasStarted) {
+                Log.d(TAG, "Disconnected");
+                endCall();
+//                }
                 unregisterReceiver();
             }
         };

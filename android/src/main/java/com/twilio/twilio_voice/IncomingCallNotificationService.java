@@ -96,12 +96,30 @@ public class IncomingCallNotificationService extends Service {
                 case Constants.ACTION_ACCEPT:
                     int origin = intent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN, 0);
                     Log.d(TAG, "onStartCommand-ActionAccept in IncomingCallNotificationService" + origin);
+                    if (mediaPlayer != null && isPlaying) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                        isPlaying = false;
+                    }
                     accept(callInvite, notificationId, origin);
                     break;
                 case Constants.ACTION_REJECT:
+                    if (mediaPlayer != null && isPlaying) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                        isPlaying = false;
+                    }
                     reject(callInvite);
                     break;
                 case Constants.ACTION_CANCEL_CALL:
+                    if (mediaPlayer != null && isPlaying) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                        isPlaying = false;
+                    }
                     handleCancelledCall(intent);
                     break;
                 case Constants.ACTION_RETURN_CALL:
