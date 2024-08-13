@@ -423,7 +423,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     TwilioVoicePlugin.activeCall = call;
                     startAnswerActivity(call);
                     finish();
-
                 }
             }
 
@@ -447,8 +446,8 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                     Log.d(TAG, "Disconnected");
                     endCall();
                 }
+                unregisterReceiver();
             }
-
         };
     }
 
@@ -665,7 +664,6 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         super.onDestroy();
         // audioSwitch.stop();
         setVolumeControlStream(savedVolumeControlStream);
-        unregisterReceiver();
 //        mediaSession.release();
         if (wakeLock != null) {
             wakeLock.release();
