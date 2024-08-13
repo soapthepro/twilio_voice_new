@@ -143,12 +143,11 @@ public class IncomingCallNotificationService extends Service {
                                 mediaPlayer.stop();
                                 mediaPlayer.release();
                             }
-//                            accept(privCallInvite, privNotificationId, 10);
-                            Log.d(TAG, "SOUNDPOOL: " + SoundPoolManager.getInstance(getApplicationContext()).isRinging());
                             if (privIntentNotif != null && isPlaying) {
                                 try {
                                     isPlaying = false;
                                     privIntentNotif.send();
+                                    privIntentNotif = null;
                                     Log.d(TAG, "Intent sent successfully");
                                 } catch (PendingIntent.CanceledException e) {
                                     Log.e(TAG, "PendingIntent was cancelled", e);
@@ -431,6 +430,7 @@ public class IncomingCallNotificationService extends Service {
         }
         SoundPoolManager.getInstance(this).playDisconnect();
         isPlaying = false;
+        privIntentNotif = null;
         Intent rejectCallIntent = new Intent();
         rejectCallIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         rejectCallIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -446,10 +446,13 @@ public class IncomingCallNotificationService extends Service {
             mediaPlayer.stop();
         }
         isPlaying = false;
+        privIntentNotif = null;
         CancelledCallInvite cancelledCallInvite = intent.getParcelableExtra(Constants.CANCELLED_CALL_INVITE);
         SharedPreferences preferences = getApplicationContext().getSharedPreferences(TwilioPreferences, Context.MODE_PRIVATE);
         boolean prefsShow = preferences.getBoolean("show-notifications", true);
         if (prefsShow) {
+            isPlaying = false;
+            privIntentNotif = null;
             buildMissedCallNotification(cancelledCallInvite.getFrom(), cancelledCallInvite.getTo());
         }
         endForeground();
