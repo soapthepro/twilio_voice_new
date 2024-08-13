@@ -139,9 +139,10 @@ public class IncomingCallNotificationService extends Service {
                         case KeyEvent.KEYCODE_MEDIA_PLAY:
                         case KeyEvent.KEYCODE_MEDIA_PAUSE:
                             Log.d(TAG, "Inside Media Listner");
-                            if (mediaPlayer != null) {
+                            if (mediaPlayer != null && isPlaying) {
                                 mediaPlayer.stop();
                                 mediaPlayer.release();
+                                mediaPlayer = null;
                             }
                             if (privIntentNotif != null && isPlaying) {
                                 try {
