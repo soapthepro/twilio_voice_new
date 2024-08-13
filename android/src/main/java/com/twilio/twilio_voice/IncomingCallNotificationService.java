@@ -265,6 +265,7 @@ public class IncomingCallNotificationService extends Service {
         } else {
             caller = preferences.getString(fromId, preferences.getString("defaultCaller", "Unknown caller"));
         }
+        caller.replaceAll("_", " ");
         Log.i(TAG, "CALLER NAME AFTER SETTING = " + caller);
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Version O = Android 8
