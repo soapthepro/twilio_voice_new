@@ -11,7 +11,8 @@
   <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
   <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+  
   <application>
 
     <activity android:name=".AnswerJavaActivity" android:turnScreenOn="true" android:launchMode="singleTop" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/LaunchTheme.NoActionBar" />
@@ -32,7 +33,9 @@
     <activity
         android:name=".IncomingCallNotificationActivity" android:turnScreenOn="true" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/Theme.AppCompat">
     </activity>
-    <service android:enabled="true" android:name=".IncomingCallNotificationService"
+    <service android:enabled="true" 
+        android:name=".IncomingCallNotificationService"
+        android:foregroundServiceType="mediaPlayback"
         android:exported="false">
       <intent-filter>
         <action android:name="ACTION_ACCEPT" />
