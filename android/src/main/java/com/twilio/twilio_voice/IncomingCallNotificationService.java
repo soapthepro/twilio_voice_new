@@ -687,10 +687,10 @@ public class IncomingCallNotificationService extends Service {
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
             }
-            Notification bubbleNotification = createActiveCallBubbleNotification(notificationId);
-            startForeground(notificationId, bubbleNotification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
         }
+        Notification bubbleNotification = createActiveCallBubbleNotification(notificationId);
+        startForeground(notificationId, bubbleNotification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
     }
 
     /*
