@@ -439,8 +439,8 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private String createNotificationChannel(String channelId, int channelImportance) {
+        Log.i(TAG, "creating bubble channel!");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.i(TAG, "creating bubble channel!");
             NotificationChannel callInviteChannel = new NotificationChannel(channelId,
                     "Call Bubble Channel", channelImportance);
 
@@ -449,8 +449,8 @@ public class IncomingCallNotificationService extends Service {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(callInviteChannel);
 
-            return channelId;
         }
+        return channelId;
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
