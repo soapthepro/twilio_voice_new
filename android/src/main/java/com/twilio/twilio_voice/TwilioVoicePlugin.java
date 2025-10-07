@@ -201,6 +201,10 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
 
                         String to = intent.getStringExtra(Constants.CALL_FROM);
                         String from = intent.getStringExtra(Constants.CALL_TO);
+                        Intent promote = new Intent(context, IncomingCallNotificationService.class)
+                                .setAction(IncomingCallNotificationService.ACTION_PROMOTE_TO_MIC_FGS);
+                        androidx.core.content.ContextCompat.startForegroundService(context, promote);
+
                         Log.d(TAG, "calling: " + to);
                         params.put("To", to.replace("client:", ""));
                         sendPhoneCallEvents("ReturningCall|" + from + "|" + to + "|" + "Incoming");
@@ -481,6 +485,10 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         } else if (call.method.equals("makeCall")) {
             Log.d(TAG, "Making new call");
             sendPhoneCallEvents("LOG|Making new call");
+            Intent promote = new Intent(context, IncomingCallNotificationService.class)
+                .setAction(IncomingCallNotificationService.ACTION_PROMOTE_TO_MIC_FGS);
+            androidx.core.content.ContextCompat.startForegroundService(context, promote);
+
             final HashMap<String, String> params = new HashMap<>();
             Map<String, Object> args = call.arguments();
             for (Map.Entry<String, Object> entry : args.entrySet()) {
@@ -491,6 +499,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 }
             }
             this.callOutgoing = true;
+            setAudioFocus(true);
             final ConnectOptions connectOptions = new ConnectOptions.Builder(this.accessToken)
                     .params(params)
                     .build();
@@ -701,6 +710,11 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 /*
                  * Enable changing the volume using the up/down keys during a conversation
                  */
+                Intent svc = new Intent(context, IncomingCallNotificationService.class)
+                        .setAction("ACTION_ACTIVE_CALL")
+                        .putExtra("activeCallFrom", call.getFrom());
+                androidx.core.content.ContextCompat.startForegroundService(context, svc);
+
                 savedVolumeControlStream = activity.getVolumeControlStream();
                 activity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                 sendPhoneCallEvents("Connected|" + call.getFrom() + "|" + call.getTo() + "|" + (callOutgoing ? "Outgoing" : "Incoming"));
@@ -724,6 +738,9 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     String message = String.format("Call Error: %d, %s", error.getErrorCode(), error.getMessage());
                     Log.e(TAG, message);
                 }
+                Intent svc = new Intent(context, IncomingCallNotificationService.class)
+                        .setAction("ACTION_CALL_ENDED_HERE");
+                context.startService(svc);
                 activity.setVolumeControlStream(savedVolumeControlStream);
                 sendPhoneCallEvents("Call Ended");
                 disconnected();
