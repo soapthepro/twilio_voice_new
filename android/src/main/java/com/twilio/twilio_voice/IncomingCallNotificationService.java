@@ -55,6 +55,7 @@ import com.twilio.voice.CancelledCallInvite;
 import android.media.session.MediaSessionManager;
 import android.media.session.MediaController;
 import android.text.TextUtils;
+import android.graphics.drawable.Icon;
 
 public class IncomingCallNotificationService extends Service {
 
@@ -545,7 +546,7 @@ public class IncomingCallNotificationService extends Service {
 
         BubbleMetadata bubbleData = new BubbleMetadata.Builder()
                 .setDesiredHeight(200) // small bubble
-                .setIcon(Icon.createWithResource(this, R.drawable.ic_call_end_white_24dp))
+                .setIcon(R.drawable.ic_call_end_white_24dp)
                 .setIntent(bubblePendingIntent)
                 .build();
 
@@ -557,7 +558,7 @@ public class IncomingCallNotificationService extends Service {
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setOngoing(true)
                 .setBubbleMetadata(bubbleData)
-                .setIcon(Icon.createWithResource(this, R.drawable.ic_call_end_white_24dp));
+                .setIcon(R.drawable.ic_call_end_white_24dp);
 
 
         return builder.build();
