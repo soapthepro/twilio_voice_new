@@ -136,17 +136,6 @@ public class IncomingCallNotificationService extends Service {
                     returnCall(intent);
                     break;
                 case ACTION_PROMOTE_TO_MIC_FGS:
-                    Log.i(TAG, "Promote to mic foreground service");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        startForeground(notificationId,
-                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
-                                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
-                        } else {
-                            startForeground(notificationId,
-                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
-                    }
-                    break;
-                case ACTION_PROMOTE_TO_MIC_FGS:
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         startForeground(notificationId,
                                 createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
