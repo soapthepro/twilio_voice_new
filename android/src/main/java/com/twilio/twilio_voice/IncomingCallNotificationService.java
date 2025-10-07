@@ -551,13 +551,13 @@ public class IncomingCallNotificationService extends Service {
             .build();
 
         Notification.Builder builder = new Notification.Builder(this,
-                createNotificationChannel("call_bubble", NotificationManager.IMPORTANCE_LOW))
+                createNotificationChannel("call_bubble", NotificationManager.IMPORTANCE_HIGH))
                 .setSmallIcon(R.drawable.ic_call_end_white_24dp)
                 .setContentTitle("Ongoing Call")
                 .setCategory(Notification.CATEGORY_CALL)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setOngoing(true)
-                .setBubbleMetadata(bubbleData);
+                // .setBubbleMetadata(bubbleData);
 
 
         return builder.build();
