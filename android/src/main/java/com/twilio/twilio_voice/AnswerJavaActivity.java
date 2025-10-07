@@ -396,6 +396,30 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
+    private void setActiveCallNotification(Call activeCall, int notificationId) {
+        Log.d(TAG, "SETTING ACTIVE CALL NOTIFICATION");
+        Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        Notification notification = new Notification.Builder(this, createChannel(NotificationManager.IMPORTANCE_LOW))
+                .setContentTitle("Call in progress")
+                .setContentText("Ongoing call")
+                .setSmallIcon(R.drawable.ic_call_end_white_24dp)
+                .setCategory(Notification.CATEGORY_CALL)
+                .setOngoing(true)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(notificationId, notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+        } else {
+            startForeground(notificationId, notification);
+        }
+    }
+
     Call activeCall;
 
     private Call.Listener callListener() {
@@ -418,6 +442,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             public void onConnected(@NonNull Call call) {
                 // audioSwitch.activate();
                 activeCall = call;
+                setActiveCallNotification(call, 0);
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Connected from BackgroundUI");
                     TwilioVoicePlugin.activeCall = call;
