@@ -11,6 +11,8 @@
   <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
   
   <application>
 
@@ -34,7 +36,7 @@
     </activity>
     <service android:enabled="true" 
         android:name=".IncomingCallNotificationService"
-        android:foregroundServiceType="dataSync|mediaPlayback"
+        android:foregroundServiceType="dataSync|mediaPlayback|microphone"
         tools:replace="android:foregroundServiceType"
         android:exported="false">
       <intent-filter>
