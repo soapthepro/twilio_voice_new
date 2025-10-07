@@ -105,6 +105,11 @@ public class IncomingCallNotificationService extends Service {
                     }
                     accept(callInvite, notificationId, origin);
                     break;
+                case "ACTION_ACTIVE_CALL":
+                    String from = intent.getStringExtra("activeCallFrom");
+                    Log.d(TAG, "onStartCommand-ACTION_ACTIVE_CALL in IncomingCallNotificationService from: " + from);
+                    setActiveCallNotification(null, 200);
+                    break;
                 case Constants.ACTION_REJECT:
                     if (mediaPlayer != null && isPlaying) {
                         mediaPlayer.stop();
@@ -197,6 +202,31 @@ public class IncomingCallNotificationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void setActiveCallNotification(Call activeCall, int notificationId) {
+        Log.d(TAG, "SETTING ACTIVE CALL NOTIFICATION");
+        Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        Notification notification = new Notification.Builder(this, createChannel(NotificationManager.IMPORTANCE_LOW))
+                .setContentTitle("Call in progress")
+                .setContentText("Ongoing call")
+                .setSmallIcon(R.drawable.ic_call_end_white_24dp)
+                .setCategory(Notification.CATEGORY_CALL)
+                .setOngoing(true)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(notificationId, notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK |
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        } else {
+            startForeground(notificationId, notification);
+        }
     }
 
     private Call.Listener callListener() {
@@ -602,14 +632,14 @@ public class IncomingCallNotificationService extends Service {
         if (isAppVisible()) {
             Log.i(TAG, "setCallInProgressNotification - app is visible.");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW));
             }
         } else {
             Log.i(TAG, "setCallInProgressNotification - app is NOT visible.");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
             }

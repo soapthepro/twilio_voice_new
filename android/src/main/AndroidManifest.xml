@@ -34,7 +34,7 @@
     </activity>
     <service android:enabled="true" 
         android:name=".IncomingCallNotificationService"
-        android:foregroundServiceType="mediaPlayback"
+        android:foregroundServiceType="dataSync|mediaPlayback"
         tools:replace="android:foregroundServiceType"
         android:exported="false">
       <intent-filter>
