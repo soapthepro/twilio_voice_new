@@ -201,6 +201,7 @@ public class IncomingCallNotificationService extends Service {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void setActiveCallNotification(Call activeCall, int notificationId) {
+        Log.d(TAG, "SETTING ACTIVE CALL NOTIFICATION");
         Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
@@ -242,6 +243,7 @@ public class IncomingCallNotificationService extends Service {
             public void onConnected(@NonNull Call call) {
                 // audioSwitch.activate();
                 activeCall = call;
+                setActiveCallNotification(call, privNotificationId);
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Connected from BackgroundUI");
                     TwilioVoicePlugin.activeCall = call;
