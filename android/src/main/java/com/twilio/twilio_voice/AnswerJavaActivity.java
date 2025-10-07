@@ -59,6 +59,12 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import androidx.media.session.MediaButtonReceiver;
+import android.content.pm.ServiceInfo;
+import android.app.Service;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 
 public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetActionButtonReceiver.Delegate {
 
