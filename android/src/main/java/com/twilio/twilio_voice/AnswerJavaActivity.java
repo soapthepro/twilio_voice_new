@@ -419,10 +419,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             public void onConnected(@NonNull Call call) {
                 // audioSwitch.activate();
                 activeCall = call;
-                Intent serviceIntent = new Intent(this, IncomingCallNotificationService.class);
+                Intent serviceIntent = new Intent(AnswerJavaActivity.this, IncomingCallNotificationService.class);
                 serviceIntent.setAction("ACTION_ACTIVE_CALL");
-                serviceIntent.putExtra("activeCallFrom", call.getFrom());
-                ContextCompat.startForegroundService(this, serviceIntent);
+                ContextCompat.startForegroundService(AnswerJavaActivity.this, serviceIntent);
                 if (!TwilioVoicePlugin.appHasStarted) {
                     Log.d(TAG, "Connected from BackgroundUI");
                     TwilioVoicePlugin.activeCall = call;
