@@ -556,7 +556,7 @@ public class IncomingCallNotificationService extends Service {
                 .setContentTitle("Ongoing Call")
                 .setCategory(Notification.CATEGORY_CALL)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setOngoing(true)
+                .setOngoing(true);
                 // .setBubbleMetadata(bubbleData);
 
 
