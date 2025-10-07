@@ -545,17 +545,20 @@ public class IncomingCallNotificationService extends Service {
 
         BubbleMetadata bubbleData = new BubbleMetadata.Builder()
                 .setDesiredHeight(200) // small bubble
-                .setIcon(IconCompat.createWithResource(this, R.drawable.ic_call_end_white_24dp))
+                .setIcon(Icon.createWithResource(this, R.drawable.ic_call_end_white_24dp))
                 .setIntent(bubblePendingIntent)
                 .build();
 
-        Notification.Builder builder = new Notification.Builder(this, createNotificationChannel("call_bubble", NotificationManager.IMPORTANCE_LOW).getId())
+        Notification.Builder builder = new Notification.Builder(this,
+                createNotificationChannel("call_bubble", NotificationManager.IMPORTANCE_LOW))
                 .setSmallIcon(R.drawable.ic_call_end_white_24dp)
                 .setContentTitle("Ongoing Call")
                 .setCategory(Notification.CATEGORY_CALL)
-                .setBubbleMetadata(bubbleData)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setOngoing(true);
+                .setOngoing(true)
+                .setBubbleMetadata(bubbleData)
+                .setIcon(Icon.createWithResource(this, R.drawable.ic_call_end_white_24dp));
+
 
         return builder.build();
     }
