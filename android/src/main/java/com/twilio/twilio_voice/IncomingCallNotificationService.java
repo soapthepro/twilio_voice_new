@@ -112,7 +112,7 @@ public class IncomingCallNotificationService extends Service {
                 case "ACTION_ACTIVE_CALL":
                     String from = intent.getStringExtra("activeCallFrom");
                     Log.d(TAG, "onStartCommand-ACTION_ACTIVE_CALL in IncomingCallNotificationService from: " + from);
-                    setActiveCallNotification(null, privNotificationId);
+                    setActiveCallNotification(null, Constants.ACTIVE_CALL_NOTIFICATION_ID);
                     break;
                 case Constants.ACTION_REJECT:
                     if (mediaPlayer != null && isPlaying) {
@@ -136,7 +136,7 @@ public class IncomingCallNotificationService extends Service {
                     returnCall(intent);
                     break;
                 case ACTION_PROMOTE_TO_MIC_FGS:
-                    setActiveCallNotification(null, notificationId);
+                    setActiveCallNotification(null, Constants.ACTIVE_CALL_NOTIFICATION_ID);
                     // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     //     startForeground(notificationId,
                     //             createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
@@ -471,8 +471,8 @@ public class IncomingCallNotificationService extends Service {
     private void accept(CallInvite callInvite, int notificationId, int origin) {
         // endForeground();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // notificationManager.cancel(notificationId);
-        setActiveCallNotification(null, notificationId);
+        notificationManager.cancel(Constants.RINGING_NOTIFICATION_ID);
+        setActiveCallNotification(null, Constants.ACTIVE_CALL_NOTIFICATION_ID);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
 //        SoundPoolManager.getInstance(this).stopRinging();
         Log.i(TAG, "IsAppVisible: " + isAppVisible() + " Origin: " + origin);

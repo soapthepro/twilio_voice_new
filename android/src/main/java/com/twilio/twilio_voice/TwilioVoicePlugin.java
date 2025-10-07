@@ -157,7 +157,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     if (Build.VERSION.SDK_INT >= 29 && !isAppVisible()) {
                         break;
                     }
-                    notificationManager.cancel(activeCallNotificationId);
+                    notificationManager.cancel(Constants.RINGING_NOTIFICATION_ID);
                     // startAnswerActivity(activeCallInvite, activeCallNotificationId);
                     break;
                 case Constants.ACTION_CANCEL_CALL:
@@ -606,7 +606,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
         activeCallInvite.accept(this.activity, callListener);
         sendPhoneCallEvents("Answer|" + activeCallInvite.getFrom() + "|" + activeCallInvite.getTo() + formatCustomParams(activeCallInvite.getCustomParameters()));
         Log.d(TAG, "ACTIVE NOTIFICATION ID: " + activeCallNotificationId);
-        notificationManager.cancel(activeCallNotificationId);
+        // notificationManager.cancel(activeCallNotificationId);
 //        Intent intent = new Intent(activity, BackgroundCallJavaActivity.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
