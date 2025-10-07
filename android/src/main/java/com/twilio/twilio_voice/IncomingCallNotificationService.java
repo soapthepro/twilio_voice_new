@@ -44,6 +44,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media.session.MediaButtonReceiver;
+import androidx.media.app.NotificationCompat.BubbleMetadata;
 
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
@@ -518,6 +519,30 @@ public class IncomingCallNotificationService extends Service {
         notificationManager.cancel(100);
     }
 
+    private Notification createActiveCallBubbleNotification(int notificationId) {
+        Intent bubbleIntent = new Intent(this, AnswerJavaActivity.class);
+        bubbleIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent bubblePendingIntent = PendingIntent.getActivity(
+                this, 0, bubbleIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        BubbleMetadata bubbleData = new BubbleMetadata.Builder()
+                .setDesiredHeight(200) // small bubble
+                .setIcon(IconCompat.createWithResource(this, R.drawable.ic_call_end_white_24dp))
+                .setIntent(bubblePendingIntent)
+                .build();
+
+        Notification.Builder builder = new Notification.Builder(this, createNotificationChannel("call_bubble", NotificationManager.IMPORTANCE_LOW).getId())
+                .setSmallIcon(R.drawable.ic_call_end_white_24dp)
+                .setContentTitle("Ongoing Call")
+                .setCategory(Notification.CATEGORY_CALL)
+                .setBubbleMetadata(bubbleData)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setOngoing(true);
+
+        return builder.build();
+    }
 
     private void buildMissedCallNotification(String callerId, String to) {
 
@@ -643,6 +668,9 @@ public class IncomingCallNotificationService extends Service {
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
             }
+            Notification bubbleNotification = createActiveCallBubbleNotification(notificationId);
+            startForeground(notificationId, bubbleNotification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
         }
     }
 
