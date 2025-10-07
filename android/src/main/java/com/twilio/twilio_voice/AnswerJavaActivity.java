@@ -346,7 +346,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         }
         else {
             Log.d(TAG, "Answering call in AnswerjavaActivity 244 with id: " + activeCallNotificationId);
-            notificationManager.cancel(activeCallNotificationId);
+            // notificationManager.cancel(activeCallNotificationId);
             activeCallInvite.accept(this, callListener);
         }
     }
@@ -372,7 +372,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         }
         else {
             Log.d(TAG, "Answering call in AnswerjavaActivity 244 with id: " + activeCallNotificationId);
-            notificationManager.cancel(activeCallNotificationId);
+            // notificationManager.cancel(activeCallNotificationId);
             activeCallInvite.accept(this, callListener);
         }
     }

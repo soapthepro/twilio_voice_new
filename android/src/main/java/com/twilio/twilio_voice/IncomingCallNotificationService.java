@@ -136,14 +136,15 @@ public class IncomingCallNotificationService extends Service {
                     returnCall(intent);
                     break;
                 case ACTION_PROMOTE_TO_MIC_FGS:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        startForeground(notificationId,
-                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
-                                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
-                    } else {
-                        startForeground(notificationId,
-                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
-                    }
+                    setActiveCallNotification(null, notificationId);
+                    // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    //     startForeground(notificationId,
+                    //             createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
+                    //             ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+                    // } else {
+                    //     startForeground(notificationId,
+                    //             createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
+                    // }
                     return START_NOT_STICKY;
                 case "ACTION_CALL_ENDED_HERE":
                     endForeground();
@@ -271,7 +272,7 @@ public class IncomingCallNotificationService extends Service {
                     Log.d(TAG, "Connected from BackgroundUI");
                     TwilioVoicePlugin.activeCall = call;
                     startAnswerActivity(call);
-                    stopSelf();
+                    // stopSelf();
                 }
             }
 
