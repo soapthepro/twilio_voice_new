@@ -546,7 +546,7 @@ public class IncomingCallNotificationService extends Service {
 
         BubbleMetadata bubbleData = new BubbleMetadata.Builder()
                 .setDesiredHeight(200) // small bubble
-                .setIcon(R.drawable.ic_call_end_white_24dp)
+                .setIcon(Icon.createWithResource(this, R.drawable.ic_call_end_white_24dp))
                 .setIntent(bubblePendingIntent)
                 .build();
 
@@ -558,7 +558,7 @@ public class IncomingCallNotificationService extends Service {
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setOngoing(true)
                 .setBubbleMetadata(bubbleData)
-                .setIcon(R.drawable.ic_call_end_white_24dp);
+                .setIcon(Icon.createWithResource(this, R.drawable.ic_call_end_white_24dp));
 
 
         return builder.build();
