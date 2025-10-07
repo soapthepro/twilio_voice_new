@@ -64,6 +64,7 @@ public class IncomingCallNotificationService extends Service {
     private Context context;
     private IntentFilter intentFilter;
     private static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
+    public static final String ACTION_PROMOTE_TO_MIC_FGS = "PROMOTE_TO_MIC_FGS";
     private static int counter;
     private static int doublePressSpeed = 300; // double keypressed in ms
     private static Timer doublePressTimer;
@@ -133,6 +134,31 @@ public class IncomingCallNotificationService extends Service {
                     break;
                 case Constants.ACTION_RETURN_CALL:
                     returnCall(intent);
+                    break;
+                case ACTION_PROMOTE_TO_MIC_FGS:
+                    Log.i(TAG, "Promote to mic foreground service");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        startForeground(notificationId,
+                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
+                                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+                        } else {
+                            startForeground(notificationId,
+                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
+                    }
+                    break;
+                case ACTION_PROMOTE_TO_MIC_FGS:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        startForeground(notificationId,
+                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH),
+                                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+                    } else {
+                        startForeground(notificationId,
+                                createNotification(privCallInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
+                    }
+                    return START_NOT_STICKY;
+                case "ACTION_CALL_ENDED_HERE":
+                    endForeground();
+                    stopSelf();
                     break;
                 default:
                     break;
@@ -225,8 +251,7 @@ public class IncomingCallNotificationService extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(notificationId, notification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK |
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
         } else {
             startForeground(notificationId, notification);
         }
@@ -454,7 +479,7 @@ public class IncomingCallNotificationService extends Service {
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
-        endForeground();
+        // endForeground();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(notificationId);
         Log.i(TAG, "accept call invite! in IncomingCallNotificationService");
@@ -489,6 +514,7 @@ public class IncomingCallNotificationService extends Service {
             LocalBroadcastManager.getInstance(this).sendBroadcast(activeCallIntent);
             Log.i(TAG, "sending broadcast intent");
         }
+        setActiveCallNotification(null, notificationId);
     }
 
     private void reject(CallInvite callInvite) {
@@ -661,9 +687,9 @@ public class IncomingCallNotificationService extends Service {
             int result = audioManager.requestAudioFocus(focusRequest);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            setCallInProgressNotification(callInvite, notificationId);
-        }
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        //     setCallInProgressNotification(callInvite, notificationId);
+        // }
         sendCallInviteToActivity(callInvite, notificationId);
     }
 
@@ -676,21 +702,21 @@ public class IncomingCallNotificationService extends Service {
         if (isAppVisible()) {
             Log.i(TAG, "setCallInProgressNotification - app is visible.");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW));
             }
         } else {
             Log.i(TAG, "setCallInProgressNotification - app is NOT visible.");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
             }
         }
-        Notification bubbleNotification = createActiveCallBubbleNotification(notificationId);
-        startForeground(notificationId, bubbleNotification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        // Notification bubbleNotification = createActiveCallBubbleNotification(notificationId);
+        // startForeground(notificationId, bubbleNotification,
+        //             ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
     }
 
     /*

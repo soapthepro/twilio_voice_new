@@ -325,6 +325,13 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     }
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
+        // Promote service to MIC-typed FGS now that this Activity is visible (Android 14/15 rule)
+        Intent promote = new Intent(this, IncomingCallNotificationService.class)
+                .setAction(IncomingCallNotificationService.ACTION_PROMOTE_TO_MIC_FGS)
+                .putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite)
+                .putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, activeCallNotificationId);
+        androidx.core.content.ContextCompat.startForegroundService(this, promote);
+
         Intent acceptIntent = new Intent(this, IncomingCallNotificationService.class);
         acceptIntent.setAction(Constants.ACTION_ACCEPT);
         acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite);
@@ -346,6 +353,11 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
     private void acceptCallBroadcast() {
         Log.d(TAG, "Accepting call");
+        Intent promote = new Intent(this, IncomingCallNotificationService.class)
+                .setAction(IncomingCallNotificationService.ACTION_PROMOTE_TO_MIC_FGS)
+                .putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite)
+                .putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, activeCallNotificationId);
+        androidx.core.content.ContextCompat.startForegroundService(this, promote);
         Intent acceptIntent = new Intent(this, IncomingCallNotificationService.class);
         acceptIntent.setAction(Constants.ACTION_ACCEPT);
         acceptIntent.putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite);
@@ -443,9 +455,14 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             @Override
             public void onDisconnected(@NonNull Call call, CallException error) {
                 // audioSwitch.deactivate();
-                Intent disconnectIntent = new Intent();;
-                disconnectIntent.setAction("ACTION_CALL_ENDED_HERE");
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(disconnectIntent);
+                // Inform both: local listeners & the service
+                Intent local = new Intent();
+                local.setAction("ACTION_CALL_ENDED_HERE");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(local);
+                
+                Intent svc = new Intent(AnswerJavaActivity.this, IncomingCallNotificationService.class)
+                        .setAction("ACTION_CALL_ENDED_HERE");
+                startService(svc);
 //                if (!TwilioVoicePlugin.appHasStarted) {
                 Log.d(TAG, "Disconnected");
                 endCall();

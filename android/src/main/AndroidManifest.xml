@@ -12,8 +12,6 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
-  <uses-permission android:name="android.permission.BUBBLE_OVERLAY"/>
   
   <application>
 
@@ -37,7 +35,7 @@
     </activity>
     <service android:enabled="true" 
         android:name=".IncomingCallNotificationService"
-        android:foregroundServiceType="dataSync|mediaPlayback|microphone"
+        android:foregroundServiceType="microphone"
         tools:replace="android:foregroundServiceType"
         android:exported="false">
       <intent-filter>

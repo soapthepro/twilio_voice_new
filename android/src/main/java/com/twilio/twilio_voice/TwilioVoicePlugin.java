@@ -169,7 +169,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 case Constants.ACTION_ACCEPT:
                          Log.d(TAG, "Received ACTION_ACCEPT in TwilioVoicePlugin");
                         int acceptOrigin = intent.getIntExtra(Constants.ACCEPT_CALL_ORIGIN,0);
-                    context.stopService(new Intent(context, IncomingCallNotificationService.class));
+                    // context.stopService(new Intent(context, IncomingCallNotificationService.class));
                     if(acceptOrigin == 0){
                             Log.d(TAG, "Origin is 0 sending to AnswerJavaActivity");
                             Intent answerIntent = new Intent(activity, AnswerJavaActivity.class);
