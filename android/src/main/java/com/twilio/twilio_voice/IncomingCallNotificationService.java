@@ -44,7 +44,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media.session.MediaButtonReceiver;
-import androidx.media.app.NotificationCompat.BubbleMetadata;
+import android.app.Notification.BubbleMetadata;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.twilio.voice.Call;
 import com.twilio.voice.CallException;
@@ -434,6 +435,21 @@ public class IncomingCallNotificationService extends Service {
         notificationManager.createNotificationChannel(callInviteChannel);
 
         return channelId;
+    }
+
+    private String createNotificationChannel(String channelId, int channelImportance) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.i(TAG, "creating bubble channel!");
+            NotificationChannel callInviteChannel = new NotificationChannel(channelId,
+                    "Call Bubble Channel", channelImportance);
+
+            callInviteChannel.setLightColor(Color.GREEN);
+            callInviteChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(callInviteChannel);
+
+            return channelId;
+        }
     }
 
     private void accept(CallInvite callInvite, int notificationId, int origin) {
