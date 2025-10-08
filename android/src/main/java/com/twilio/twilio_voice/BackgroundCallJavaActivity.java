@@ -45,6 +45,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import android.widget.Chronometer;
+import android.os.SystemClock;
+
 public class BackgroundCallJavaActivity extends AppCompatActivity {
 
     private static String TAG = "BackgroundCallActivity";
@@ -68,6 +71,10 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     private int savedVolumeControlStream;
     private MenuItem audioDeviceMenuItem;
 
+    private Chronometer chronometer;
+    private ImageView ivAvatarIcon;
+    private TextView tvInitial;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +88,10 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 //        btnOutput = (ImageView) findViewById(R.id.btnOutput);
         btnHangUp = (ImageView) findViewById(R.id.btnHangUp);
         menu_audio_device = (ImageView) findViewById(R.id.menu_audio_device);
+        chronometer = findViewById(R.id.chronometer);
+        ivAvatarIcon = findViewById(R.id.ivAvatarIcon);
+        tvInitial = findViewById(R.id.tvInitial);
+
         KeyguardManager kgm = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         Boolean isKeyguardUp = kgm.inKeyguardRestrictedInputMode();
 
@@ -138,6 +149,11 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                 tvUserName.setText(caller.replaceAll("_", " "));
                 tvCallStatus.setText(getString(R.string.connected_status));
                 Log.d(TAG, "handleCallIntent-");
+                String display = caller.replaceAll("_", " ");
+                setupAvatar(display);
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
+
                 configCallUI();
                 startAudioSwitch();
             }else{
@@ -234,6 +250,28 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     
 
     boolean isMuted = false;
+
+    private void setupAvatar(String display) {
+        boolean hasLetter = false;
+        char firstLetter = 0;
+        for (int i = 0; i < display.length(); i++) {
+            char c = display.charAt(i);
+            if (Character.isLetter(c)) {
+                hasLetter = true;
+                firstLetter = c;
+                break;
+            }
+        }
+        if (hasLetter) {
+            tvInitial.setText(("" + firstLetter).toUpperCase(Locale.getDefault()));
+            tvInitial.setVisibility(View.VISIBLE);
+            ivAvatarIcon.setVisibility(View.GONE);
+        } else {
+            tvInitial.setVisibility(View.GONE);
+            ivAvatarIcon.setVisibility(View.VISIBLE);
+            ivAvatarIcon.setImageResource(R.drawable.ic_user); // your default user icon
+        }
+    }
 
     private void configCallUI() {
         Log.d(TAG, "configCallUI");
@@ -365,22 +403,24 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         }
     }
 
-    private void updateAudioDeviceIcon(AudioDevice selectedAudioDevice) {    
-        int audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;    
-        if (selectedAudioDevice instanceof AudioDevice.BluetoothHeadset) {       
-            audioDeviceMenuIcon = R.drawable.ic_bluetooth_white_24dp;    
-        } else if (selectedAudioDevice instanceof AudioDevice.WiredHeadset) {        
-            audioDeviceMenuIcon = R.drawable.ic_headset_mic_white_24dp;    
-        } else if (selectedAudioDevice instanceof AudioDevice.Earpiece) {        
-            audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;    
-        } else if (selectedAudioDevice instanceof AudioDevice.Speakerphone) {        
-            audioDeviceMenuIcon = R.drawable.ic_volume_up_white_24dp;    
-        }    
-        if (audioDeviceMenuItem != null) {       
-            audioDeviceMenuItem.setIcon(audioDeviceMenuIcon);    
+    private void updateAudioDeviceIcon(AudioDevice selectedAudioDevice) {
+        int audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;
+        if (selectedAudioDevice instanceof AudioDevice.BluetoothHeadset) {
+            audioDeviceMenuIcon = R.drawable.ic_bluetooth_white_24dp;
+        } else if (selectedAudioDevice instanceof AudioDevice.WiredHeadset) {
+            audioDeviceMenuIcon = R.drawable.ic_headset_mic_white_24dp;
+        } else if (selectedAudioDevice instanceof AudioDevice.Earpiece) {
+            audioDeviceMenuIcon = R.drawable.ic_phonelink_ring_white_24dp;
+        } else if (selectedAudioDevice instanceof AudioDevice.Speakerphone) {
+            audioDeviceMenuIcon = R.drawable.ic_volume_up_white_24dp;
+        }
+        if (audioDeviceMenuItem != null) {
+            audioDeviceMenuItem.setIcon(audioDeviceMenuIcon);
+        }
+        if (menu_audio_device != null) { 
+            menu_audio_device.setImageResource(audioDeviceMenuIcon);
         }
     }
-
 
     private void callCanceled() {
         Log.d(TAG, "Call is cancelled");
@@ -392,6 +432,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (chronometer != null) chronometer.stop();
 //        audioSwitch.stop();
         setVolumeControlStream(savedVolumeControlStream);
         deactivateSensor();

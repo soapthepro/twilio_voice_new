@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <size android:width="120dp" android:height="120dp"/>  <!-- slightly smaller than before -->
+    <solid android:color="#3A4654"/>  <!-- grayish circle like the screenshot -->
+</shape>
