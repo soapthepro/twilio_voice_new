@@ -87,7 +87,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         btnSalescaptain = (ImageView) findViewById(R.id.btnSalescaptain);
 //        btnOutput = (ImageView) findViewById(R.id.btnOutput);
         btnHangUp = (ImageView) findViewById(R.id.btnHangUp);
-        menu_audio_device = (ImageView) findViewById(R.id.menu_audio_device);
+        // menu_audio_device = (ImageView) findViewById(R.id.menu_audio_device);
+
+        menu_audio_device = (ImageView) findViewById(R.id.btnAudioDevice);
         chronometer = findViewById(R.id.chronometer);
         ivAvatarIcon = findViewById(R.id.ivAvatarIcon);
         tvInitial = findViewById(R.id.tvInitial);
@@ -417,7 +419,7 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         if (audioDeviceMenuItem != null) {
             audioDeviceMenuItem.setIcon(audioDeviceMenuIcon);
         }
-        if (menu_audio_device != null) { 
+        if (menu_audio_device != null) {
             menu_audio_device.setImageResource(audioDeviceMenuIcon);
         }
     }
