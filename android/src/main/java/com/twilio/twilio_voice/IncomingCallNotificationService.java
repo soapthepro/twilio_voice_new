@@ -699,7 +699,7 @@ public class IncomingCallNotificationService extends Service {
         } else {
             Log.i(TAG, "setCallInProgressNotification - app is NOT visible.");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH), ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL);
             } else {
                 startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_HIGH));
             }
