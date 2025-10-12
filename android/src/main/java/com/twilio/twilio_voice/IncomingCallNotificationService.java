@@ -636,7 +636,8 @@ public class IncomingCallNotificationService extends Service {
 
     private void handleIncomingCall(CallInvite callInvite, int notificationId) {
         Log.i(TAG, "handle incoming call");
-        Log.d(TAG, "NOTIFICATION ID 428 LINE: " + Constants.INCOMING_CALL_NOTIFICATION_ID);
+        int notificationIdHere = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
+        Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationIdHere);
 //        SoundPoolManager.getInstance(this).playRinging();
         mediaPlayer = MediaPlayer.create(this, R.raw.incoming);
         mediaPlayer.setLooping(true);
@@ -678,7 +679,7 @@ public class IncomingCallNotificationService extends Service {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            setCallInProgressNotification(callInvite, Constants.INCOMING_CALL_NOTIFICATION_ID);
+            setCallInProgressNotification(callInvite, notificationIdHere);
         }
         sendCallInviteToActivity(callInvite, notificationId);
     }
