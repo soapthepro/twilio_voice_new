@@ -636,7 +636,7 @@ public class IncomingCallNotificationService extends Service {
 
     private void handleIncomingCall(CallInvite callInvite, int notificationId) {
         Log.i(TAG, "handle incoming call");
-        int notificationIdHere = intent.getIntExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, 0);
+        int notificationIdHere = Integer.parseInt(Constants.INCOMING_CALL_NOTIFICATION_ID);
         Log.d(TAG, "NOTIFICATION ID 428 LINE: " + notificationIdHere);
 //        SoundPoolManager.getInstance(this).playRinging();
         mediaPlayer = MediaPlayer.create(this, R.raw.incoming);
