@@ -677,9 +677,9 @@ public class IncomingCallNotificationService extends Service {
             int result = audioManager.requestAudioFocus(focusRequest);
         }
 
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        //     setCallInProgressNotification(callInvite, notificationId);
-        // }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setCallInProgressNotification(callInvite, notificationId);
+        }
         sendCallInviteToActivity(callInvite, notificationId);
     }
 
@@ -691,11 +691,11 @@ public class IncomingCallNotificationService extends Service {
     private void setCallInProgressNotification(CallInvite callInvite, int notificationId) {
         if (isAppVisible()) {
             Log.i(TAG, "setCallInProgressNotification - app is visible.");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
-            } else {
-                startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW));
-            }
+            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            //     startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+            // } else {
+            //     startForeground(notificationId, createNotification(callInvite, notificationId, NotificationManager.IMPORTANCE_LOW));
+            // }
         } else {
             Log.i(TAG, "setCallInProgressNotification - app is NOT visible.");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

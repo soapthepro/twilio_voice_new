@@ -126,13 +126,13 @@
                 android:padding="12dp"
                 android:tint="@android:color/white"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_phonelink_ring_white_24dp" />
+                app:srcCompat="@drawable/ic_volume_up_white_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Output"
+                android:text="Speaker"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -150,7 +150,7 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:background="@drawable/bg_btn_rect_green"
-                android:padding="12dp"
+                android:padding="18dp"
                 android:tint="@android:color/white"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_mic_off" />
@@ -159,7 +159,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Mic"
+                android:text="Mute"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -180,7 +180,7 @@
                 android:padding="12dp"
                 android:tint="@android:color/white"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/splash_icon" />
+                app:srcCompat="@drawable/outline_dashboard_customize_24" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -204,7 +204,7 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:background="@drawable/bg_btn_rect_red"
-                android:padding="12dp"
+                android:padding="18dp"
                 android:tint="@android:color/white"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_phone_off" />

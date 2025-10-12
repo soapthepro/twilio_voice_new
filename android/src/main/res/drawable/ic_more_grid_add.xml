@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- base grid -->
+    <item android:drawable="@drawable/ic_grid_view_24dp" />
+
+    <!-- small plus overlaid bottom-right -->
+    <item
+        android:drawable="@drawable/ic_add_24dp"
+        android:gravity="bottom|end"
+        android:right="2dp"
+        android:bottom="2dp" />
+</layer-list>
