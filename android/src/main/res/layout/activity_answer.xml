@@ -133,6 +133,7 @@
 <!--                    android:visibility="invisible" />-->
 
 <!--            </LinearLayout>-->
+<!-- android:foreground="?attr/selectableItemBackgroundBorderless" -->
 <!--        </LinearLayout>-->
 <!--    </LinearLayout>-->
     <FrameLayout
@@ -141,7 +142,7 @@
         android:layout_height="140dp"
         android:layout_marginTop="120dp"
         android:background="@drawable/bg_avatar_circle"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
