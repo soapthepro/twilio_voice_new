@@ -48,11 +48,15 @@ import java.util.Set;
 import android.widget.Chronometer;
 import android.os.SystemClock;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+
 public class BackgroundCallJavaActivity extends AppCompatActivity {
 
     private static String TAG = "BackgroundCallActivity";
     public static final String TwilioPreferences = "com.twilio.twilio_voicePreferences";
-
+    private static final String LAUNCHER_ACTIVITY = "com.theclosecompany.sales_book.MainActivity";
 
     //    private Call activeCall;
     private NotificationManager notificationManager;
@@ -309,13 +313,14 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
             }
         });
 
-        btnSalescaptain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onCLick");
-                finish();
-            }
-        });
+        // btnSalescaptain.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View v) {
+        //         Log.d(TAG, "onCLick");
+        //         finish();
+        //     }
+        // });
+        btnSalescaptain.setOnClickListener(v -> openOrBringToFront(v.getContext()));
 
 //        btnOutput.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -327,6 +332,61 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+
+    private void openOrBringToFront(Context ctx) {
+    ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+
+    ActivityManager.AppTask launcherTask = null;
+    ActivityManager.AppTask anyAppTask = null;
+
+    try {
+        if (am != null) {
+            for (ActivityManager.AppTask task : am.getAppTasks()) {
+                ActivityManager.RecentTaskInfo info = task.getTaskInfo();
+                if (info == null || info.baseIntent == null || info.baseIntent.getComponent() == null) continue;
+
+                final String pkg = info.baseIntent.getComponent().getPackageName();
+                final String cls = info.baseIntent.getComponent().getClassName();
+                if (!ctx.getPackageName().equals(pkg)) continue;
+
+                // Prefer the actual launcher/MainActivity task
+                if (LAUNCHER_ACTIVITY.equals(cls) || cls.endsWith(".MainActivity")) {
+                    launcherTask = task;
+                    break;
+                }
+                // Otherwise remember any app task (could be this plugin task)
+                if (anyAppTask == null) anyAppTask = task;
+            }
+        }
+    } catch (Throwable ignored) {}
+
+    if (launcherTask != null) {
+        launcherTask.moveToFront();
+        if (ctx instanceof Activity) ((Activity) ctx).finish();
+        return;
+    }
+
+    if (anyAppTask != null) {
+        // Bring whatever app task exists (might be plugin); then also ensure launcher comes up
+        anyAppTask.moveToFront();
+        // Fall through to start the launcher too (no duplicate due to flags/singleTop)
+    }
+
+    // Cold start (or to ensure launcher is shown)
+        Intent launch = ctx.getPackageManager().getLaunchIntentForPackage(ctx.getPackageName());
+        if (launch == null) {
+            launch = new Intent(Intent.ACTION_MAIN);
+            launch.addCategory(Intent.CATEGORY_LAUNCHER);
+            launch.setComponent(new ComponentName(ctx.getPackageName(), LAUNCHER_ACTIVITY));
+        }
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        ctx.startActivity(launch);
+
+        if (ctx instanceof Activity) ((Activity) ctx).finish();
     }
 
     private void applyFabState(ImageView button, Boolean enabled) {
