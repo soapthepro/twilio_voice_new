@@ -43,8 +43,6 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
     var callKitCallController: CXCallController
     var userInitiatedDisconnect: Bool = false
     var callOutgoing: Bool = false
-    var pendingAnswerWork: (() -> Void)?
-    var isProcessingDeferredAnswer = false
     
     static var appName: String {
         get {
@@ -703,41 +701,20 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
         callDisconnected()
     }
     
-    // func callDisconnected() {
-    //     self.sendPhoneCallEvents(description: "LOG|Call Disconnected", isError: false)
-    //     if (self.call != nil) {
-            
-    //         self.sendPhoneCallEvents(description: "LOG|Setting call to nil", isError: false)
-    //         self.call = nil
-    //     }
-    //     if (self.callInvite != nil) {
-    //         self.callInvite = nil
-    //     }
-        
-    //     self.callOutgoing = false
-    //     self.userInitiatedDisconnect = false
-        
-    // }
     func callDisconnected() {
         self.sendPhoneCallEvents(description: "LOG|Call Disconnected", isError: false)
         if (self.call != nil) {
+            
             self.sendPhoneCallEvents(description: "LOG|Setting call to nil", isError: false)
             self.call = nil
         }
         if (self.callInvite != nil) {
             self.callInvite = nil
         }
-
+        
         self.callOutgoing = false
         self.userInitiatedDisconnect = false
-
-        // If we were waiting to answer a different call, do it now (once).
-        if let work = self.pendingAnswerWork, !self.isProcessingDeferredAnswer {
-            self.isProcessingDeferredAnswer = true
-            self.pendingAnswerWork = nil
-            work()
-            self.isProcessingDeferredAnswer = false
-        }
+        
     }
     
     func isSpeakerOn() -> Bool {
@@ -818,47 +795,18 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
         action.fulfill()
     }
     
-    // public func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-    //     self.sendPhoneCallEvents(description: "LOG|provider:performAnswerCallAction:", isError: false)
-        
-        
-    //     self.performAnswerVoiceCall(uuid: action.callUUID) { (success) in
-    //         if success {
-    //             self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() successful", isError: false)
-    //         } else {
-    //             self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() failed:", isError: false)
-    //         }
-    //     }
-        
-    //     action.fulfill()
-    // }
     public func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         self.sendPhoneCallEvents(description: "LOG|provider:performAnswerCallAction:", isError: false)
-
-        // If there is an active call, end it first, then answer the new one.
-        if let activeCall = self.call, let activeUUID = activeCall.uuid {
-            // Make a one-shot closure that will answer after the old call ends
-            self.pendingAnswerWork = { [weak self] in
-                guard let self = self else { return }
-                self.performAnswerVoiceCall(uuid: action.callUUID) { success in
-                    self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() deferred \(success ? "successful" : "failed")", isError: !success)
-                }
-            }
-
-            // Mark this as a user-initiated transition to avoid odd CallKit end reasons
-            self.userInitiatedDisconnect = true
-            self.sendPhoneCallEvents(description: "LOG|Ending active call \(activeUUID) before answering new call", isError: false)
-            performEndCallAction(uuid: activeUUID)
-
-            // We must still fulfill the CallKit action now.
-            action.fulfill()
-            return
-        }
-
-        // No active call; answer immediately like before
+        
+        
         self.performAnswerVoiceCall(uuid: action.callUUID) { (success) in
-            self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() \(success ? "successful" : "failed")", isError: !success)
+            if success {
+                self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() successful", isError: false)
+            } else {
+                self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() failed:", isError: false)
+            }
         }
+        
         action.fulfill()
     }
     
