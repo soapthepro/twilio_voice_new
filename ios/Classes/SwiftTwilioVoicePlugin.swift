@@ -795,36 +795,73 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
         action.fulfill()
     }
     
+    // public func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
+    //     self.sendPhoneCallEvents(description: "LOG|provider:performAnswerCallAction:", isError: false)
+        
+        
+    //     self.performAnswerVoiceCall(uuid: action.callUUID) { (success) in
+    //         if success {
+    //             self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() successful", isError: false)
+    //         } else {
+    //             self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() failed:", isError: false)
+    //         }
+    //     }
+        
+    //     action.fulfill()
+    // }
+    
+    // public func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
+    //     self.sendPhoneCallEvents(description: "LOG|provider:performEndCallAction:", isError: false)
+        
+        
+    //     if (self.callInvite != nil) {
+    //         self.sendPhoneCallEvents(description: "LOG|provider:performEndCallAction: rejecting call", isError: false)
+    //         self.callInvite?.reject()
+    //         self.callInvite = nil
+    //     }else if let call = self.call {
+    //         self.sendPhoneCallEvents(description: "LOG|provider:performEndCallAction: disconnecting call", isError: false)
+    //         call.disconnect()
+    //     }
+    //     action.fulfill()
+    // }
+    
     public func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-        self.sendPhoneCallEvents(description: "LOG|provider:performAnswerCallAction:", isError: false)
-        
-        
-        self.performAnswerVoiceCall(uuid: action.callUUID) { (success) in
-            if success {
-                self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() successful", isError: false)
-            } else {
-                self.sendPhoneCallEvents(description: "LOG|provider:performAnswerVoiceCall() failed:", isError: false)
-            }
+        let uuid = action.callUUID
+
+        guard let invite = self.callInvite, invite.uuid == uuid else {
+            self.sendPhoneCallEvents(description: "LOG|Answer action UUID doesn't match current invite", isError: false)
+            action.fail()
+            return
         }
-        
-        action.fulfill()
+
+        self.performAnswerVoiceCall(uuid: uuid) { success in
+            success ? action.fulfill() : action.fail()
+        }
     }
     
     public func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-        self.sendPhoneCallEvents(description: "LOG|provider:performEndCallAction:", isError: false)
-        
-        
-        if (self.callInvite != nil) {
-            self.sendPhoneCallEvents(description: "LOG|provider:performEndCallAction: rejecting call", isError: false)
-            self.callInvite?.reject()
+        let uuid = action.callUUID
+
+        if let invite = self.callInvite, invite.uuid == uuid {
+            self.sendPhoneCallEvents(description: "LOG|Ending incoming invite \(uuid)", isError: false)
+            invite.reject()
             self.callInvite = nil
-        }else if let call = self.call {
-            self.sendPhoneCallEvents(description: "LOG|provider:performEndCallAction: disconnecting call", isError: false)
-            call.disconnect()
+            action.fulfill()
+            return
         }
-        action.fulfill()
+
+        if let call = self.call, call.uuid == uuid {
+            self.sendPhoneCallEvents(description: "LOG|Disconnecting active call \(uuid)", isError: false)
+            call.disconnect()
+            action.fulfill()
+            return
+        }
+
+        // If neither matches, fail so CallKit doesn't desync silently
+        self.sendPhoneCallEvents(description: "LOG|End action for unknown UUID \(uuid)", isError: false)
+        action.fail()
     }
-    
+
     public func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
         self.sendPhoneCallEvents(description: "LOG|provider:performSetHeldAction:", isError: false)
         if let call = self.call {
@@ -934,25 +971,41 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
         self.callKitCompletionCallback = completionHandler
     }
     
-    func performAnswerVoiceCall(uuid: UUID, completionHandler: @escaping (Bool) -> Swift.Void) {
-        if let ci = self.callInvite {
-            let acceptOptions: AcceptOptions = AcceptOptions(callInvite: ci) { (builder) in
-                builder.uuid = ci.uuid
-            }
-            self.sendPhoneCallEvents(description: "LOG|performAnswerVoiceCall: answering call", isError: false)
-            let theCall = ci.accept(options: acceptOptions, delegate: self)
-            self.sendPhoneCallEvents(description: "Answer|\(theCall.from!)|\(theCall.to!)\(formatCustomParams(params: ci.customParameters))", isError:false)
-            self.call = theCall
-            self.callKitCompletionCallback = completionHandler
-            self.callInvite = nil
+    // func performAnswerVoiceCall(uuid: UUID, completionHandler: @escaping (Bool) -> Swift.Void) {
+    //     if let ci = self.callInvite {
+    //         let acceptOptions: AcceptOptions = AcceptOptions(callInvite: ci) { (builder) in
+    //             builder.uuid = ci.uuid
+    //         }
+    //         self.sendPhoneCallEvents(description: "LOG|performAnswerVoiceCall: answering call", isError: false)
+    //         let theCall = ci.accept(options: acceptOptions, delegate: self)
+    //         self.sendPhoneCallEvents(description: "Answer|\(theCall.from!)|\(theCall.to!)\(formatCustomParams(params: ci.customParameters))", isError:false)
+    //         self.call = theCall
+    //         self.callKitCompletionCallback = completionHandler
+    //         self.callInvite = nil
             
-            guard #available(iOS 13, *) else {
-                self.incomingPushHandled()
-                return
-            }
-        } else {
-            self.sendPhoneCallEvents(description: "LOG|No CallInvite matches the UUID", isError: false)
+    //         guard #available(iOS 13, *) else {
+    //             self.incomingPushHandled()
+    //             return
+    //         }
+    //     } else {
+    //         self.sendPhoneCallEvents(description: "LOG|No CallInvite matches the UUID", isError: false)
+    //     }
+    // }
+
+    func performAnswerVoiceCall(uuid: UUID, completionHandler: @escaping (Bool) -> Void) {
+        guard let ci = self.callInvite, ci.uuid == uuid else {
+            completionHandler(false)
+            return
         }
+
+        let acceptOptions = AcceptOptions(callInvite: ci) { builder in
+            builder.uuid = uuid
+        }
+
+        let theCall = ci.accept(options: acceptOptions, delegate: self)
+        self.call = theCall
+        self.callInvite = nil
+        self.callKitCompletionCallback = completionHandler
     }
     
     public func onListen(withArguments arguments: Any?,
