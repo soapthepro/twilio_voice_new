@@ -259,6 +259,9 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
                 //runon ui thread
                 runOnUiThread(() -> {
                     tvUserName.setText(caller.replaceAll("_", " "));
+                    chronometer.stop();
+                    chronometer.setBase(SystemClock.elapsedRealtime());
+                    chronometer.start();
                 });
             }
         }
