@@ -238,33 +238,43 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         updateAudioDeviceIcon(audioSwitch.getAvailableAudioDevices().get(0));
     }
 
-    // @Override
-    // protected void onNewIntent(Intent intent) {
-    //     super.onNewIntent(intent);
-    //     if (intent != null && intent.getAction() != null) {
-    //         Log.d(TAG, "onNewIntent-");
-    //         Log.d(TAG, intent.getAction());
-    //         switch (intent.getAction()) {
-    //             case Constants.ACTION_CANCEL_CALL:
-    //                 callCanceled();
-    //                 break;
-    //             default: {
-    //             }
-    //         }
-    //     }
-    // }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent);
-        handleCallIntent(intent);
-
-        // keep your cancel handling
-        if (intent != null && Constants.ACTION_CANCEL_CALL.equals(intent.getAction())) {
-            callCanceled();
+        if (intent != null) {
+            if (intent.getStringExtra(Constants.CALL_FROM) != null) {
+                String fromId = intent.getStringExtra(Constants.CALL_FROM).replace("client:", "");
+                Log.d(TAG, "caller fromID onnewintent");
+                Log.d(TAG, fromId);
+                Log.d(TAG, intent.getStringExtra(Constants.CALL_FROM));
+                String caller;
+                if (fromId != null) {
+                    caller = fromId;
+                } else {
+                    caller = "Unknown Caller";
+                }
+                Log.d(TAG, "handleCallIntent onnewintent");
+                Log.d(TAG, "caller from onnewintent");
+                Log.d(TAG, caller);
+                //runon ui thread
+                runOnUiThread(() -> {
+                    tvUserName.setText(caller.replaceAll("_", " "));
+                });
+            }
+        }
+        if (intent != null && intent.getAction() != null) {
+            Log.d(TAG, "onNewIntent-");
+            Log.d(TAG, intent.getAction());
+            switch (intent.getAction()) {
+                case Constants.ACTION_CANCEL_CALL:
+                    callCanceled();
+                    break;
+                default: {
+                }
+            }
         }
     }
+    
 
     boolean isMuted = false;
 
