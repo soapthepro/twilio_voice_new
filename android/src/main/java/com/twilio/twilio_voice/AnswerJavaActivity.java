@@ -263,25 +263,35 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         }
     }
 
+    // @Override
+    // protected void onNewIntent(Intent intent) {
+    //     super.onNewIntent(intent);
+    //     Log.d(TAG, "onNewIntent-");
+    //     if (intent != null && intent.getAction() != null) {
+    //         Log.d(TAG, intent.getAction());
+    //         switch (intent.getAction()) {
+    //             case Constants.ACTION_CANCEL_CALL:
+    //                 newCancelCallClickListener();
+    //                 break;
+    //             case Constants.ACTION_ACCEPT:
+    //                 checkPermissionsAndAccept();
+    //                 break;
+    //             default: {
+    //             }
+    //         }
+    //     }
+    // }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d(TAG, "onNewIntent-");
-        if (intent != null && intent.getAction() != null) {
-            Log.d(TAG, intent.getAction());
-            switch (intent.getAction()) {
-                case Constants.ACTION_CANCEL_CALL:
-                    newCancelCallClickListener();
-                    break;
-                case Constants.ACTION_ACCEPT:
-                    checkPermissionsAndAccept();
-                    break;
-                default: {
-                }
-            }
-        }
-    }
+        setIntent(intent);
 
+        Log.d(TAG, "onNewIntent-");
+
+        // ✅ Let your existing handler do everything (including updating name)
+        handleIncomingCallIntent(intent);
+    }
 
     private void configCallUI() {
         Log.d(TAG, "configCallUI");
