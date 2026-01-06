@@ -171,6 +171,18 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         }
     }
 
+    private void endExistingCallIfAny() {
+        try {
+            // Tell the plugin to end the current call (this also does cleanup)
+            Intent end = new Intent();
+            end.setAction(Constants.ACTION_END_CALL);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(end);
+            Log.d(TAG, "Requested existing call to end before accepting new call");
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to send ACTION_END_CALL broadcast", e);
+        }
+    }
+
     public void checkPermissionForOverlay() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
@@ -325,6 +337,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
     }
     private void acceptCall() {
         Log.d(TAG, "Accepting call");
+        endExistingCallIfAny();
         // Promote service to MIC-typed FGS now that this Activity is visible (Android 14/15 rule)
         Intent promote = new Intent(this, IncomingCallNotificationService.class)
                 .setAction(IncomingCallNotificationService.ACTION_PROMOTE_TO_MIC_FGS)
@@ -353,6 +366,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
     private void acceptCallBroadcast() {
         Log.d(TAG, "Accepting call");
+        endExistingCallIfAny();
         Intent promote = new Intent(this, IncomingCallNotificationService.class)
                 .setAction(IncomingCallNotificationService.ACTION_PROMOTE_TO_MIC_FGS)
                 .putExtra(Constants.INCOMING_CALL_INVITE, activeCallInvite)
