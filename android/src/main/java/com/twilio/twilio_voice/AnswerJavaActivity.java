@@ -175,6 +175,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         try {
             // Tell the plugin to end the current call (this also does cleanup)
             Intent end = new Intent();
+            tvUserName.setText("Loading...");
             end.setAction(Constants.ACTION_END_CALL);
             LocalBroadcastManager.getInstance(this).sendBroadcast(end);
             Log.d(TAG, "Requested existing call to end before accepting new call");
