@@ -30,7 +30,7 @@
             <action android:name="android.intent.action.MEDIA_BUTTON" />
           </intent-filter>
         </receiver>
-    <activity android:name=".BackgroundCallJavaActivity" android:turnScreenOn="true" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/LaunchTheme.NoActionBar" />
+    <activity android:name=".BackgroundCallJavaActivity" android:turnScreenOn="true" android:launchMode="singleTop" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/LaunchTheme.NoActionBar" />
     <activity
         android:name=".IncomingCallNotificationActivity" android:turnScreenOn="true" android:showWhenLocked="true" android:showOnLockScreen="true" android:theme="@style/Theme.AppCompat">
     </activity>
