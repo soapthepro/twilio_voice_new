@@ -238,22 +238,33 @@ public class BackgroundCallJavaActivity extends AppCompatActivity {
         updateAudioDeviceIcon(audioSwitch.getAvailableAudioDevices().get(0));
     }
 
+    // @Override
+    // protected void onNewIntent(Intent intent) {
+    //     super.onNewIntent(intent);
+    //     if (intent != null && intent.getAction() != null) {
+    //         Log.d(TAG, "onNewIntent-");
+    //         Log.d(TAG, intent.getAction());
+    //         switch (intent.getAction()) {
+    //             case Constants.ACTION_CANCEL_CALL:
+    //                 callCanceled();
+    //                 break;
+    //             default: {
+    //             }
+    //         }
+    //     }
+    // }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null && intent.getAction() != null) {
-            Log.d(TAG, "onNewIntent-");
-            Log.d(TAG, intent.getAction());
-            switch (intent.getAction()) {
-                case Constants.ACTION_CANCEL_CALL:
-                    callCanceled();
-                    break;
-                default: {
-                }
-            }
+        setIntent(intent);
+        handleCallIntent(intent);
+
+        // keep your cancel handling
+        if (intent != null && Constants.ACTION_CANCEL_CALL.equals(intent.getAction())) {
+            callCanceled();
         }
     }
-    
 
     boolean isMuted = false;
 

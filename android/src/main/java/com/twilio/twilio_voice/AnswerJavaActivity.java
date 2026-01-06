@@ -403,8 +403,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
 
     private void startAnswerActivity(Call call) {
         Intent intent = new Intent(this, BackgroundCallJavaActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(Constants.CALL_FROM, call.getFrom());
         startActivity(intent);
         Log.d(TAG, "Connected");
