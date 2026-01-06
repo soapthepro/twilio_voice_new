@@ -175,7 +175,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
         try {
             // Tell the plugin to end the current call (this also does cleanup)
             Intent end = new Intent();
-            tvUserName.setText("Loading...");
+            runOnUiThread(() -> {
+                tvUserName.setText("Loading...");
+            });
             end.setAction(Constants.ACTION_END_CALL);
             LocalBroadcastManager.getInstance(this).sendBroadcast(end);
             Log.d(TAG, "Requested existing call to end before accepting new call");
@@ -293,7 +295,9 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
             } else {
                 caller = preferences.getString(fromId, preferences.getString("defaultCaller", getString(R.string.unknown_caller)));
             }
-            tvUserName.setText(caller.replaceAll("_", " "));
+            runOnUiThread(() -> {
+                tvUserName.setText(caller.replaceAll("_", " "));
+            });
 
             btnAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override
