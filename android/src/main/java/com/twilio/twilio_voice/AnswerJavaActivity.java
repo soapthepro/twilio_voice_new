@@ -477,6 +477,7 @@ public class AnswerJavaActivity extends AppCompatActivity  implements HeadsetAct
                 // audioSwitch.deactivate();
                 // Inform both: local listeners & the service
                 Intent local = new Intent();
+                TwilioVoicePlugin.activeCall = null;
                 local.setAction("ACTION_CALL_ENDED_HERE");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(local);
                 
