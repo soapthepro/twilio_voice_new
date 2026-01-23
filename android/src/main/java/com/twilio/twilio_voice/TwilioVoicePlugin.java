@@ -216,7 +216,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     }
                     break;
                 case "ACTION_CALL_ENDED_HERE":
-                    activeCall = null;
+                    this.activeCall = null;
                     sendPhoneCallEvents("Call Ended");
                     break;
                 default:
@@ -469,6 +469,8 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
             result.success(activeCall == null ? null : activeCall.getSid());
         } else if (call.method.equals("isOnCall")) {
             Log.d(TAG, "Is on call invoked");
+            Log.d(TAG, "ACTIVE CALL: " + this.activeCall);
+            Log.d(TAG, "ACTIVE CALL SID: " + (this.activeCall != null ? this.activeCall.getSid() : null));
             result.success(this.activeCall != null);
         } else if (call.method.equals("holdCall")) {
             Log.d(TAG, "Hold call invoked");
